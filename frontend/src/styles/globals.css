@@ -140,6 +140,16 @@
   to   { opacity: 1; }
 }
 
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* ─────────────────── Utility Classes ─────────────────── */
 @layer utilities {
   .animate-fade-up {
@@ -152,6 +162,14 @@
 
   .animate-fade-in {
     animation: fadeIn 0.3s ease forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.28s ease forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.28s ease forwards;
   }
 
   .dot-pulse {
