@@ -67,19 +67,19 @@ app.get("/health", (_req, res) => {
 });
 
 // ── API Routes ────────────────────────────────────────
-// Routes will be registered here as they are created:
-//
-// import { authRouter }      from "@/routes/auth.routes";
-// import { locationsRouter } from "@/routes/locations.routes";
-// import { reviewsRouter }   from "@/routes/reviews.routes";
-// import { guidesRouter }    from "@/routes/guides.routes";
-// import { aiRouter }        from "@/routes/ai.routes";
-//
-// app.use("/api/auth",      authRouter);
-// app.use("/api/locations", locationsRouter);
-// app.use("/api/reviews",   reviewsRouter);
-// app.use("/api/guides",    guidesRouter);
-// app.use("/api/ai",        aiRouter);
+import { locationRouter } from "@/modules/locations/location.router";
+import { reviewRouter }   from "@/modules/reviews/review.router";
+import { aiRouter }       from "@/modules/ai/ai.router";
+
+app.use("/api/locations", locationRouter);
+app.use("/api/reviews",   reviewRouter);
+app.use("/api/ai",        aiRouter);
+
+// Future routes:
+// import { authRouter }   from "@/modules/auth/auth.router";
+// import { guidesRouter } from "@/modules/guides/guides.router";
+// app.use("/api/auth",   authRouter);
+// app.use("/api/guides", guidesRouter);
 
 // ── 404 handler ───────────────────────────────────────
 app.use((_req, res) => {
