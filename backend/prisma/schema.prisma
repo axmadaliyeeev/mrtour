@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────
+enum Category {
+  tarix
+  tabiat
+  madaniyat
+  din
+  arxeologiya
+}
+
+// ── Models ────────────────────────────────────────────
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  surname      String
+  email        String     @unique
+  passwordHash String
+  country      String     @default("")
+  lang         String     @default("uz")
+  isPremium    Boolean    @default(false)
+  refreshToken String?
+  preferences  String[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  plan         UserPlan[]
+  reviews      Review[]
+}
+
+model Location {
+  id            String     @id @default(cuid())
+  name          String
+  city          String
+  region        String
+  category      Category
+  rating        Float      @default(0)
+  reviewCount   Int        @default(0)
+  images        String[]
+  tags          String[]
+  shortDesc     String?
+  fullDesc      String?
+  transport     String?
+  hours         String?
+  price         String?
+  priceUSD      Float      @default(0)
+  googleMapsUrl String?
+  bestSeason    String?
+  duration      String?
+  featured      Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  reviews       Review[]
+  userPlans     UserPlan[]
+
+  @@index([city])
+  @@index([category])
+  @@index([featured])
+  @@index([rating])
+}
+
+// Junction table: User ↔ Location (plan)
+model UserPlan {
+  id         String   @id @default(cuid())
+  userId     String
+  locationId String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, locationId])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  locationId String
+  userId     String?
+  author     String
+  country    String   @default("🌍")
+  text       String
+  stars      Int
+  trustScore Int      @default(0)
+  aiTags     String[]
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([locationId])
+  @@index([createdAt])
+}

@@ -1,10 +1,12 @@
-import type { FilterQuery, SortOrder } from "mongoose";
-import { Location, type ILocation } from "./location.model";
+import { Prisma, type Category, type Location } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { createError } from "@/middleware/error-handler";
+import { buildPagination } from "@/utils/response";
 
-// ── Types ─────────────────────────────────────────────
+export type SortField = "rating" | "reviewCount" | "price";
+
 export interface LocationFilters {
-  category?: ILocation["category"];
+  category?: Category;
   region?: string;
   search?: string;
   featured?: boolean;
@@ -15,23 +17,15 @@ export interface PaginationInput {
   limit?: number;
 }
 
-export type SortField = "rating" | "reviewCount" | "price";
-
-const SORT_MAP: Record<SortField, Record<string, SortOrder>> = {
-  rating:      { rating: -1 },
-  reviewCount: { reviewCount: -1 },
-  price:       { priceUSD: 1 },
-};
-
 interface GetAllResult {
-  locations: ILocation[];
+  locations: Location[];
   total: number;
   pages: number;
   page: number;
   limit: number;
 }
 
-// ── getAll ────────────────────────────────────────────
+// ── getAll ─────────────────────────────────────────────
 export async function getAll(
   filters: LocationFilters = {},
   pagination: PaginationInput = {},
@@ -41,44 +35,46 @@ export async function getAll(
   const limit = Math.min(50, Math.max(1, pagination.limit ?? 12));
   const skip  = (page - 1) * limit;
 
-  const query: FilterQuery<ILocation> = {};
+  const where: Prisma.LocationWhereInput = {};
 
-  if (filters.category) query.category = filters.category;
-  if (filters.region)   query.region   = { $regex: filters.region, $options: "i" };
-  if (typeof filters.featured === "boolean") query.featured = filters.featured;
+  if (filters.category) where.category = filters.category;
+  if (filters.region)   where.region = { contains: filters.region, mode: "insensitive" };
+  if (typeof filters.featured === "boolean") where.featured = filters.featured;
 
   if (filters.search?.trim()) {
-    const rx = { $regex: filters.search.trim(), $options: "i" };
-    query.$or = [{ name: rx }, { city: rx }, { shortDesc: rx }, { tags: rx }];
+    const q = filters.search.trim();
+    where.OR = [
+      { name:      { contains: q, mode: "insensitive" } },
+      { city:      { contains: q, mode: "insensitive" } },
+      { shortDesc: { contains: q, mode: "insensitive" } },
+    ];
   }
 
+  const orderBy: Prisma.LocationOrderByWithRelationInput =
+    sort === "reviewCount" ? { reviewCount: "desc" } :
+    sort === "price"       ? { priceUSD:    "asc"  } :
+                             { rating:      "desc" };
+
   const [locations, total] = await Promise.all([
-    Location.find(query)
-      .sort(SORT_MAP[sort] ?? SORT_MAP.rating)
-      .skip(skip)
-      .limit(limit)
-      .lean<ILocation[]>(),
-    Location.countDocuments(query),
+    prisma.location.findMany({ where, orderBy, skip, take: limit }),
+    prisma.location.count({ where }),
   ]);
 
   return { locations, total, pages: Math.ceil(total / limit), page, limit };
 }
 
-// ── getById ───────────────────────────────────────────
-export async function getById(id: string): Promise<ILocation> {
-  const location = await Location.findById(id).lean<ILocation>();
-
-  if (!location) {
-    throw createError(`Location '${id}' not found`, 404);
-  }
-
+// ── getById ────────────────────────────────────────────
+export async function getById(id: string): Promise<Location> {
+  const location = await prisma.location.findUnique({ where: { id } });
+  if (!location) throw createError(`Location '${id}' not found`, 404);
   return location;
 }
 
-// ── getFeatured ───────────────────────────────────────
-export async function getFeatured(): Promise<ILocation[]> {
-  return Location.find({ featured: true })
-    .sort({ rating: -1 })
-    .limit(6)
-    .lean<ILocation[]>();
+// ── getFeatured ────────────────────────────────────────
+export async function getFeatured(): Promise<Location[]> {
+  return prisma.location.findMany({
+    where:   { featured: true },
+    orderBy: { rating: "desc" },
+    take:    6,
+  });
 }

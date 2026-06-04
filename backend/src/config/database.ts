@@ -1,53 +1,22 @@
-import mongoose from "mongoose";
-import { env } from "./env";
-
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 3000;
-
-async function connectWithRetry(attempt = 1): Promise<void> {
-  try {
-    await mongoose.connect(env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      maxPoolSize: 10,
-      minPoolSize: 2,
-    });
-    console.log(`✅  MongoDB connected [${mongoose.connection.host}]`);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`❌  MongoDB connection failed (attempt ${attempt}/${MAX_RETRIES}): ${message}`);
-
-    if (attempt < MAX_RETRIES) {
-      console.log(`⏳  Retrying in ${RETRY_DELAY_MS / 1000}s...`);
-      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
-      return connectWithRetry(attempt + 1);
-    }
-
-    console.error("💀  All connection attempts exhausted. Exiting.");
-    process.exit(1);
-  }
-}
+import { prisma } from "@/lib/prisma";
 
 export async function connectDatabase(): Promise<void> {
-  mongoose.connection.on("disconnected", () =>
-    console.warn("⚠️   MongoDB disconnected")
-  );
-  mongoose.connection.on("reconnected", () =>
-    console.log("♻️   MongoDB reconnected")
-  );
-  mongoose.connection.on("error", (err) =>
-    console.error("🔴  MongoDB error:", err.message)
-  );
+  try {
+    await prisma.$connect();
+    console.log("✅  PostgreSQL (Neon) connected via Prisma");
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("❌  Database connection failed:", msg);
+    process.exit(1);
+  }
 
-  await connectWithRetry();
+  process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 }
 
 async function gracefulShutdown(signal: string): Promise<void> {
-  console.log(`\n🔔  ${signal} received — closing MongoDB connection...`);
-  await mongoose.connection.close();
-  console.log("✅  MongoDB connection closed.");
+  console.log(`\n🔔  ${signal} received — closing Prisma connection...`);
+  await prisma.$disconnect();
+  console.log("✅  Prisma disconnected.");
   process.exit(0);
 }
-
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
