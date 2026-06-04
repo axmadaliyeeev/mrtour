@@ -1,0 +1,41 @@
+{
+  "name": "mrtour-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.4",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "zod": "^3.24.1",
+    "@anthropic-ai/sdk": "^0.37.0",
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "express-rate-limit": "^7.5.0",
+    "dotenv": "^16.4.7",
+    "cookie-parser": "^1.4.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "ts-node-dev": "^2.0.0",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/morgan": "^1.9.9",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/node": "^22.10.7",
+    "eslint": "^8.57.1",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "prettier": "^3.4.2"
+  }
+}

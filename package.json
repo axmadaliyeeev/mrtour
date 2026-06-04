@@ -1,0 +1,22 @@
+{
+  "name": "mrtour-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "cd frontend && next dev",
+    "dev:backend": "cd backend && ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"cyan,green\" \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build:frontend": "cd frontend && next build",
+    "build:backend": "cd backend && tsc",
+    "build": "npm run build:frontend && npm run build:backend",
+    "lint": "concurrently \"npm run lint --workspace=frontend\" \"npm run lint --workspace=backend\"",
+    "format": "concurrently \"npm run format --workspace=frontend\" \"npm run format --workspace=backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
