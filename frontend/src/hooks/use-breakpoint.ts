@@ -9,27 +9,23 @@ interface Breakpoint {
   isDesktop: boolean;
 }
 
+const SSR_DEFAULT: Breakpoint = { width: 1200, isMobile: false, isTablet: false, isDesktop: true };
+
 function getBreakpoint(width: number): Breakpoint {
   return {
     width,
-    isMobile: width < 768,
-    isTablet: width >= 768 && width <= 1100,
+    isMobile:  width < 768,
+    isTablet:  width >= 768 && width <= 1100,
     isDesktop: width > 1100,
   };
 }
 
 export function useBreakpoint(): Breakpoint {
-  const [bp, setBp] = useState<Breakpoint>(() =>
-    typeof window !== "undefined"
-      ? getBreakpoint(window.innerWidth)
-      : { width: 1200, isMobile: false, isTablet: false, isDesktop: true }
-  );
+  const [bp, setBp] = useState<Breakpoint>(SSR_DEFAULT);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
+    setBp(getBreakpoint(window.innerWidth));
     const handler = () => setBp(getBreakpoint(window.innerWidth));
-
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, []);
