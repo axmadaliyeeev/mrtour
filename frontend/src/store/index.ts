@@ -22,8 +22,6 @@ interface AppStore {
   toggleTheme: () => void;
 
   // UI
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
   authModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
@@ -68,18 +66,13 @@ export const useAppStore = create<AppStore>()(
         set((state) => ({ theme: state.theme === "dark" ? "light" : "dark" })),
 
       // ── UI ────────────────────────────────────────────
-      activeTab: "overview",
-      setActiveTab: (tab) => set({ activeTab: tab }),
-
-      authModalOpen:  false,
-      openAuthModal:  () => set({ authModalOpen: true }),
+      authModalOpen: false,
+      openAuthModal: () => set({ authModalOpen: true }),
       closeAuthModal: () => set({ authModalOpen: false }),
     }),
     {
       name: "mrtour-v2",
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? localStorage : ({} as Storage)
-      ),
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
         plan: state.plan,

@@ -1,71 +1,43 @@
-import axios, {
-  type AxiosInstance,
-  type AxiosRequestConfig,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
-const instance: AxiosInstance = axios.create({
+const instance = axios.create({
   baseURL: BASE_URL,
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
 
-// ── Request: attach JWT ────────────────────────────────
-instance.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("mrtour-token");
-      if (token) config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (err) => Promise.reject(err)
-);
+instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem("mrtour-token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-// ── Response: unwrap { success, data } wrapper ─────────
 instance.interceptors.response.use(
-  (response) => {
-    // Backend always returns { success: true, data: ... }
-    // Unwrap so callers get the actual data directly
-    if (response.data?.success !== undefined) {
-      response.data = response.data.data;
-    }
-    return response;
+  (res) => {
+    if (res.data?.success !== undefined) res.data = res.data.data;
+    return res;
   },
-  async (error) => {
-    const original = error.config as AxiosRequestConfig & { _retry?: boolean };
-    if (error.response?.status !== 401 || original._retry) {
-      return Promise.reject(error);
-    }
-    original._retry = true;
-
-    try {
-      await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
-      return instance(original);
-    } catch {
-      if (typeof window !== "undefined") {
+  async (err) => {
+    const orig = err.config as AxiosRequestConfig & { _retry?: boolean };
+    if (err.response?.status === 401 && !orig._retry) {
+      orig._retry = true;
+      try {
+        await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        return instance(orig);
+      } catch {
         localStorage.removeItem("mrtour-token");
       }
-      return Promise.reject(error);
     }
+    return Promise.reject(err);
   }
 );
 
-// ── Typed convenience methods ─────────────────────────
 export const apiClient = {
-  get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return instance.get<T>(url, config).then((r) => r.data as T);
-  },
-  post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return instance.post<T>(url, data, config).then((r) => r.data as T);
-  },
-  patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return instance.patch<T>(url, data, config).then((r) => r.data as T);
-  },
-  delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return instance.delete<T>(url, config).then((r) => r.data as T);
-  },
+  get:    <T>(url: string, cfg?: AxiosRequestConfig) => instance.get<T>(url, cfg).then(r => r.data as T),
+  post:   <T>(url: string, data?: unknown, cfg?: AxiosRequestConfig) => instance.post<T>(url, data, cfg).then(r => r.data as T),
+  patch:  <T>(url: string, data?: unknown, cfg?: AxiosRequestConfig) => instance.patch<T>(url, data, cfg).then(r => r.data as T),
+  delete: <T>(url: string, cfg?: AxiosRequestConfig) => instance.delete<T>(url, cfg).then(r => r.data as T),
 };
