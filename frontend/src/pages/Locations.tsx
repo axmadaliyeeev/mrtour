@@ -1,29 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
+import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
 type CategoryFilter = Location["category"] | "all";
 
-const CATEGORIES: { key: CategoryFilter; label: string; emoji: string }[] = [
-  { key: "all", label: "Barchasi", emoji: "🗺️" },
-  { key: "tarix", label: "Tarix", emoji: "🏛️" },
-  { key: "tabiat", label: "Tabiat", emoji: "🌿" },
-  { key: "madaniyat", label: "Madaniyat", emoji: "🎭" },
-  { key: "din", label: "Din", emoji: "🕌" },
-  { key: "arxeologiya", label: "Arxeologiya", emoji: "⛏️" },
-];
-
 const CITIES = ["Barchasi", "Toshkent", "Samarqand", "Buxoro", "Xiva", "Chimgan"];
-
-const SORT_OPTIONS = [
-  { key: "rating", label: "Reyting" },
-  { key: "price-asc", label: "Narx: arzon" },
-  { key: "price-desc", label: "Narx: qimmat" },
-  { key: "reviews", label: "Sharhlar" },
-];
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -35,6 +20,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function Locations() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
   const [activeCity, setActiveCity] = useState("Barchasi");
@@ -42,6 +28,22 @@ export default function Locations() {
   const [showFilters, setShowFilters] = useState(false);
 
   const debouncedSearch = useDebounce(search, 300);
+
+  const CATEGORIES: { key: CategoryFilter; label: string; emoji: string }[] = [
+    { key: "all",         label: t("locations", "filter_all"),     emoji: "🗺️" },
+    { key: "tarix",       label: t("home", "cat_tarix"),           emoji: "🏛️" },
+    { key: "tabiat",      label: t("home", "cat_tabiat"),          emoji: "🌿" },
+    { key: "madaniyat",   label: t("home", "cat_madaniyat"),       emoji: "🎭" },
+    { key: "din",         label: t("home", "cat_din"),             emoji: "🕌" },
+    { key: "arxeologiya", label: t("home", "cat_arxeologiya"),     emoji: "⛏️" },
+  ];
+
+  const SORT_OPTIONS = [
+    { key: "rating",     label: t("locations", "sort_rating") },
+    { key: "price-asc",  label: t("locations", "sort_price_asc") },
+    { key: "price-desc", label: t("locations", "sort_price_desc") },
+    { key: "reviews",    label: t("locations", "sort_reviews") },
+  ];
 
   const results = useMemo(() => {
     let result = [...LOCATIONS];
@@ -52,7 +54,7 @@ export default function Locations() {
         (l) =>
           l.name.toLowerCase().includes(q) ||
           l.city.toLowerCase().includes(q) ||
-          l.tags.some((t) => t.toLowerCase().includes(q)) ||
+          l.tags.some((tag) => tag.toLowerCase().includes(q)) ||
           l.shortDesc.toLowerCase().includes(q)
       );
     }
@@ -82,8 +84,8 @@ export default function Locations() {
 
     return result;
   }, [debouncedSearch, activeCategory, activeCity, sortBy]);
-  const hasActiveFilters =
-    activeCategory !== "all" || activeCity !== "Barchasi" || sortBy !== "rating";
+
+  const hasActiveFilters = activeCategory !== "all" || activeCity !== "Barchasi" || sortBy !== "rating";
 
   function clearFilters() {
     setActiveCategory("all");
@@ -95,13 +97,18 @@ export default function Locations() {
   return (
     <div className="pb-6">
       {/* Header */}
-      <div className="px-4 pt-4 pb-3">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-1">
-          Joylar
-        </h1>
-        <p className="text-xs text-[var(--muted-foreground)]">
-          {results.length} joy topildi
-        </p>
+      <div className="px-4 pt-4 pb-3 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
+            {t("locations", "title")}
+          </h1>
+          <p className="text-xs text-[var(--muted-foreground)]">
+            {results.length} {t("locations", "found")}
+          </p>
+        </div>
+        <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold">
+          {results.length}
+        </span>
       </div>
 
       {/* Search bar */}
@@ -111,14 +118,14 @@ export default function Locations() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
             <input
               type="text"
-              placeholder="Joy, shahar yoki teg izlash..."
+              placeholder={t("locations", "search_placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={cn(
                 "w-full pl-9 pr-4 py-2.5 rounded-xl",
                 "bg-[var(--muted)] border border-[var(--border)]",
                 "text-[var(--foreground)] text-sm placeholder:text-[var(--muted-foreground)]",
-                "outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20 transition-all"
+                "outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all"
               )}
             />
             {search && (
@@ -135,10 +142,10 @@ export default function Locations() {
             className={cn(
               "flex items-center justify-center w-10 h-10 rounded-xl border transition-all",
               showFilters || hasActiveFilters
-                ? "bg-teal-500 border-teal-500 text-white"
-                : "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-teal-500/40"
+                ? "bg-indigo-500 border-indigo-500 text-white"
+                : "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] hover:border-indigo-500/40"
             )}
-            aria-label="Filtrlar"
+            aria-label="Filters"
           >
             <SlidersHorizontal className="w-4 h-4" />
           </button>
@@ -154,8 +161,8 @@ export default function Locations() {
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium shrink-0 transition-all",
               activeCategory === cat.key
-                ? "bg-teal-500 border-teal-500 text-white"
-                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-teal-500/30"
+                ? "bg-indigo-500 border-indigo-500 text-white"
+                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
             )}
           >
             <span>{cat.emoji}</span>
@@ -171,7 +178,7 @@ export default function Locations() {
             {/* City */}
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)] mb-2">
-                Shahar
+                {t("locations", "city_filter")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {CITIES.map((city) => (
@@ -181,11 +188,11 @@ export default function Locations() {
                     className={cn(
                       "px-3 py-1.5 rounded-full border text-xs font-medium transition-all",
                       activeCity === city
-                        ? "bg-teal-500 border-teal-500 text-white"
-                        : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-teal-500/30"
+                        ? "bg-indigo-500 border-indigo-500 text-white"
+                        : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
                     )}
                   >
-                    {city}
+                    {city === "Barchasi" ? t("locations", "filter_all") : city}
                   </button>
                 ))}
               </div>
@@ -194,7 +201,7 @@ export default function Locations() {
             {/* Sort */}
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)] mb-2">
-                Saralash
+                {t("locations", "sort_label")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {SORT_OPTIONS.map((opt) => (
@@ -204,8 +211,8 @@ export default function Locations() {
                     className={cn(
                       "px-3 py-1.5 rounded-full border text-xs font-medium transition-all",
                       sortBy === opt.key
-                        ? "bg-teal-500 border-teal-500 text-white"
-                        : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-teal-500/30"
+                        ? "bg-indigo-500 border-indigo-500 text-white"
+                        : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
                     )}
                   >
                     {opt.label}
@@ -220,7 +227,7 @@ export default function Locations() {
                 onClick={clearFilters}
                 className="w-full py-2 text-xs text-red-400 border border-red-400/20 bg-red-500/5 rounded-xl hover:bg-red-500/10 transition-colors"
               >
-                Filtrlarni tozalash
+                {t("locations", "clear_filters")}
               </button>
             )}
           </div>
@@ -232,23 +239,25 @@ export default function Locations() {
         <div className="px-4 flex flex-col items-center justify-center py-16 gap-3">
           <div className="text-5xl">🔍</div>
           <p className="text-[var(--foreground)] font-semibold text-base">
-            Joy topilmadi
+            {t("locations", "no_results")}
           </p>
           <p className="text-[var(--muted-foreground)] text-sm text-center">
-            Boshqa kalit so&apos;z yoki filtr sinab ko&apos;ring
+            {t("locations", "no_results_hint")}
           </p>
           <button
             onClick={clearFilters}
-            className="px-4 py-2 rounded-xl bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
+            className="px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
           >
-            Tozalash
+            {t("locations", "clear")}
           </button>
         </div>
       ) : (
-        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {results.map((loc) => (
-            <LocationCard key={loc.id} location={loc} variant="default" />
-          ))}
+        <div className="px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {results.map((loc) => (
+              <LocationCard key={loc.id} location={loc} variant="default" />
+            ))}
+          </div>
         </div>
       )}
     </div>

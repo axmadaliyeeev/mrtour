@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { User, Location } from "@/types";
+import type { Lang } from "@/i18n/translations";
 
 interface AppStore {
   // Auth
@@ -16,6 +17,10 @@ interface AppStore {
   removeFromPlan: (id: string) => void;
   isInPlan: (id: string) => boolean;
   clearPlan: () => void;
+
+  // Language (app-level, persisted, works for guests too)
+  lang: Lang;
+  setLang: (lang: Lang) => void;
 
   // Theme
   theme: "dark" | "light";
@@ -34,7 +39,12 @@ export const useAppStore = create<AppStore>()(
       user: null,
       isLoggedIn: false,
 
-      login: (user) => set({ user, isLoggedIn: true }),
+      login: (user) =>
+        set((state) => ({
+          user,
+          isLoggedIn: true,
+          lang: (user.lang as Lang) ?? state.lang,
+        })),
 
       logout: () => set({ user: null, isLoggedIn: false, plan: [] }),
 
@@ -59,6 +69,15 @@ export const useAppStore = create<AppStore>()(
 
       clearPlan: () => set({ plan: [] }),
 
+      // ── Language ──────────────────────────────────────
+      lang: "uz",
+
+      setLang: (lang) =>
+        set((state) => ({
+          lang,
+          user: state.user ? { ...state.user, lang } : null,
+        })),
+
       // ── Theme ─────────────────────────────────────────
       theme: "dark",
 
@@ -77,6 +96,7 @@ export const useAppStore = create<AppStore>()(
         user: state.user,
         plan: state.plan,
         theme: state.theme,
+        lang: state.lang,
       }),
     }
   )

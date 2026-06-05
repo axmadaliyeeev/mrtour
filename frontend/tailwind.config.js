@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+﻿/** @type {import('tailwindcss').Config} */
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -12,15 +12,7 @@ export default {
       "2xl": "1536px",
     },
     extend: {
-      colors: {
-        teal: {
-          300: "#5eead4",
-          400: "#2dd4bf",
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
-        },
-      },
+      colors: {},
       fontFamily: {
         sans: ["Sora", "system-ui", "sans-serif"],
       },
@@ -61,8 +53,8 @@ export default {
         "card":       "0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07)",
         "card-hover": "0 8px 30px -4px rgb(0 0 0 / 0.12), 0 4px 8px -2px rgb(0 0 0 / 0.06)",
         "card-dark":  "0 1px 3px 0 rgb(0 0 0 / 0.4)",
-        "teal-glow":  "0 0 20px -4px rgb(20 184 166 / 0.5)",
-        "teal-sm":    "0 2px 8px -2px rgb(20 184 166 / 0.4)",
+        "indigo-glow":  "0 0 20px -4px rgb(99 102 241 / 0.5)",
+        "indigo-sm":    "0 2px 8px -2px rgb(99 102 241 / 0.4)",
       },
     },
   },

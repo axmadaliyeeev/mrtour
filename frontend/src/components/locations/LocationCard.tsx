@@ -1,18 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { MapPin, Bookmark, BookmarkCheck, Clock, Star } from "lucide-react";
+﻿import { useNavigate } from "react-router-dom";
+import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation } from "lucide-react";
 import { cn, truncate } from "@/lib/utils";
 import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
-const CAT: Record<
+const CAT_STYLE: Record<
   Location["category"],
-  { label: string; color: string; bg: string; emoji: string }
+  { color: string; bg: string; emoji: string; tKey: "cat_tarix" | "cat_tabiat" | "cat_madaniyat" | "cat_din" | "cat_arxeologiya" }
 > = {
-  tarix:       { label: "Tarix",       color: "text-amber-400",  bg: "bg-amber-500/20 border-amber-500/30",   emoji: "🏛️" },
-  tabiat:      { label: "Tabiat",      color: "text-emerald-400", bg: "bg-emerald-500/20 border-emerald-500/30", emoji: "🌿" },
-  madaniyat:   { label: "Madaniyat",   color: "text-purple-400", bg: "bg-purple-500/20 border-purple-500/30", emoji: "🎭" },
-  din:         { label: "Din",         color: "text-teal-400",   bg: "bg-teal-500/20 border-teal-500/30",     emoji: "🕌" },
-  arxeologiya: { label: "Arxeologiya", color: "text-orange-400", bg: "bg-orange-500/20 border-orange-500/30", emoji: "⛏️" },
+  tarix:       { color: "text-amber-400",   bg: "bg-amber-500/20 border-amber-500/30",   emoji: "🏛️", tKey: "cat_tarix" },
+  tabiat:      { color: "text-emerald-400", bg: "bg-emerald-500/20 border-emerald-500/30", emoji: "🌿", tKey: "cat_tabiat" },
+  madaniyat:   { color: "text-purple-400",  bg: "bg-purple-500/20 border-purple-500/30",  emoji: "🎭", tKey: "cat_madaniyat" },
+  din:         { color: "text-indigo-400",    bg: "bg-indigo-500/20 border-indigo-500/30",      emoji: "🕌", tKey: "cat_din" },
+  arxeologiya: { color: "text-orange-400",  bg: "bg-orange-500/20 border-orange-500/30",  emoji: "⛏️", tKey: "cat_arxeologiya" },
 };
 
 interface LocationCardProps {
@@ -23,9 +24,12 @@ interface LocationCardProps {
 
 export function LocationCard({ location, variant = "default", className }: LocationCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { addToPlan, removeFromPlan, isInPlan } = useAppStore();
   const inPlan = isInPlan(location.id);
-  const cat = CAT[location.category];
+  const cat = CAT_STYLE[location.category];
+  const catLabel = t("home", cat.tKey);
+  const freeLabel = t("detail", "free");
 
   const go = () => navigate(`/locations/${location.id}`);
 
@@ -35,14 +39,14 @@ export function LocationCard({ location, variant = "default", className }: Locat
     else addToPlan(location);
   };
 
-  /* ── Featured variant ──────────────────────────────── */
+  /* ── Featured variant ──────────────────────────────────── */
   if (variant === "featured") {
     return (
       <div
         onClick={go}
         className={cn(
           "relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
-          "shadow-lg hover:shadow-2xl hover:shadow-black/30 transition-all duration-300",
+          "shadow-lg hover:shadow-2xl hover:shadow-black/40 transition-all duration-300 hover:-translate-y-1",
           className
         )}
       >
@@ -56,25 +60,24 @@ export function LocationCard({ location, variant = "default", className }: Locat
               "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60";
           }}
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
         {/* Category badge */}
         <span className={cn(
           "absolute top-3 left-3 flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full border backdrop-blur-md",
           cat.bg, cat.color
         )}>
-          {cat.emoji} {cat.label}
+          {cat.emoji} {catLabel}
         </span>
 
         {/* Price badge */}
         <span className={cn(
           "absolute top-3 right-12 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md",
           location.priceUSD === 0
-            ? "bg-emerald-500/80 text-white"
-            : "bg-black/50 text-teal-300 border border-teal-500/30"
+            ? "bg-emerald-500/85 text-white"
+            : "bg-black/55 text-indigo-300 border border-indigo-500/30"
         )}>
-          {location.priceUSD === 0 ? "Bepul" : `~$${location.priceUSD}`}
+          {location.priceUSD === 0 ? freeLabel : `~$${location.priceUSD}`}
         </span>
 
         {/* Bookmark button */}
@@ -82,24 +85,24 @@ export function LocationCard({ location, variant = "default", className }: Locat
           onClick={bookmark}
           className={cn(
             "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90",
-            inPlan ? "bg-teal-500 text-white shadow-lg shadow-teal-500/40" : "bg-black/40 text-white hover:bg-teal-500/70"
+            inPlan ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/40" : "bg-black/40 text-white hover:bg-indigo-500/70"
           )}
-          aria-label={inPlan ? "Rejadan olib tashlash" : "Rejaga qo'shish"}
+          aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
         >
           {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
         </button>
 
         {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="font-bold text-white text-base leading-tight mb-1.5 drop-shadow-md">
+          <h3 className="font-bold text-white text-base leading-tight mb-1.5 drop-shadow-lg">
             {location.name}
           </h3>
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1 text-white/75 text-xs">
-              <MapPin className="w-3 h-3" />
+            <span className="flex items-center gap-1 text-white/80 text-xs">
+              <Navigation className="w-3 h-3" />
               {location.city}
             </span>
-            <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+            <div className="flex items-center gap-1 bg-black/35 backdrop-blur-sm px-2 py-0.5 rounded-full">
               <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
               <span className="text-white text-xs font-bold">{location.rating}</span>
             </div>
@@ -109,19 +112,19 @@ export function LocationCard({ location, variant = "default", className }: Locat
     );
   }
 
-  /* ── Default variant ───────────────────────────────── */
+  /* ── Default variant ───────────────────────────────────── */
   return (
     <div
       onClick={go}
       className={cn(
         "rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
-        "hover:border-teal-500/40 hover:shadow-card-hover hover:-translate-y-1",
-        "transition-all duration-300 ease-spring group",
+        "hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/8 hover:-translate-y-1",
+        "transition-all duration-300 group",
         className
       )}
     >
       {/* Image */}
-      <div className="relative h-44 overflow-hidden bg-[var(--muted)]">
+      <div className="relative h-48 overflow-hidden bg-[var(--muted)]">
         <img
           src={location.img}
           alt={location.name}
@@ -132,24 +135,24 @@ export function LocationCard({ location, variant = "default", className }: Locat
               "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60";
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
 
         {/* Category badge */}
         <span className={cn(
           "absolute top-2.5 left-2.5 flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border backdrop-blur-md",
           cat.bg, cat.color
         )}>
-          {cat.emoji} {cat.label}
+          {cat.emoji} {catLabel}
         </span>
 
         {/* Price badge */}
         <span className={cn(
           "absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold backdrop-blur-md",
           location.priceUSD === 0
-            ? "bg-emerald-500/80 text-white"
-            : "bg-black/55 text-teal-300 border border-teal-500/20"
+            ? "bg-emerald-500/85 text-white"
+            : "bg-black/60 text-indigo-300 border border-indigo-500/20"
         )}>
-          {location.priceUSD === 0 ? "Bepul" : `~$${location.priceUSD}`}
+          {location.priceUSD === 0 ? freeLabel : `~$${location.priceUSD}`}
         </span>
 
         {/* Bookmark */}
@@ -158,17 +161,17 @@ export function LocationCard({ location, variant = "default", className }: Locat
           className={cn(
             "absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 shadow-md",
             inPlan
-              ? "bg-teal-500 text-white shadow-teal-500/40"
-              : "bg-black/50 text-white/80 hover:bg-teal-500/80"
+              ? "bg-indigo-500 text-white shadow-indigo-500/40"
+              : "bg-black/50 text-white/80 hover:bg-indigo-500/80"
           )}
-          aria-label={inPlan ? "Rejadan olib tashlash" : "Rejaga qo'shish"}
+          aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
         >
           {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
         </button>
       </div>
 
       {/* Body */}
-      <div className="p-3 space-y-2">
+      <div className="p-3.5 space-y-2.5">
         <h3 className="font-bold text-sm text-[var(--foreground)] leading-snug line-clamp-1">
           {location.name}
         </h3>
@@ -176,7 +179,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
         {/* City + Rating */}
         <div className="flex items-center justify-between gap-1">
           <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)] truncate">
-            <MapPin className="w-3 h-3 shrink-0 text-teal-500" />
+            <MapPin className="w-3 h-3 shrink-0 text-indigo-500" />
             {location.city}
           </span>
           <div className="flex items-center gap-0.5 shrink-0">
@@ -198,22 +201,39 @@ export function LocationCard({ location, variant = "default", className }: Locat
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-1.5 border-t border-[var(--border)]/50">
+        <div className="flex items-center justify-between pt-1.5 border-t border-[var(--border)]/60">
           <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
-            <Clock className="w-3 h-3 text-teal-500/70" />
+            <Clock className="w-3 h-3 text-indigo-500/70" />
             {location.duration}
           </span>
           <div className="flex gap-1">
             {location.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-medium"
+                className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-medium border border-[var(--border)]"
               >
                 {tag}
               </span>
             ))}
           </div>
         </div>
+
+        {/* Add to plan button */}
+        <button
+          onClick={bookmark}
+          className={cn(
+            "w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.98]",
+            inPlan
+              ? "bg-indigo-500/15 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/20"
+              : "bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] hover:border-indigo-500/40 hover:text-indigo-400 hover:bg-indigo-500/8"
+          )}
+        >
+          {inPlan ? (
+            <><BookmarkCheck className="w-3.5 h-3.5" /> {t("card", "in_plan")} ✓</>
+          ) : (
+            <><Bookmark className="w-3.5 h-3.5" /> {t("card", "add_plan")}</>
+          )}
+        </button>
       </div>
     </div>
   );

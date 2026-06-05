@@ -1,7 +1,10 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User as UserIcon, Loader2, RotateCcw } from "lucide-react";
+﻿import { useState, useRef, useEffect } from "react";
+import { Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api-client";
+import { useAppStore } from "@/store";
+import { useTranslation } from "@/i18n";
 
 interface Message {
   id: string;
@@ -10,33 +13,38 @@ interface Message {
   timestamp: Date;
 }
 
-const QUICK_ACTIONS = [
-  { label: "🗺️ Samarqand sayohati", text: "Samarqandga 3 kunlik sayohat rejasi tuzib ber" },
-  { label: "💰 Valyuta kursi", text: "Hozirgi dollar va rubl kursi qancha?" },
-  { label: "🏨 Mehmonxona", text: "Buxoroda eng yaxshi mehmonxonalarni tavsiya qil" },
-  { label: "🚌 Transport", text: "Toshkentdan Samarqandga qanday borsa bo'ladi?" },
-  { label: "🌟 Eng yaxshi joylar", text: "O'zbekistonda albatta borish kerak bo'lgan 5 joy" },
-  { label: "💡 Maslahat", text: "O'zbekistonga sayohat qilishda nimalarni bilish kerak?" },
-];
-
-const WELCOME_MESSAGE: Message = {
-  id: "welcome",
-  role: "assistant",
-  content:
-    "Salom! Men AI Bek — MRTOUR.UZ ning sun'iy intellekt yordamchisiman. 🇺🇿\n\nO'zbekistondagi sayohatingiz bo'yicha har qanday savolga javob bera olaman:\n• Joylar va diqqatga sazovor ob'ektlar\n• Mehmonxona va restoran tavsiyalari\n• Transport va yo'l yo'riqlari\n• Valyuta kurslari\n• Madaniyat va urf-odatlar\n\nNima haqida bilmoqchisiz?",
-  timestamp: new Date(),
-};
-
 export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
+  const { plan } = useAppStore();
+  const { t, lang } = useTranslation();
+  const navigate = useNavigate();
+
+  function makeWelcomeMessage(): Message {
+    return { id: "welcome", role: "assistant", content: t("chat", "welcome"), timestamp: new Date() };
+  }
+
+  const QUICK_ACTIONS = [
+    { label: `🗺️ ${t("chat", "quick_samarqand")}`, text: t("chat", "quick_samarqand_prompt") },
+    { label: `🏨 ${t("chat", "quick_hotel")}`,      text: t("chat", "quick_hotel_prompt") },
+    { label: `🚌 ${t("chat", "quick_transport")}`,  text: t("chat", "quick_transport_prompt") },
+    { label: `🌟 ${t("chat", "quick_top")}`,        text: t("chat", "quick_top_prompt") },
+    { label: `💡 ${t("chat", "quick_tips")}`,       text: t("chat", "quick_tips_prompt") },
+  ];
+
+  const [messages, setMessages] = useState<Message[]>(() => [makeWelcomeMessage()]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [planBannerDismissed, setPlanBannerDismissed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  function buildPlanContext(): string | undefined {
+    if (!plan.length) return undefined;
+    return plan.map((loc) => `${loc.name} (${loc.city})`).join(", ");
+  }
 
   async function sendMessage(text: string) {
     if (!text.trim() || isLoading) return;
@@ -61,12 +69,15 @@ export default function Chat() {
 
       const res = await apiClient.post<{ reply: string }>("/ai/chat", {
         messages: apiMessages,
+        userContext: {
+          plan: buildPlanContext(),
+        },
       });
 
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: res.reply ?? "Kechirasiz, javob olishda xatolik yuz berdi.",
+        content: res.reply ?? t("chat", "error"),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
@@ -74,8 +85,7 @@ export default function Chat() {
       const errMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content:
-          "Kechirasiz, hozirda server bilan bog'lanishda muammo bor. Iltimos, bir ozdan so'ng qayta urinib ko'ring. 🙏",
+        content: t("chat", "error"),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errMsg]);
@@ -83,6 +93,14 @@ export default function Chat() {
       setIsLoading(false);
       inputRef.current?.focus();
     }
+  }
+
+  function sendPlanTourRequest() {
+    if (!plan.length) return;
+    const locationNames = plan.map((loc) => `${loc.name} (${loc.city})`).join(", ");
+    const msg = `${t("chat", "plan_tour_intro")} ${locationNames}. ${t("chat", "plan_tour_outro")}`;
+    sendMessage(msg);
+    setPlanBannerDismissed(true);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -93,39 +111,60 @@ export default function Chat() {
   }
 
   function resetChat() {
-    setMessages([WELCOME_MESSAGE]);
+    setMessages([makeWelcomeMessage()]);
     setInput("");
+    setPlanBannerDismissed(false);
   }
 
-  function formatTime(date: Date) {
-    return date.toLocaleTimeString("uz-UZ", {
-      hour: "2-digit",
-      minute: "2-digit",
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "welcome") {
+        return [makeWelcomeMessage()];
+      }
+      return prev;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
+  function formatTime(date: Date) {
+    return date.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" });
   }
+
+  const showPlanBanner = plan.length > 0 && !planBannerDismissed && messages.length <= 1;
+  const showQuickActions = messages.length <= 1;
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] max-h-[calc(100vh-3.5rem)] overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)] shrink-0">
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white text-lg shadow-md">
-            🤖
+          <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
+            <Bot className="w-4 h-4" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[var(--background)]" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[var(--foreground)]">AI Bek</p>
-            <p className="text-[11px] text-teal-400">Onlayn · Doimo tayyor</p>
+            <p className="text-sm font-bold text-[var(--foreground)]">{t("chat", "title")}</p>
+            <p className="text-[11px] text-indigo-400">{t("chat", "subtitle")}</p>
           </div>
         </div>
-        <button
-          onClick={resetChat}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:border-teal-500/40 transition-all"
-          aria-label="Suhbatni yangilash"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Yangilash
-        </button>
+        <div className="flex items-center gap-2">
+          {plan.length > 0 && (
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30">
+              <MapPin className="w-3 h-3 text-indigo-400" />
+              <span className="text-[11px] font-semibold text-indigo-400">
+                {plan.length} {t("chat", "places")}
+              </span>
+            </div>
+          )}
+          <button
+            onClick={resetChat}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:border-indigo-500/40 transition-all"
+            aria-label={t("chat", "reset")}
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            {t("chat", "reset")}
+          </button>
+        </div>
       </div>
 
       {/* Messages area */}
@@ -138,12 +177,11 @@ export default function Chat() {
               msg.role === "user" ? "flex-row-reverse" : "flex-row"
             )}
           >
-            {/* Avatar */}
             <div
               className={cn(
                 "w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5",
                 msg.role === "assistant"
-                  ? "bg-gradient-to-br from-teal-500 to-teal-600 text-white"
+                  ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-sm shadow-indigo-500/30"
                   : "bg-[var(--muted)] border border-[var(--border)]"
               )}
             >
@@ -154,7 +192,6 @@ export default function Chat() {
               )}
             </div>
 
-            {/* Bubble */}
             <div
               className={cn(
                 "max-w-[80%] space-y-1",
@@ -167,7 +204,7 @@ export default function Chat() {
                   "px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                   msg.role === "assistant"
                     ? "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm"
-                    : "bg-teal-500 text-white rounded-tr-sm"
+                    : "bg-indigo-500 text-white rounded-tr-sm shadow-md shadow-indigo-500/20"
                 )}
               >
                 {msg.content}
@@ -179,18 +216,15 @@ export default function Chat() {
           </div>
         ))}
 
-        {/* Typing indicator */}
         {isLoading && (
           <div className="flex gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
               <Bot className="w-3.5 h-3.5 text-white" />
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)]">
               <div className="flex items-center gap-1.5">
-                <Loader2 className="w-3.5 h-3.5 text-teal-400 animate-spin" />
-                <span className="text-xs text-[var(--muted-foreground)]">
-                  Yozmoqda...
-                </span>
+                <Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
+                <span className="text-xs text-[var(--muted-foreground)]">{t("chat", "typing")}</span>
               </div>
             </div>
           </div>
@@ -199,22 +233,79 @@ export default function Chat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick action buttons */}
-      {messages.length <= 1 && (
-        <div className="px-4 pb-3 shrink-0">
-          <p className="text-[11px] text-[var(--muted-foreground)] mb-2">
-            Tezkor savollar:
-          </p>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {QUICK_ACTIONS.map((action) => (
+      {/* Plan banner + Quick actions */}
+      {showQuickActions && (
+        <div className="px-4 pb-3 shrink-0 space-y-3">
+          {/* Plan-aware tour creation banner */}
+          {showPlanBanner && (
+            <div className="relative rounded-2xl border border-indigo-500/40 bg-indigo-500/8 p-3.5 overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-indigo-500/5 -translate-y-6 translate-x-6 pointer-events-none" />
               <button
-                key={action.label}
-                onClick={() => sendMessage(action.text)}
-                className="shrink-0 px-3 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-xs text-[var(--foreground)] hover:border-teal-500/40 hover:bg-teal-500/5 transition-all whitespace-nowrap"
+                onClick={() => setPlanBannerDismissed(true)}
+                className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                aria-label="Close"
               >
-                {action.label}
+                <X className="w-3 h-3" />
               </button>
-            ))}
+              <div className="flex items-start gap-2.5 pr-6">
+                <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-indigo-400 mb-0.5">
+                    {plan.length} {t("chat", "plan_banner_title")}
+                  </p>
+                  <p className="text-[11px] text-[var(--foreground)]/70 leading-snug mb-2.5">
+                    {plan.slice(0, 3).map(l => l.name).join(", ")}
+                    {plan.length > 3 && ` ${t("chat", "plan_banner_desc")} ${plan.length - 3} ${t("chat", "plan_banner_more")}`}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={sendPlanTourRequest}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-all active:scale-[0.97]"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      {t("chat", "plan_btn")}
+                    </button>
+                    <button
+                      onClick={() => navigate("/profile")}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] transition-all"
+                    >
+                      <MapPin className="w-3 h-3" />
+                      {t("chat", "plan_view")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quick actions */}
+          <div>
+            <p className="text-[11px] text-[var(--muted-foreground)] mb-2 flex items-center gap-1">
+              <MessageCircle className="w-3 h-3" />
+              {t("chat", "quick_label")}
+            </p>
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {plan.length > 0 && (
+                <button
+                  onClick={sendPlanTourRequest}
+                  className="shrink-0 px-3 py-2 rounded-xl bg-indigo-500/15 border border-indigo-500/40 text-xs text-indigo-400 font-semibold hover:bg-indigo-500/20 transition-all whitespace-nowrap flex items-center gap-1.5"
+                >
+                  <MapPin className="w-3 h-3" />
+                  {t("chat", "plan_quick")}: {plan.length} {t("chat", "places")}
+                </button>
+              )}
+              {QUICK_ACTIONS.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={() => sendMessage(action.text)}
+                  className="shrink-0 px-3 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-xs text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all whitespace-nowrap"
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -227,19 +318,16 @@ export default function Chat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Xabar yozing... (Enter — yuborish)"
+            placeholder={t("chat", "input_placeholder")}
             rows={1}
             className={cn(
               "flex-1 px-4 py-3 rounded-xl resize-none",
               "bg-[var(--muted)] border border-[var(--border)]",
               "text-[var(--foreground)] text-sm placeholder:text-[var(--muted-foreground)]",
-              "outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20 transition-all",
+              "outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all",
               "max-h-32 overflow-y-auto"
             )}
-            style={{
-              height: "auto",
-              minHeight: "44px",
-            }}
+            style={{ height: "auto", minHeight: "44px" }}
             onInput={(e) => {
               const el = e.currentTarget;
               el.style.height = "auto";
@@ -253,10 +341,10 @@ export default function Chat() {
             className={cn(
               "flex items-center justify-center w-11 h-11 rounded-xl transition-all active:scale-95 shrink-0",
               input.trim() && !isLoading
-                ? "bg-teal-500 hover:bg-teal-600 text-white shadow-md shadow-teal-500/25"
+                ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md shadow-indigo-500/25"
                 : "bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] cursor-not-allowed"
             )}
-            aria-label="Yuborish"
+            aria-label={t("chat", "input_placeholder")}
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -266,7 +354,7 @@ export default function Chat() {
           </button>
         </div>
         <p className="text-[10px] text-[var(--muted-foreground)]/60 text-center mt-2">
-          Shift+Enter — yangi qator
+          {t("chat", "hint")}
         </p>
       </div>
     </div>

@@ -10,7 +10,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.9,
     reviewCount: 3841,
-    img: "https://images.unsplash.com/photo-1654608220640-a79c08a2f2a7?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1596476756289-35ef9a50f29a?w=800&q=80",
     tags: ["UNESCO", "Arxitektura", "Madrasa", "Ipak yo'li"],
     shortDesc:
       "Markaziy Osiyo me'morchiligining eng go'zal durdonasi — uchta ulug'vor madrasa bilan bezalgan maidoni.",
@@ -33,7 +33,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.8,
     reviewCount: 2156,
-    img: "https://images.unsplash.com/photo-1657810066977-e5b8289e0d24?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1604867254142-5b1e88e75785?w=800&q=80",
     tags: ["UNESCO", "Shahar-muzey", "Qal'a", "Xorazm"],
     shortDesc:
       "Xivaning ichki qal'asi — tirik muzey shahar bo'lib, 400 yillik tarix nafasi ufurib turadi.",
@@ -56,7 +56,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.7,
     reviewCount: 1893,
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80",
     tags: ["Qal'a", "Saroy", "Ipak yo'li", "Buxoro amiri"],
     shortDesc:
       "Buxoroning 2500 yillik tarixi gavdalangan ulkan qal'a — amirlari saroyi va tarixiy muzey.",
@@ -102,7 +102,7 @@ export const LOCATIONS: Location[] = [
     category: "din",
     rating: 4.8,
     reviewCount: 2312,
-    img: "https://images.unsplash.com/photo-1581974944026-5d6ed762f617?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1593014978541-85e0df597b19?w=800&q=80",
     tags: ["Maqbara", "Temur", "Gumbaz", "Ziyoratgoh"],
     shortDesc:
       "Amir Temur va Temuriylar sulolasining maqbarasi — ko'k gumbazli Samarqand ramzi.",
@@ -125,7 +125,7 @@ export const LOCATIONS: Location[] = [
     category: "madaniyat",
     rating: 4.5,
     reviewCount: 4120,
-    img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=800&q=80",
     tags: ["Bozor", "Milliy taomlar", "Ziravorlar", "Hunarmandchilik"],
     shortDesc:
       "Toshkentning 2000 yillik an'anaviy bozori — ziravorlar, mevalar va milliy hunarmandchilik markazi.",
@@ -148,7 +148,7 @@ export const LOCATIONS: Location[] = [
     category: "din",
     rating: 4.9,
     reviewCount: 1987,
-    img: "https://images.unsplash.com/photo-1601055751955-3c4e2d9eb9cf?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1567168544813-cc03465b4fa8?w=800&q=80",
     tags: ["Ziyoratgoh", "Maqbara", "Mozaika", "UNESCO"],
     shortDesc:
       "Tirik shoh qabristonligi — rangli kashtalar bilan bezalgan XIV–XV asr maqbaralari kompleksi.",
@@ -171,7 +171,7 @@ export const LOCATIONS: Location[] = [
     category: "madaniyat",
     rating: 4.6,
     reviewCount: 1543,
-    img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
+    img: "https://images.unsplash.com/photo-1590845947376-2638caa89309?w=800&q=80",
     tags: ["Havuz", "Choyxona", "Milliy muhit", "Tungi hayot"],
     shortDesc:
       "Buxoroning qadimiy markazidagi suv havuzi atrofida eski teraklar soyasida choy ichish va milliy taomlar.",
@@ -199,7 +199,7 @@ export const RESTAURANTS: Restaurant[] = [
     priceRange: "₩₩",
     address: "Registon ko'chasi 12",
     hours: "10:00–23:00",
-    img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800",
+    img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80",
     menu: [
       { name: "Osh (Plov)", price: 35000, description: "Samarqand uslubida palov, qo'y go'shti bilan" },
       { name: "Shashlik", price: 45000, description: "Tandirda pishirilgan qo'y go'shti" },
@@ -216,7 +216,7 @@ export const RESTAURANTS: Restaurant[] = [
     priceRange: "₩₩₩",
     address: "Lyabi Hovuz maydoni 3",
     hours: "09:00–22:00",
-    img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
+    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
     menu: [
       { name: "Dimlama", price: 40000, description: "Sabzavot va go'sht bilan qo'shib dimlab pishirilgan taom" },
       { name: "Somsa", price: 8000, description: "Tandirda pishirilgan go'shtli pirozhki" },
@@ -233,7 +233,7 @@ export const RESTAURANTS: Restaurant[] = [
     priceRange: "₩",
     address: "Chorsu bozori yonida, 5-blok",
     hours: "08:00–21:00",
-    img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
+    img: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800&q=80",
     menu: [
       { name: "Non tandirdan", price: 5000, description: "Yangi pishirilgan patir non" },
       { name: "Mastava", price: 25000, description: "Guruchli milliy sho'rva" },
@@ -250,7 +250,7 @@ export const RESTAURANTS: Restaurant[] = [
     priceRange: "₩₩",
     address: "Ichan-Qal'a, Palvon Darvoza ko'chasi 8",
     hours: "07:30–22:30",
-    img: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800",
+    img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
     menu: [
       { name: "Xorazm oshi", price: 38000, description: "Xorazm uslubidagi qo'y go'shtli plov" },
       { name: "Qovoq sho'rva", price: 22000, description: "Qovoq va sabzavot bilan issiq sho'rva" },
@@ -271,7 +271,7 @@ export const HOTELS: Hotel[] = [
     pricePerNight: 1200000,
     amenities: ["Wi-Fi", "Hovuz", "Spa", "Restoran", "Konferents-zal", "Parking", "Lift", "24/7 qabulxona"],
     address: "Universitetskiy bulvar 1, Samarqand",
-    img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+    img: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&q=80",
     available: true,
   },
   {
@@ -283,7 +283,7 @@ export const HOTELS: Hotel[] = [
     pricePerNight: 750000,
     amenities: ["Wi-Fi", "Bog'", "Restoran", "Ekskursiya tashkil etish", "Parking"],
     address: "Ko'kaldosh ko'chasi 7, Buxoro",
-    img: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800",
+    img: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&q=80",
     available: true,
   },
   {
@@ -295,7 +295,7 @@ export const HOTELS: Hotel[] = [
     pricePerNight: 900000,
     amenities: ["Wi-Fi", "Tarixiy bino", "Restoran", "Ichki hovli", "Ekskursiya"],
     address: "Ichan-Qal'a, Muhammad Amin Xon madrasasi yonida",
-    img: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",
+    img: "https://images.unsplash.com/photo-1455587734955-081b22074882?w=800&q=80",
     available: false,
   },
   {
@@ -307,7 +307,7 @@ export const HOTELS: Hotel[] = [
     pricePerNight: 500000,
     amenities: ["Wi-Fi", "Tog' manzarasi", "Restoran", "Kanatli yo'l yaqin", "Bolalar maydonchasi"],
     address: "Chimgan qishlog'i, asosiy ko'cha 3",
-    img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800",
+    img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
     available: true,
   },
 ];

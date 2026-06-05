@@ -1,58 +1,56 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import {
   LogOut,
   MapPin,
   Globe,
   Moon,
   Sun,
-  Phone,
   Star,
   BookmarkX,
   ChevronRight,
   User as UserIcon,
   Shield,
+  Sparkles,
+  Phone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
 import { Stars } from "@/components/ui/stars";
+import { useTranslation } from "@/i18n";
+import type { Lang } from "@/i18n";
 
-const LANGUAGES = [
-  { code: "uz", label: "O'zbek", flag: "🇺🇿" },
-  { code: "ru", label: "Русский", flag: "🇷🇺" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "zh", label: "中文", flag: "🇨🇳" },
-  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
+  { code: "uz", label: "O'zbek",   flag: "🇺🇿" },
+  { code: "ru", label: "Русский",  flag: "🇷🇺" },
+  { code: "en", label: "English",  flag: "🇬🇧" },
+  { code: "zh", label: "中文",     flag: "🇨🇳" },
+  { code: "de", label: "Deutsch",  flag: "🇩🇪" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
 ];
 
-const EMERGENCY_NUMBERS = [
-  { label: "Tez yordam", number: "103", emoji: "🚑" },
-  { label: "Yong'in xizmati", number: "101", emoji: "🚒" },
-  { label: "Politsiya", number: "102", emoji: "👮" },
-  { label: "Gaz xizmati", number: "104", emoji: "⚠️" },
-  { label: "Turizm info", number: "1219", emoji: "ℹ️" },
-];
-
-const GUEST_BENEFITS = [
-  { icon: "🗺️", title: "Tur rejasi tuzish", desc: "Joylarni saqlash va marshrutni tartiblashtirish" },
-  { icon: "🤖", title: "AI Bek bilan suhbat", desc: "Shaxsiy sayohat yordamchisi" },
-  { icon: "⭐", title: "Sharh qoldirish", desc: "Boʻlgan joylar haqida fikr bildiring" },
-  { icon: "💾", title: "Ma'lumotlarni saqlash", desc: "Reja va sozlamalar bulutda saqlanadi" },
+const EMERGENCY_NUMBERS_RAW = [
+  { emoji: "🚑", key: "emergency_ambulance" as const, number: "103" },
+  { emoji: "🚒", key: "emergency_fire"      as const, number: "101" },
+  { emoji: "👮", key: "emergency_police"    as const, number: "102" },
+  { emoji: "⚠️", key: "emergency_gas"       as const, number: "104" },
+  { emoji: "ℹ️", key: "emergency_tourism"   as const, number: "1219" },
 ];
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     user,
     isLoggedIn,
     logout,
     plan,
+    lang,
+    setLang,
     removeFromPlan,
     theme,
     toggleTheme,
     openAuthModal,
-    updateUser,
   } = useAppStore();
 
   function handleLogout() {
@@ -60,16 +58,23 @@ export default function Profile() {
     logout();
   }
 
-  async function handleLanguageChange(lang: string) {
-    if (!user) return;
-    updateUser({ lang });
-    try {
-      await apiClient.patch("/users/me", { lang });
-    } catch {
-      // revert on failure
-      updateUser({ lang: user.lang });
+  async function handleLanguageChange(newLang: Lang) {
+    setLang(newLang);
+    if (user) {
+      try {
+        await apiClient.patch("/users/me", { lang: newLang });
+      } catch {
+        // silent — local lang already updated
+      }
     }
   }
+
+  const GUEST_BENEFITS = [
+    { icon: "🗺️", title: t("profile", "benefit1_title"), desc: t("profile", "benefit1_desc") },
+    { icon: "🤖", title: t("profile", "benefit2_title"), desc: t("profile", "benefit2_desc") },
+    { icon: "⭐", title: t("profile", "benefit3_title"), desc: t("profile", "benefit3_desc") },
+    { icon: "💾", title: t("profile", "benefit4_title"), desc: t("profile", "benefit4_desc") },
+  ];
 
   /* ── Guest view ───────────────────────────────────────────── */
   if (!isLoggedIn || !user) {
@@ -78,10 +83,10 @@ export default function Profile() {
         {/* Header */}
         <div className="pt-4 pb-6">
           <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
-            Profil
+            {t("profile", "title")}
           </h1>
           <p className="text-xs text-[var(--muted-foreground)]">
-            Kirish yoki ro&apos;yxatdan o&apos;tish
+            {t("profile", "subtitle")}
           </p>
         </div>
 
@@ -92,32 +97,56 @@ export default function Profile() {
           </div>
           <div>
             <h2 className="text-base font-bold text-[var(--foreground)] mb-1">
-              Mehmon sifatida kiryapsiz
+              {t("profile", "guest_title")}
             </h2>
             <p className="text-xs text-[var(--muted-foreground)]">
-              Barcha imkoniyatlardan foydalanish uchun kiring
+              {t("profile", "guest_desc")}
             </p>
           </div>
           <div className="flex gap-2 w-full">
             <button
               onClick={openAuthModal}
-              className="flex-1 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold transition-colors"
+              className="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors"
             >
-              Kirish
+              {t("profile", "login_btn")}
             </button>
             <button
               onClick={openAuthModal}
-              className="flex-1 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm font-semibold hover:border-teal-500/40 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm font-semibold hover:border-indigo-500/40 transition-colors"
             >
-              Ro&apos;yxatdan o&apos;tish
+              {t("profile", "register_btn")}
             </button>
+          </div>
+        </div>
+
+        {/* Language selector for guest */}
+        <div className="mb-6">
+          <p className="text-sm font-bold text-[var(--foreground)] mb-3 px-1">
+            🌐 {t("profile", "lang_title")}
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {LANGUAGES.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => handleLanguageChange(l.code)}
+                className={cn(
+                  "flex flex-col items-center gap-1 p-2.5 rounded-xl border text-xs font-medium transition-all",
+                  lang === l.code
+                    ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400"
+                    : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
+                )}
+              >
+                <span className="text-xl">{l.flag}</span>
+                {l.label}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Benefits */}
         <div className="space-y-2 mb-6">
           <p className="text-sm font-bold text-[var(--foreground)] mb-3">
-            Akkaunt imkoniyatlari
+            {t("profile", "benefits_title")}
           </p>
           {GUEST_BENEFITS.map((b) => (
             <div
@@ -126,9 +155,7 @@ export default function Profile() {
             >
               <span className="text-2xl">{b.icon}</span>
               <div>
-                <p className="text-sm font-semibold text-[var(--foreground)]">
-                  {b.title}
-                </p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">{b.title}</p>
                 <p className="text-xs text-[var(--muted-foreground)]">{b.desc}</p>
               </div>
             </div>
@@ -145,14 +172,14 @@ export default function Profile() {
                 <Sun className="w-4 h-4 text-amber-400" />
               )}
               <span className="text-sm font-medium text-[var(--foreground)]">
-                {theme === "dark" ? "Tungi rejim" : "Kunduzgi rejim"}
+                {theme === "dark" ? t("profile", "theme_dark") : t("profile", "theme_light")}
               </span>
             </div>
             <button
               onClick={toggleTheme}
               className={cn(
                 "relative w-12 h-6 rounded-full transition-colors",
-                theme === "dark" ? "bg-teal-500" : "bg-[var(--muted)] border border-[var(--border)]"
+                theme === "dark" ? "bg-indigo-500" : "bg-[var(--muted)] border border-[var(--border)]"
               )}
             >
               <span
@@ -173,10 +200,10 @@ export default function Profile() {
     <div className="pb-8">
       {/* Avatar + name header */}
       <div className="relative overflow-hidden px-4 pt-5 pb-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
         <div className="relative flex items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg">
               {user.name.charAt(0).toUpperCase()}
             </div>
             {user.isPremium && (
@@ -210,17 +237,17 @@ export default function Profile() {
       <section className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
-            📋 Mening rejam
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-400 text-[11px] font-bold">
+            📋 {t("profile", "plan_title")}
+            <span className="ml-1 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
               {plan.length}
             </span>
           </h3>
           {plan.length > 0 && (
             <button
               onClick={() => navigate("/locations")}
-              className="text-xs text-teal-400 hover:text-teal-300 flex items-center gap-1"
+              className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
             >
-              Joy qo&apos;shish <ChevronRight className="w-3.5 h-3.5" />
+              {t("profile", "plan_add")} <ChevronRight className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
@@ -229,16 +256,16 @@ export default function Profile() {
           <div className="flex flex-col items-center gap-3 py-8 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-center">
             <div className="text-4xl">🗺️</div>
             <p className="text-sm font-semibold text-[var(--foreground)]">
-              Reja bo&apos;sh
+              {t("profile", "plan_empty_title")}
             </p>
             <p className="text-xs text-[var(--muted-foreground)]">
-              Joylarni bookmarklab rejangizni tuzing
+              {t("profile", "plan_empty_desc")}
             </p>
             <button
               onClick={() => navigate("/locations")}
-              className="px-4 py-2 rounded-xl bg-teal-500 text-white text-xs font-semibold hover:bg-teal-600 transition-colors"
+              className="px-4 py-2 rounded-xl bg-indigo-500 text-white text-xs font-semibold hover:bg-indigo-600 transition-colors"
             >
-              Joylarni ko&apos;rish
+              {t("profile", "plan_empty_btn")}
             </button>
           </div>
         ) : (
@@ -272,12 +299,21 @@ export default function Profile() {
                 <button
                   onClick={() => removeFromPlan(loc.id)}
                   className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
-                  aria-label="Rejadan olib tashlash"
+                  aria-label={t("detail", "remove_plan")}
                 >
                   <BookmarkX className="w-4 h-4" />
                 </button>
               </div>
             ))}
+
+            {/* AI tour creation button */}
+            <button
+              onClick={() => navigate("/chat")}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all active:scale-[0.98]"
+            >
+              <Sparkles className="w-4 h-4" />
+              {t("profile", "plan_ai_btn")}
+            </button>
           </div>
         )}
       </section>
@@ -285,22 +321,22 @@ export default function Profile() {
       {/* Language selector */}
       <section className="px-4 mb-5">
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
-          🌐 Til
+          🌐 {t("profile", "lang_title")}
         </h3>
         <div className="grid grid-cols-3 gap-2">
-          {LANGUAGES.map((lang) => (
+          {LANGUAGES.map((l) => (
             <button
-              key={lang.code}
-              onClick={() => handleLanguageChange(lang.code)}
+              key={l.code}
+              onClick={() => handleLanguageChange(l.code)}
               className={cn(
                 "flex flex-col items-center gap-1 p-2.5 rounded-xl border text-xs font-medium transition-all",
-                user.lang === lang.code
-                  ? "bg-teal-500/15 border-teal-500/50 text-teal-400"
-                  : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-teal-500/30"
+                lang === l.code
+                  ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400"
+                  : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
               )}
             >
-              <span className="text-xl">{lang.flag}</span>
-              {lang.label}
+              <span className="text-xl">{l.flag}</span>
+              {l.label}
             </button>
           ))}
         </div>
@@ -309,7 +345,7 @@ export default function Profile() {
       {/* Theme toggle */}
       <section className="px-4 mb-5">
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
-          ⚙️ Sozlamalar
+          ⚙️ {t("profile", "settings_title")}
         </h3>
         <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
           <div className="flex items-center justify-between">
@@ -320,16 +356,16 @@ export default function Profile() {
                 <Sun className="w-4 h-4 text-amber-400" />
               )}
               <span className="text-sm font-medium text-[var(--foreground)]">
-                {theme === "dark" ? "Tungi rejim" : "Kunduzgi rejim"}
+                {theme === "dark" ? t("profile", "theme_dark") : t("profile", "theme_light")}
               </span>
             </div>
             <button
               onClick={toggleTheme}
               className={cn(
                 "relative w-12 h-6 rounded-full transition-colors",
-                theme === "dark" ? "bg-teal-500" : "bg-[var(--muted)] border border-[var(--border)]"
+                theme === "dark" ? "bg-indigo-500" : "bg-[var(--muted)] border border-[var(--border)]"
               )}
-              aria-label="Tema almashtirish"
+              aria-label="Theme toggle"
             >
               <span
                 className={cn(
@@ -345,10 +381,10 @@ export default function Profile() {
       {/* Emergency numbers */}
       <section className="px-4 mb-5">
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3 flex items-center gap-2">
-          <Phone className="w-4 h-4 text-red-400" /> Favqulodda raqamlar
+          <Phone className="w-4 h-4 text-red-400" /> {t("profile", "emergency_label")}
         </h3>
         <div className="p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-1">
-          {EMERGENCY_NUMBERS.map((item) => (
+          {EMERGENCY_NUMBERS_RAW.map((item) => (
             <a
               key={item.number}
               href={`tel:${item.number}`}
@@ -356,9 +392,9 @@ export default function Profile() {
             >
               <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">
                 <span>{item.emoji}</span>
-                {item.label}
+                {t("services", item.key)}
               </span>
-              <span className="text-sm font-bold text-teal-400">{item.number}</span>
+              <span className="text-sm font-bold text-red-400">{item.number}</span>
             </a>
           ))}
         </div>
@@ -371,7 +407,7 @@ export default function Profile() {
           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-semibold hover:bg-red-500/20 transition-colors active:scale-[0.98]"
         >
           <LogOut className="w-4 h-4" />
-          Chiqish
+          {t("profile", "logout")}
         </button>
       </div>
     </div>

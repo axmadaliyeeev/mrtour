@@ -1,103 +1,73 @@
-import { useState } from "react";
-import { Search, MapPin, Star, Clock, Phone, CheckCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+﻿import { useState } from "react";
 import {
-  RESTAURANTS,
-  HOTELS,
-  GUIDES,
-  CURRENCY_RATES,
-} from "@/data";
+  Search, MapPin, Clock, Phone, CheckCircle, Star,
+  Wifi, Car, Coffee, Dumbbell, Utensils, Hotel, Compass,
+  Train, Bus, Zap, TrendingUp, Globe2,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES } from "@/data";
 import { Stars } from "@/components/ui/stars";
+import { useTranslation } from "@/i18n";
 
 type Tab = "restoranlar" | "hotellar" | "gidlar" | "transport" | "valyuta";
 
-const TABS: { key: Tab; label: string; emoji: string }[] = [
-  { key: "restoranlar", label: "Restoranlar", emoji: "🍽️" },
-  { key: "hotellar", label: "Hotellar", emoji: "🏨" },
-  { key: "gidlar", label: "Gidlar", emoji: "🧭" },
-  { key: "transport", label: "Transport", emoji: "🚌" },
-  { key: "valyuta", label: "Valyuta", emoji: "💱" },
-];
+const AMENITY_ICONS: Record<string, React.ReactNode> = {
+  "Wi-Fi":      <Wifi className="w-3 h-3" />,
+  "Avtoturargoh": <Car className="w-3 h-3" />,
+  "Nonushta":   <Coffee className="w-3 h-3" />,
+  "Fitnes":     <Dumbbell className="w-3 h-3" />,
+};
 
-const TRANSPORT_OPTIONS = [
-  {
-    type: "Poyezd",
-    emoji: "🚂",
-    routes: [
-      { from: "Toshkent", to: "Samarqand", duration: "2 soat", price: "80 000 so'm" },
-      { from: "Toshkent", to: "Buxoro", duration: "3.5 soat", price: "120 000 so'm" },
-      { from: "Samarqand", to: "Buxoro", duration: "1.5 soat", price: "60 000 so'm" },
-    ],
-  },
-  {
-    type: "Avtobus",
-    emoji: "🚌",
-    routes: [
-      { from: "Toshkent", to: "Namangan", duration: "4 soat", price: "40 000 so'm" },
-      { from: "Toshkent", to: "Andijon", duration: "5 soat", price: "50 000 so'm" },
-      { from: "Toshkent", to: "Termiz", duration: "8 soat", price: "70 000 so'm" },
-    ],
-  },
-  {
-    type: "Taksi",
-    emoji: "🚕",
-    routes: [
-      { from: "Toshkent", to: "Chimgan", duration: "1.5 soat", price: "~150 000 so'm" },
-      { from: "Urgench", to: "Xiva", duration: "30 daqiqa", price: "~30 000 so'm" },
-      { from: "Buxoro", to: "Shahrisabz", duration: "1.5 soat", price: "~100 000 so'm" },
-    ],
-  },
-];
-
+// ── Restaurants ───────────────────────────────────────────
 function RestaurantsTab({ search }: { search: string }) {
+  const { t } = useTranslation();
   const q = search.toLowerCase();
   const filtered = RESTAURANTS.filter(
-    (r) =>
-      !q ||
-      r.name.toLowerCase().includes(q) ||
-      r.city.toLowerCase().includes(q) ||
-      r.cuisine.toLowerCase().includes(q)
+    (r) => !q || r.name.toLowerCase().includes(q) || r.city.toLowerCase().includes(q) || r.cuisine.toLowerCase().includes(q)
   );
 
+  if (filtered.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-4xl mb-3">🍽️</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_restaurant")}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      {filtered.length === 0 && (
-        <p className="text-center text-[var(--muted-foreground)] text-sm py-8">
-          Restoran topilmadi
-        </p>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((r) => (
-        <div
-          key={r.id}
-          className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden"
-        >
-          <img
-            src={r.img}
-            alt={r.name}
-            className="w-full h-36 object-cover"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src =
-                "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=60";
-            }}
-          />
-          <div className="p-3 space-y-1.5">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-sm text-[var(--foreground)]">{r.name}</h3>
-              <span className="text-xs font-semibold text-teal-400 shrink-0">
-                {r.priceRange}
-              </span>
+        <div key={r.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+          <div className="relative h-44 overflow-hidden">
+            <img
+              src={r.img}
+              alt={r.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=60"; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/55 backdrop-blur-sm text-indigo-300 border border-indigo-500/30">
+              {r.priceRange}
+            </span>
+            <div className="absolute bottom-2.5 left-3 right-3">
+              <h3 className="font-bold text-sm text-white drop-shadow-md truncate">{r.name}</h3>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-                <MapPin className="w-3 h-3" />{r.city}
+          </div>
+          <div className="p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)]">
+                <MapPin className="w-3 h-3 text-indigo-500" />{r.city}
               </span>
               <Stars rating={r.rating} size="sm" showNumber />
             </div>
-            <div className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-              <Clock className="w-3 h-3" />{r.hours}
-            </div>
-            <div className="text-xs text-[var(--muted-foreground)]">
-              Taom: {r.cuisine}
+            <div className="flex items-center gap-3 text-[11px] text-[var(--muted-foreground)]">
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3 text-indigo-500/60" />{r.hours}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-[10px]">
+                {r.cuisine}
+              </span>
             </div>
           </div>
         </div>
@@ -106,163 +76,154 @@ function RestaurantsTab({ search }: { search: string }) {
   );
 }
 
+// ── Hotels ────────────────────────────────────────────────
 function HotelsTab({ search }: { search: string }) {
+  const { t } = useTranslation();
   const q = search.toLowerCase();
   const filtered = HOTELS.filter(
-    (h) =>
-      !q ||
-      h.name.toLowerCase().includes(q) ||
-      h.city.toLowerCase().includes(q)
+    (h) => !q || h.name.toLowerCase().includes(q) || h.city.toLowerCase().includes(q)
   );
 
+  if (filtered.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-4xl mb-3">🏨</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_hotel")}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      {filtered.length === 0 && (
-        <p className="text-center text-[var(--muted-foreground)] text-sm py-8">
-          Hotel topilmadi
-        </p>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((h) => (
-        <div
-          key={h.id}
-          className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden"
-        >
-          <div className="relative">
+        <div key={h.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+          <div className="relative h-44 overflow-hidden">
             <img
               src={h.img}
               alt={h.name}
-              className="w-full h-36 object-cover"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=60";
-              }}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=60"; }}
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
             {!h.available && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <span className="text-white text-xs font-semibold px-3 py-1 rounded-full bg-red-500/80">
-                  Band
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <span className="text-white text-xs font-bold px-3 py-1 rounded-full bg-red-500/80 backdrop-blur-sm">
+                  {t("services", "busy")}
                 </span>
               </div>
             )}
-            <span
-              className={cn(
-                "absolute top-3 right-3 px-2 py-1 rounded-full text-[10px] font-semibold backdrop-blur-sm",
-                h.available ? "bg-green-500/80 text-white" : "bg-red-500/80 text-white"
-              )}
-            >
-              {h.available ? "Bo'sh" : "Band"}
+            <span className={cn(
+              "absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm",
+              h.available ? "bg-green-500/80 text-white" : "bg-red-500/80 text-white"
+            )}>
+              {h.available ? t("services", "available") : t("services", "busy")}
             </span>
-          </div>
-          <div className="p-3 space-y-1.5">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-sm text-[var(--foreground)]">{h.name}</h3>
-              <div className="flex">
+            <div className="absolute bottom-2.5 left-3">
+              <h3 className="font-bold text-sm text-white drop-shadow-md">{h.name}</h3>
+              <div className="flex mt-0.5">
                 {Array.from({ length: h.stars }, (_, i) => (
-                  <span key={i} className="text-amber-400 text-xs">★</span>
+                  <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-                <MapPin className="w-3 h-3" />{h.city}
+          </div>
+          <div className="p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)]">
+                <MapPin className="w-3 h-3 text-indigo-500" />{h.city}
               </span>
               <Stars rating={h.rating} size="sm" showNumber />
             </div>
-            <p className="text-sm font-bold text-teal-400">
-              ${h.pricePerNight}{" "}
-              <span className="text-xs font-normal text-[var(--muted-foreground)]">
-                / kecha
-              </span>
-            </p>
-            <div className="flex flex-wrap gap-1 pt-1">
-              {h.amenities.slice(0, 4).map((a) => (
-                <span
-                  key={a}
-                  className="text-[9px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)]"
-                >
-                  {a}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function GuidesTab({ search }: { search: string }) {
-  const q = search.toLowerCase();
-  const filtered = GUIDES.filter(
-    (g) =>
-      !q ||
-      g.name.toLowerCase().includes(q) ||
-      g.city.toLowerCase().includes(q) ||
-      g.langs.some((l) => l.toLowerCase().includes(q))
-  );
-
-  return (
-    <div className="space-y-3">
-      {filtered.length === 0 && (
-        <p className="text-center text-[var(--muted-foreground)] text-sm py-8">
-          Gid topilmadi
-        </p>
-      )}
-      {filtered.map((g) => (
-        <div
-          key={g.id}
-          className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]"
-        >
-          <div className="flex items-start gap-3">
-            <img
-              src={g.img}
-              alt={g.name}
-              className="w-14 h-14 rounded-full object-cover border-2 border-[var(--border)]"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=14b8a6&color=fff&size=56`;
-              }}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <h3 className="font-bold text-sm text-[var(--foreground)]">{g.name}</h3>
-                {g.verified && (
-                  <CheckCircle className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                )}
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
-                  <MapPin className="w-3 h-3" />{g.city}
-                </span>
-                <Stars rating={g.rating} size="sm" showNumber />
-              </div>
-              <div className="flex flex-wrap gap-1 mb-1">
-                {g.langs.map((l) => (
-                  <span
-                    key={l}
-                    className="text-[9px] px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-400 border border-teal-500/30"
-                  >
-                    {l}
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-bold text-indigo-400">
+                ${h.pricePerNight.toLocaleString()}
+                <span className="text-[11px] font-normal text-[var(--muted-foreground)]"> {t("services", "per_night")}</span>
+              </p>
+              <div className="flex gap-1">
+                {h.amenities.slice(0, 3).map((a) => (
+                  <span key={a} title={a} className="w-6 h-6 rounded-lg bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-[var(--muted-foreground)]">
+                    {AMENITY_ICONS[a] ?? <span className="text-[9px] font-bold">{a[0]}</span>}
                   </span>
                 ))}
               </div>
-              <p className="text-xs text-[var(--muted-foreground)] line-clamp-2">{g.bio}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border)]/50">
-            <span className="text-sm font-bold text-teal-400">
-              ${g.pricePerDay}
-              <span className="text-xs font-normal text-[var(--muted-foreground)]">/kun</span>
-            </span>
-            <span
-              className={cn(
-                "text-[10px] px-2.5 py-1 rounded-full font-semibold",
-                g.available
-                  ? "bg-green-500/15 text-green-400 border border-green-500/30"
-                  : "bg-red-500/15 text-red-400 border border-red-500/30"
-              )}
-            >
-              {g.available ? "Bo'sh" : "Band"}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Guides ────────────────────────────────────────────────
+function GuidesTab({ search }: { search: string }) {
+  const { t } = useTranslation();
+  const q = search.toLowerCase();
+  const filtered = GUIDES.filter(
+    (g) => !q || g.name.toLowerCase().includes(q) || g.city.toLowerCase().includes(q) || g.langs.some((l) => l.toLowerCase().includes(q))
+  );
+
+  if (filtered.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-4xl mb-3">🧭</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_guide")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {filtered.map((g) => (
+        <div key={g.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all duration-200">
+          <div className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="relative shrink-0">
+                <img
+                  src={g.img}
+                  alt={g.name}
+                  className="w-16 h-16 rounded-2xl object-cover border-2 border-[var(--border)]"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=14b8a6&color=fff&size=64`;
+                  }}
+                />
+                {g.available && (
+                  <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-[var(--card)]" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <h3 className="font-bold text-sm text-[var(--foreground)] truncate">{g.name}</h3>
+                  {g.verified && <CheckCircle className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
+                </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)]">
+                    <MapPin className="w-3 h-3 text-indigo-500" />{g.city}
+                  </span>
+                  <Stars rating={g.rating} size="sm" showNumber />
+                </div>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {g.langs.map((l) => (
+                    <span key={l} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 font-medium">
+                      {l}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-[11px] text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">{g.bio}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)]/50 bg-[var(--muted)]/30">
+            <div>
+              <span className="text-base font-bold text-indigo-400">${g.pricePerDay.toLocaleString()}</span>
+              <span className="text-[11px] text-[var(--muted-foreground)]">{t("services", "per_day")}</span>
+            </div>
+            <span className={cn(
+              "text-[10px] px-2.5 py-1 rounded-full font-semibold",
+              g.available
+                ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                : "bg-red-500/15 text-red-400 border border-red-500/30"
+            )}>
+              ● {g.available ? t("services", "available") : t("services", "busy")}
             </span>
           </div>
         </div>
@@ -271,32 +232,96 @@ function GuidesTab({ search }: { search: string }) {
   );
 }
 
+// ── Transport ─────────────────────────────────────────────
 function TransportTab() {
+  const { t } = useTranslation();
+
+  function formatDuration(hours: number, mins: number): string {
+    const h = t("services", "hours_unit");
+    const m = t("services", "min_unit");
+    if (hours > 0 && mins > 0) return `${hours} ${h} ${mins} ${m}`;
+    if (hours > 0) return `${hours} ${h}`;
+    return `${mins} ${m}`;
+  }
+
+  function formatPrice(uzs: number): string {
+    return `${new Intl.NumberFormat("uz-UZ").format(uzs)} ${t("services", "uzs_unit")}`;
+  }
+
+  const TRANSPORT_OPTIONS = [
+    {
+      type: t("services", "train_type"),
+      emoji: "🚄",
+      icon: <Train className="w-4 h-4" />,
+      desc: t("services", "train_desc"),
+      routes: [
+        { from: "Toshkent", to: "Samarqand", hours: 2,   mins: 0,  priceUZS: 80000 },
+        { from: "Toshkent", to: "Buxoro",    hours: 3,   mins: 30, priceUZS: 120000 },
+        { from: "Samarqand", to: "Buxoro",   hours: 1,   mins: 30, priceUZS: 60000 },
+      ],
+    },
+    {
+      type: t("services", "bus_type"),
+      emoji: "🚌",
+      icon: <Bus className="w-4 h-4" />,
+      desc: t("services", "bus_desc"),
+      routes: [
+        { from: "Toshkent", to: "Namangan", hours: 4, mins: 0,  priceUZS: 40000 },
+        { from: "Toshkent", to: "Andijon",  hours: 5, mins: 0,  priceUZS: 50000 },
+        { from: "Toshkent", to: "Termiz",   hours: 8, mins: 0,  priceUZS: 70000 },
+      ],
+    },
+    {
+      type: t("services", "taxi_type"),
+      emoji: "🚕",
+      icon: <Zap className="w-4 h-4" />,
+      desc: t("services", "taxi_desc"),
+      routes: [
+        { from: "Toshkent",  to: "Chimgan",    hours: 1, mins: 30, priceUZS: 150000 },
+        { from: "Urgench",   to: "Xiva",       hours: 0, mins: 30, priceUZS: 30000 },
+        { from: "Buxoro",    to: "Shahrisabz", hours: 1, mins: 30, priceUZS: 100000 },
+      ],
+    },
+  ];
+
+  const EMERGENCY = [
+    { name: t("services", "emergency_ambulance"), number: "103", emoji: "🚑" },
+    { name: t("services", "emergency_fire"),      number: "101", emoji: "🚒" },
+    { name: t("services", "emergency_police"),    number: "102", emoji: "👮" },
+    { name: t("services", "emergency_gas"),       number: "104", emoji: "⚠️" },
+    { name: t("services", "emergency_tourism"),   number: "1219", emoji: "ℹ️" },
+  ];
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {TRANSPORT_OPTIONS.map((opt) => (
         <div key={opt.type}>
-          <h3 className="text-sm font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
-            <span className="text-lg">{opt.emoji}</span>
-            {opt.type}
-          </h3>
-          <div className="space-y-2">
+          <div className="flex items-center gap-2.5 mb-2.5">
+            <div className="w-10 h-10 rounded-xl bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-xl">
+              {opt.emoji}
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[var(--foreground)]">{opt.type}</h3>
+              <p className="text-[11px] text-[var(--muted-foreground)]">{opt.desc}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-[var(--border)] overflow-hidden divide-y divide-[var(--border)]/50">
             {opt.routes.map((route) => (
               <div
                 key={`${route.from}-${route.to}`}
-                className="flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]"
+                className="flex items-center justify-between px-4 py-3 bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
               >
                 <div>
                   <p className="text-xs font-semibold text-[var(--foreground)]">
                     {route.from} → {route.to}
                   </p>
-                  <p className="text-[11px] text-[var(--muted-foreground)] flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {route.duration}
+                  <p className="text-[11px] text-[var(--muted-foreground)] flex items-center gap-1 mt-0.5">
+                    <Clock className="w-3 h-3" /> {formatDuration(route.hours, route.mins)}
                   </p>
                 </div>
-                <span className="text-sm font-bold text-teal-400">
-                  {route.price}
-                </span>
+                <div className="text-right">
+                  <span className="text-sm font-bold text-indigo-400">~{formatPrice(route.priceUZS)}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -304,25 +329,23 @@ function TransportTab() {
       ))}
 
       {/* Emergency numbers */}
-      <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3 flex items-center gap-2">
-          <Phone className="w-4 h-4 text-red-400" /> Muhim raqamlar
-        </h3>
-        <div className="space-y-2">
-          {[
-            { name: "Tez yordam", number: "103" },
-            { name: "Yong'in xizmati", number: "101" },
-            { name: "Politsiya", number: "102" },
-            { name: "Gaz xizmati", number: "104" },
-            { name: "Turizm axborot markazi", number: "1219" },
-          ].map((item) => (
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 overflow-hidden">
+        <div className="flex items-center gap-2.5 px-4 py-3 border-b border-red-500/15">
+          <Phone className="w-4 h-4 text-red-400" />
+          <h3 className="text-sm font-bold text-[var(--foreground)]">{t("services", "emergency")}</h3>
+        </div>
+        <div className="divide-y divide-[var(--border)]/30">
+          {EMERGENCY.map((item) => (
             <a
               key={item.number}
               href={`tel:${item.number}`}
-              className="flex items-center justify-between p-2 rounded-xl hover:bg-[var(--muted)] transition-colors"
+              className="flex items-center justify-between px-4 py-3 bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
             >
-              <span className="text-sm text-[var(--foreground)]">{item.name}</span>
-              <span className="text-sm font-bold text-teal-400">{item.number}</span>
+              <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">
+                <span>{item.emoji}</span>
+                {item.name}
+              </span>
+              <span className="text-sm font-bold text-red-400">{item.number}</span>
             </a>
           ))}
         </div>
@@ -331,35 +354,34 @@ function TransportTab() {
   );
 }
 
+// ── Currency ──────────────────────────────────────────────
 function CurrencyTab() {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState("1");
   const [fromCurrency, setFromCurrency] = useState("USD");
 
-  const currencies = Object.entries(CURRENCY_RATES).map(([code, rate]) => ({
-    code,
-    rate,
-  }));
-
+  const currencies = Object.entries(CURRENCY_RATES).map(([code, rate]) => ({ code, rate }));
   const numericAmount = parseFloat(amount) || 0;
   const baseRate = CURRENCY_RATES[fromCurrency] ?? 1;
+  const uzsAmount = numericAmount * baseRate;
 
-  function convertToUZS(amount: number, fromRate: number): number {
-    return amount * fromRate;
-  }
-
-  function convertFromUZS(uzsAmount: number, toRate: number): number {
-    return uzsAmount / toRate;
-  }
-
-  const uzsAmount = convertToUZS(numericAmount, baseRate);
+  const FLAG: Record<string, string> = {
+    USD: "🇺🇸", EUR: "🇪🇺", RUB: "🇷🇺", GBP: "🇬🇧", CNY: "🇨🇳", KZT: "🇰🇿",
+  };
 
   return (
     <div className="space-y-4">
       {/* Converter */}
-      <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-3">
-        <h3 className="text-sm font-bold text-[var(--foreground)]">
-          Valyuta kalkulyatori
-        </h3>
+      <div className="rounded-2xl bg-[var(--card)] border border-[var(--border)] p-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-[var(--foreground)]">{t("services", "currency_calc_title")}</h3>
+            <p className="text-[11px] text-[var(--muted-foreground)]">{t("services", "currency_calc_desc")}</p>
+          </div>
+        </div>
 
         <div className="flex gap-2">
           <input
@@ -370,79 +392,77 @@ function CurrencyTab() {
             className={cn(
               "flex-1 px-3 py-2.5 rounded-xl",
               "bg-[var(--muted)] border border-[var(--border)]",
-              "text-[var(--foreground)] text-sm",
-              "outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20 transition-all"
+              "text-[var(--foreground)] text-sm font-semibold",
+              "outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all"
             )}
-            placeholder="Miqdor"
           />
           <select
             value={fromCurrency}
             onChange={(e) => setFromCurrency(e.target.value)}
             className={cn(
-              "px-3 py-2.5 rounded-xl",
+              "px-3 py-2.5 rounded-xl min-w-[5rem]",
               "bg-[var(--muted)] border border-[var(--border)]",
-              "text-[var(--foreground)] text-sm",
-              "outline-none focus:border-teal-500 transition-all"
+              "text-[var(--foreground)] text-sm font-semibold",
+              "outline-none focus:border-indigo-500 transition-all"
             )}
           >
             {currencies.map(({ code }) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
+              <option key={code} value={code}>{FLAG[code] ?? ""} {code}</option>
             ))}
-            <option value="UZS">UZS</option>
+            <option value="UZS">🇺🇿 UZS</option>
           </select>
         </div>
 
-        {fromCurrency !== "UZS" ? (
-          <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">Natija (UZS):</p>
-            <p className="text-lg font-bold text-teal-400">
-              {new Intl.NumberFormat("uz-UZ").format(Math.round(uzsAmount))}{" "}
-              so&apos;m
-            </p>
-          </div>
-        ) : (
-          <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20">
-            <p className="text-xs text-[var(--muted-foreground)] mb-1">
-              {numericAmount.toLocaleString()} UZS teng:
-            </p>
-            <p className="text-base font-bold text-teal-400">
-              ${(numericAmount / CURRENCY_RATES.USD).toFixed(2)} USD
-            </p>
-          </div>
-        )}
+        <div className="p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+          {fromCurrency !== "UZS" ? (
+            <>
+              <p className="text-[11px] text-[var(--muted-foreground)] mb-1">
+                {numericAmount} {fromCurrency} =
+              </p>
+              <p className="text-xl font-bold text-indigo-400">
+                {new Intl.NumberFormat("uz-UZ").format(Math.round(uzsAmount))}{" "}
+                <span className="text-base font-semibold text-indigo-400/70">{t("services", "uzs_unit")}</span>
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-[11px] text-[var(--muted-foreground)] mb-1">
+                {numericAmount.toLocaleString()} UZS =
+              </p>
+              <p className="text-xl font-bold text-indigo-400">
+                ${(numericAmount / CURRENCY_RATES.USD).toFixed(2)}{" "}
+                <span className="text-base font-semibold text-indigo-400/70">USD</span>
+              </p>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Rates table */}
+      {/* Rates grid */}
       <div>
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-2">
-          Kurslar (1 valyuta = X so&apos;m)
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-2.5 flex items-center gap-1.5">
+          <Globe2 className="w-4 h-4 text-indigo-400" />
+          {t("services", "currency_table_title")}
+          <span className="text-[10px] font-normal text-[var(--muted-foreground)]">{t("services", "currency_table_unit")}</span>
         </h3>
-        <div className="space-y-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {currencies.map(({ code, rate }) => (
             <div
               key={code}
-              className="flex items-center justify-between p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]"
+              onClick={() => setFromCurrency(code)}
+              className={cn(
+                "flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all",
+                fromCurrency === code
+                  ? "bg-indigo-500/10 border-indigo-500/40"
+                  : "bg-[var(--card)] border-[var(--border)] hover:border-indigo-500/20"
+              )}
             >
-              <div className="flex items-center gap-2">
-                <span className="w-10 h-10 rounded-full bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-sm font-bold text-[var(--foreground)]">
-                  {code.slice(0, 2)}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-[var(--foreground)]">
-                    {code}
-                  </p>
-                  <p className="text-[10px] text-[var(--muted-foreground)]">
-                    1 {code}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-[var(--foreground)]">
+              <span className="text-xl shrink-0">{FLAG[code] ?? "💵"}</span>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-[var(--foreground)]">{code}</p>
+                <p className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
                   {new Intl.NumberFormat("uz-UZ").format(rate)}
                 </p>
-                <p className="text-[10px] text-[var(--muted-foreground)]">so&apos;m</p>
               </div>
             </div>
           ))}
@@ -452,44 +472,67 @@ function CurrencyTab() {
   );
 }
 
+// ── Main page ─────────────────────────────────────────────
 export default function Services() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>("restoranlar");
   const [search, setSearch] = useState("");
 
+  const TABS: { key: Tab; label: string; emoji: string; icon: React.ReactNode }[] = [
+    { key: "restoranlar", label: t("services", "tab_restaurants"), emoji: "🍽️", icon: <Utensils className="w-3.5 h-3.5" /> },
+    { key: "hotellar",    label: t("services", "tab_hotels"),      emoji: "🏨", icon: <Hotel className="w-3.5 h-3.5" /> },
+    { key: "gidlar",      label: t("services", "tab_guides"),      emoji: "🧭", icon: <Compass className="w-3.5 h-3.5" /> },
+    { key: "transport",   label: t("services", "tab_transport"),   emoji: "🚌", icon: <Train className="w-3.5 h-3.5" /> },
+    { key: "valyuta",     label: t("services", "tab_currency"),    emoji: "💱", icon: <TrendingUp className="w-3.5 h-3.5" /> },
+  ];
+
+  const TAB_META: Record<Tab, { title: string; desc: string; emoji: string }> = {
+    restoranlar: { title: t("services", "restaurants_title"), desc: t("services", "restaurants_desc"), emoji: "🍽️" },
+    hotellar:    { title: t("services", "hotels_title"),      desc: t("services", "hotels_desc"),      emoji: "🏨" },
+    gidlar:      { title: t("services", "guides_title"),      desc: t("services", "guides_desc"),      emoji: "🧭" },
+    transport:   { title: t("services", "transport_title"),   desc: t("services", "transport_desc"),   emoji: "🚌" },
+    valyuta:     { title: t("services", "currency_title"),    desc: t("services", "currency_desc"),    emoji: "💱" },
+  };
+
   const showSearch = ["restoranlar", "hotellar", "gidlar"].includes(activeTab);
+  const meta = TAB_META[activeTab];
 
   return (
     <div className="pb-6">
-      {/* Header */}
+      {/* Page header */}
       <div className="px-4 pt-4 pb-3">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
-          Xizmatlar
-        </h1>
-        <p className="text-xs text-[var(--muted-foreground)]">
-          Restoran, hotel, gid va boshqa xizmatlar
-        </p>
+        <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">{t("services", "title")}</h1>
+        <p className="text-xs text-[var(--muted-foreground)]">{t("services", "subtitle")}</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1.5 overflow-x-auto px-4 pb-2 scrollbar-hide">
+      <div className="flex gap-1.5 overflow-x-auto px-4 pb-3 scrollbar-hide">
         {TABS.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => {
-              setActiveTab(tab.key);
-              setSearch("");
-            }}
+            onClick={() => { setActiveTab(tab.key); setSearch(""); }}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-medium shrink-0 transition-all",
+              "flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all",
               activeTab === tab.key
-                ? "bg-teal-500 border-teal-500 text-white"
-                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-teal-500/30"
+                ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
             )}
           >
-            <span>{tab.emoji}</span>
+            {tab.icon}
             {tab.label}
           </button>
         ))}
+      </div>
+
+      {/* Section header */}
+      <div className="px-4 mb-3 flex items-center gap-2.5">
+        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-lg shrink-0">
+          {meta.emoji}
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-[var(--foreground)]">{meta.title}</h2>
+          <p className="text-[11px] text-[var(--muted-foreground)]">{meta.desc}</p>
+        </div>
       </div>
 
       {/* Search */}
@@ -499,14 +542,14 @@ export default function Services() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
             <input
               type="text"
-              placeholder="Qidirish..."
+              placeholder={`${meta.title} ${t("services", "search_placeholder")}`}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={cn(
                 "w-full pl-9 pr-4 py-2.5 rounded-xl",
                 "bg-[var(--muted)] border border-[var(--border)]",
                 "text-[var(--foreground)] text-sm placeholder:text-[var(--muted-foreground)]",
-                "outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/20 transition-all"
+                "outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all"
               )}
             />
           </div>
@@ -516,10 +559,10 @@ export default function Services() {
       {/* Content */}
       <div className="px-4">
         {activeTab === "restoranlar" && <RestaurantsTab search={search} />}
-        {activeTab === "hotellar" && <HotelsTab search={search} />}
-        {activeTab === "gidlar" && <GuidesTab search={search} />}
-        {activeTab === "transport" && <TransportTab />}
-        {activeTab === "valyuta" && <CurrencyTab />}
+        {activeTab === "hotellar"    && <HotelsTab    search={search} />}
+        {activeTab === "gidlar"      && <GuidesTab    search={search} />}
+        {activeTab === "transport"   && <TransportTab />}
+        {activeTab === "valyuta"     && <CurrencyTab />}
       </div>
     </div>
   );

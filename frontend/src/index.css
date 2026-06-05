@@ -9,12 +9,12 @@
   --card:             #f8fafc;
   --card-hover:       #f1f5f9;
   --border:           #e2e8f0;
-  --border-focus:     #14b8a6;
+  --border-focus:     #6366f1;
   --muted:            #f1f5f9;
   --muted-foreground: #64748b;
-  --primary:          #14b8a6;
-  --primary-hover:    #0d9488;
-  --ring:             #14b8a6;
+  --primary:          #6366f1;
+  --primary-hover:    #4f46e5;
+  --ring:             #6366f1;
   --sidebar-bg:       #f8fafc;
   --sidebar-border:   #e2e8f0;
   --header-bg:        rgba(248,250,252,0.92);
@@ -30,12 +30,12 @@
   --card:             #0c1628;
   --card-hover:       #102035;
   --border:           #182e4a;
-  --border-focus:     #2dd4bf;
+  --border-focus:     #818cf8;
   --muted:            #0f1e34;
   --muted-foreground: #7a95b8;
-  --primary:          #2dd4bf;
-  --primary-hover:    #14b8a6;
-  --ring:             #2dd4bf;
+  --primary:          #818cf8;
+  --primary-hover:    #6366f1;
+  --ring:             #818cf8;
   --sidebar-bg:       #080f1f;
   --sidebar-border:   #162035;
   --header-bg:        rgba(6,14,28,0.92);
@@ -120,7 +120,7 @@ h3 { font-size: 1rem;     font-weight: 600; line-height: 1.4; }
 
 /* ── Selection ───────────────────────────────────────── */
 ::selection {
-  background: rgba(20, 184, 166, 0.25);
+  background: rgba(99, 102, 241, 0.25);
   color: inherit;
 }
 
