@@ -76,7 +76,7 @@ export const useAppStore = create<AppStore>()(
       closeAuthModal: () => set({ authModalOpen: false }),
     }),
     {
-      name: "mrtour-store",
+      name: "mrtour-v2",
       storage: createJSONStorage(() =>
         typeof window !== "undefined" ? localStorage : ({} as Storage)
       ),

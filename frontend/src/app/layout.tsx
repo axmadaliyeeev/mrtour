@@ -14,13 +14,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="uz" className="dark" suppressHydrationWarning>
+    // suppressHydrationWarning needed because next-themes changes class after SSR
+    <html lang="uz" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem={false}
-          disableTransitionOnChange={false}
+          storageKey="mrtour-theme"
         >
           {children}
         </ThemeProvider>
