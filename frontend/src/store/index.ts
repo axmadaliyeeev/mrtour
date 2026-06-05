@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { User, Location } from "@/types";
+import type { User, Location, Review } from "@/types";
 import type { Lang } from "@/i18n/translations";
 
 interface AppStore {
@@ -30,6 +30,10 @@ interface AppStore {
   authModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+
+  // User reviews (persisted locally, works without backend)
+  userReviews: Record<string, Review[]>;
+  addUserReview: (locationId: string, review: Omit<Review, "id" | "locationId">) => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -88,6 +92,24 @@ export const useAppStore = create<AppStore>()(
       authModalOpen: false,
       openAuthModal: () => set({ authModalOpen: true }),
       closeAuthModal: () => set({ authModalOpen: false }),
+
+      // ── User Reviews (local-first) ────────────────────
+      userReviews: {},
+
+      addUserReview: (locationId, review) =>
+        set((state) => {
+          const newReview: Review = {
+            ...review,
+            id: `usr-${Date.now()}`,
+            locationId,
+          };
+          return {
+            userReviews: {
+              ...state.userReviews,
+              [locationId]: [newReview, ...(state.userReviews[locationId] ?? [])],
+            },
+          };
+        }),
     }),
     {
       name: "mrtour-v2",
@@ -97,6 +119,7 @@ export const useAppStore = create<AppStore>()(
         plan: state.plan,
         theme: state.theme,
         lang: state.lang,
+        userReviews: state.userReviews,
       }),
     }
   )

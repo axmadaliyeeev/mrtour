@@ -18,12 +18,13 @@ export function Sidebar() {
     { icon: "ℹ️", key: "emergency_tourism"   as const, number: "1219" },
   ];
 
+  // AI is intentionally last so it anchors at the bottom of nav
   const TABS = [
-    { route: "/home",      Icon: Home,       label: t("nav", "home") },
-    { route: "/locations", Icon: MapPin,     label: t("nav", "locations") },
-    { route: "/chat",      Icon: Bot,        label: t("nav", "ai"), isAI: true },
-    { route: "/services",  Icon: LayoutGrid, label: t("nav", "services") },
-    { route: "/profile",   Icon: User,       label: t("nav", "profile") },
+    { route: "/home",      Icon: Home,       label: t("nav", "home"),      isAI: false },
+    { route: "/locations", Icon: MapPin,     label: t("nav", "locations"), isAI: false },
+    { route: "/services",  Icon: LayoutGrid, label: t("nav", "services"),  isAI: false },
+    { route: "/profile",   Icon: User,       label: t("nav", "profile"),   isAI: false },
+    { route: "/chat",      Icon: Bot,        label: "AI Bek",              isAI: true  },
   ];
 
   return (
@@ -77,53 +78,66 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
-        {TABS.map(({ route, Icon, label, isAI }) => {
-          const active =
-            pathname === route || (route !== "/home" && pathname.startsWith(route));
-
-          if (isAI) {
+      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto flex flex-col">
+        {/* Regular tabs */}
+        <div className="flex-1 space-y-0.5">
+          {TABS.filter((t) => !t.isAI).map(({ route, Icon, label }) => {
+            const active =
+              pathname === route || (route !== "/home" && pathname.startsWith(route));
             return (
               <button
                 key={route}
                 onClick={() => navigate(route)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-indigo-500/25 bg-gradient-to-r from-indigo-600/15 to-indigo-500/8 hover:from-indigo-600/25 hover:to-indigo-500/15 transition-all my-1"
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative",
+                  active
+                    ? "bg-indigo-500/10 text-indigo-400"
+                    : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
+                )}
               >
-                <span
-                  className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0"
-                  style={{ boxShadow: "0 2px 12px rgba(99,102,241,.4)" }}
-                >
-                  <Icon className="w-3.5 h-3.5 text-white" />
-                </span>
-                <span className="text-sm font-semibold text-indigo-400">AI Bek</span>
+                {active && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-indigo-400 rounded-full" />
+                )}
+                <Icon
+                  className={cn(
+                    "w-4 h-4 shrink-0",
+                    active ? "text-indigo-400" : "text-[var(--muted-foreground)]"
+                  )}
+                />
+                <span className="text-sm font-medium">{label}</span>
               </button>
             );
-          }
+          })}
+        </div>
 
-          return (
-            <button
-              key={route}
-              onClick={() => navigate(route)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative",
-                active
-                  ? "bg-indigo-500/10 text-indigo-400"
-                  : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
-              )}
-            >
-              {active && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-indigo-400 rounded-full" />
-              )}
-              <Icon
+        {/* Divider + AI tab — always at bottom of nav */}
+        <div className="pt-2 border-t border-[var(--sidebar-border)]">
+          {(() => {
+            const route = "/chat";
+            const active = pathname === route || pathname.startsWith(route);
+            return (
+              <button
+                onClick={() => navigate(route)}
                 className={cn(
-                  "w-4 h-4 shrink-0",
-                  active ? "text-indigo-400" : "text-[var(--muted-foreground)]"
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative",
+                  active
+                    ? "bg-indigo-500/10"
+                    : "hover:bg-indigo-500/5"
                 )}
-              />
-              <span className="text-sm font-medium">{label}</span>
-            </button>
-          );
-        })}
+              >
+                {active && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-indigo-400 rounded-full" />
+                )}
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
+                  <Bot className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className={cn("text-sm font-semibold", active ? "text-indigo-400" : "text-indigo-400/70")}>
+                  AI Bek
+                </span>
+              </button>
+            );
+          })()}
+        </div>
       </nav>
 
       {/* Footer */}

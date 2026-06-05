@@ -82,6 +82,16 @@ export interface TranslationSchema {
     not_found_title: string;
     not_found_desc: string;
     back_to_list: string;
+    back: string;
+    your_rating: string;
+    insight_title: string;
+    review_success: string;
+    add_first_review: string;
+    insight_loading: string;
+    insight_error: string;
+    smart_review_label: string;
+    avg_rating: string;
+    total_reviews: string;
   };
   chat: {
     title: string;
@@ -323,6 +333,16 @@ const UZ: TranslationSchema = {
     not_found_title: "Joy topilmadi",
     not_found_desc: "Bu joy mavjud emas yoki o'chirilgan",
     back_to_list: "Joylarga qaytish",
+    back: "Orqaga",
+    your_rating: "Bahoyingiz",
+    insight_title: "AI xulosasi",
+    review_success: "Sharh qo'shildi!",
+    add_first_review: "Birinchi sharh qoldiring",
+    insight_loading: "Tahlil qilinmoqda...",
+    insight_error: "Tahlil qilishda xato yuz berdi",
+    smart_review_label: "SmartReview",
+    avg_rating: "O'rtacha baho",
+    total_reviews: "ta sharh",
   },
   chat: {
     title: "AI Bek",
@@ -567,6 +587,16 @@ const RU: TranslationSchema = {
     not_found_title: "Место не найдено",
     not_found_desc: "Это место не существует или было удалено",
     back_to_list: "Вернуться к списку",
+    back: "Назад",
+    your_rating: "Ваша оценка",
+    insight_title: "ИИ-анализ",
+    review_success: "Отзыв добавлен!",
+    add_first_review: "Оставьте первый отзыв",
+    insight_loading: "Анализируем...",
+    insight_error: "Ошибка при анализе",
+    smart_review_label: "SmartReview",
+    avg_rating: "Средняя оценка",
+    total_reviews: "отзывов",
   },
   chat: {
     title: "ИИ Бек",
@@ -811,6 +841,16 @@ const EN: TranslationSchema = {
     not_found_title: "Place Not Found",
     not_found_desc: "This place does not exist or has been removed",
     back_to_list: "Back to Places",
+    back: "Back",
+    your_rating: "Your Rating",
+    insight_title: "AI Insights",
+    review_success: "Review added!",
+    add_first_review: "Be the first to review",
+    insight_loading: "Analyzing...",
+    insight_error: "Analysis failed",
+    smart_review_label: "SmartReview",
+    avg_rating: "Average rating",
+    total_reviews: "reviews",
   },
   chat: {
     title: "AI Bek",
@@ -1055,6 +1095,16 @@ const ZH: TranslationSchema = {
     not_found_title: "未找到该景点",
     not_found_desc: "该景点不存在或已被删除",
     back_to_list: "返回景点列表",
+    back: "返回",
+    your_rating: "您的评分",
+    insight_title: "AI 分析",
+    review_success: "评价已添加！",
+    add_first_review: "成为第一个评价者",
+    insight_loading: "分析中...",
+    insight_error: "分析失败",
+    smart_review_label: "SmartReview",
+    avg_rating: "平均评分",
+    total_reviews: "条评价",
   },
   chat: {
     title: "AI 贝克",
@@ -1299,6 +1349,16 @@ const DE: TranslationSchema = {
     not_found_title: "Ort nicht gefunden",
     not_found_desc: "Dieser Ort existiert nicht oder wurde entfernt",
     back_to_list: "Zurück zur Liste",
+    back: "Zurück",
+    your_rating: "Ihre Bewertung",
+    insight_title: "KI-Analyse",
+    review_success: "Bewertung hinzugefügt!",
+    add_first_review: "Erste Bewertung schreiben",
+    insight_loading: "Analysiere...",
+    insight_error: "Analyse fehlgeschlagen",
+    smart_review_label: "SmartReview",
+    avg_rating: "Ø Bewertung",
+    total_reviews: "Bewertungen",
   },
   chat: {
     title: "KI Bek",
@@ -1545,6 +1605,16 @@ const FR: TranslationSchema = {
     not_found_title: "Lieu introuvable",
     not_found_desc: "Ce lieu n'existe pas ou a été supprimé",
     back_to_list: "Retour à la liste",
+    back: "Retour",
+    your_rating: "Votre note",
+    insight_title: "Analyse IA",
+    review_success: "Avis ajouté !",
+    add_first_review: "Soyez le premier à noter",
+    insight_loading: "Analyse en cours...",
+    insight_error: "Échec de l'analyse",
+    smart_review_label: "SmartReview",
+    avg_rating: "Note moyenne",
+    total_reviews: "avis",
   },
   chat: {
     title: "IA Bek",

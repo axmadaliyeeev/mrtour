@@ -1,4 +1,4 @@
-﻿import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Home, MapPin, Bot, LayoutGrid, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
@@ -9,11 +9,11 @@ export function BottomNav() {
   const { t } = useTranslation();
 
   const TABS = [
-    { route: "/home",      Icon: Home,       label: t("nav", "home") },
-    { route: "/locations", Icon: MapPin,     label: t("nav", "locations") },
-    { route: "/chat",      Icon: Bot,        label: t("nav", "ai"),      isAI: true },
-    { route: "/services",  Icon: LayoutGrid, label: t("nav", "services") },
-    { route: "/profile",   Icon: User,       label: t("nav", "profile") },
+    { route: "/home",      Icon: Home,       label: t("nav", "home"),      isAI: false },
+    { route: "/locations", Icon: MapPin,     label: t("nav", "locations"), isAI: false },
+    { route: "/chat",      Icon: Bot,        label: "AI Bek",              isAI: true  },
+    { route: "/services",  Icon: LayoutGrid, label: t("nav", "services"),  isAI: false },
+    { route: "/profile",   Icon: User,       label: t("nav", "profile"),   isAI: false },
   ];
 
   return (
@@ -27,26 +27,20 @@ export function BottomNav() {
               <button
                 key={route}
                 onClick={() => navigate(route)}
-                className={cn(
-                  "relative flex flex-col items-center gap-0.5 flex-1 pt-2 pb-1 transition-all duration-200",
-                  active ? "opacity-100" : "opacity-55 hover:opacity-80"
-                )}
+                className="relative flex flex-col items-center flex-1 -translate-y-3 gap-0"
               >
-                {active && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-indigo-400" />
-                )}
                 <div
                   className={cn(
-                    "flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 transition-all duration-200",
-                    active ? "scale-110 shadow-indigo-glow" : "shadow-md shadow-indigo-500/30"
+                    "w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transition-all duration-200",
+                    active ? "scale-105 shadow-indigo-glow" : ""
                   )}
                 >
-                  <Icon className="w-4 h-4 text-white" />
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] font-semibold transition-colors",
-                    active ? "text-indigo-400" : "text-[var(--foreground)]"
+                    "text-[10px] mt-1 font-semibold transition-colors",
+                    active ? "text-indigo-400" : "text-[var(--muted-foreground)]"
                   )}
                 >
                   AI Bek
