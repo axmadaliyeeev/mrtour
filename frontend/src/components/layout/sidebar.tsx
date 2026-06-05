@@ -25,10 +25,11 @@ export function Sidebar() {
       )}
     >
       {/* Logo */}
-      <div className="flex items-center gap-2 px-5 h-16 border-b border-brand-border shrink-0">
-        <span className="text-2xl font-extrabold tracking-tight text-foreground">
-          MR<span className="text-teal-500">TOUR</span>
-          <span className="text-muted-foreground font-normal">.UZ</span>
+      <div className="flex items-center gap-2 px-5 h-16 border-b border-[var(--border)] shrink-0">
+        <span className="text-2xl font-extrabold tracking-tight">
+          <span className="text-[var(--foreground)]">MR</span>
+          <span className="text-teal-500">TOUR</span>
+          <span className="text-[var(--muted-foreground)] font-normal text-lg">.UZ</span>
         </span>
       </div>
 
