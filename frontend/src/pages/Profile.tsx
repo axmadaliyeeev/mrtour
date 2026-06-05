@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
+import { apiClient } from "@/lib/api-client";
 import { Stars } from "@/components/ui/stars";
 
 const LANGUAGES = [
@@ -59,8 +60,15 @@ export default function Profile() {
     logout();
   }
 
-  function handleLanguageChange(lang: string) {
-    if (user) updateUser({ lang });
+  async function handleLanguageChange(lang: string) {
+    if (!user) return;
+    updateUser({ lang });
+    try {
+      await apiClient.patch("/users/me", { lang });
+    } catch {
+      // revert on failure
+      updateUser({ lang: user.lang });
+    }
   }
 
   /* ── Guest view ───────────────────────────────────────────── */

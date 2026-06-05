@@ -48,12 +48,6 @@ export async function register(
 
   const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
-  const tokens = generateTokens({
-    userId:    "temp",
-    email:     dto.email.toLowerCase(),
-    isPremium: false,
-  });
-
   const user = await prisma.user.create({
     data: {
       name:         dto.name.trim(),
@@ -62,11 +56,9 @@ export async function register(
       passwordHash,
       country:      dto.country ?? "",
       lang:         dto.lang ?? "uz",
-      refreshToken: tokens.refreshToken,
     },
   });
 
-  // Re-generate tokens with real userId
   const finalTokens = buildTokens(user);
   await prisma.user.update({
     where: { id: user.id },

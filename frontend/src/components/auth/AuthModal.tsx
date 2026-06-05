@@ -90,7 +90,11 @@ function LoginTab({ onClose }: { onClose: () => void }) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+    defaultValues: { email: "", password: "" },
+  });
 
   async function onSubmit(data: LoginForm) {
     setApiError(null);
@@ -102,10 +106,10 @@ function LoginTab({ onClose }: { onClose: () => void }) {
       localStorage.setItem("mrtour-token", res.accessToken);
       login(res.user);
       onClose();
-    } catch (err) {
-      setApiError(
-        err instanceof Error ? err.message : "Email yoki parol noto'g'ri"
-      );
+    } catch (err: unknown) {
+      const axiosMsg = (err as { response?: { data?: { error?: string } } })
+        ?.response?.data?.error;
+      setApiError(axiosMsg ?? "Email yoki parol noto'g'ri");
     }
   }
 
@@ -159,8 +163,13 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
   const {
     register,
     handleSubmit,
+    trigger,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    mode: "onTouched",
+    defaultValues: { name: "", surname: "", email: "", password: "", country: "" },
+  });
 
   async function onSubmit(data: RegisterForm) {
     setApiError(null);
@@ -173,9 +182,11 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
       setRegisteredName(res.user.name);
       login(res.user);
       setStep(3);
-    } catch (err) {
+    } catch (err: unknown) {
+      const axiosMsg = (err as { response?: { data?: { error?: string; message?: string } } })
+        ?.response?.data?.error;
       setApiError(
-        err instanceof Error ? err.message : "Ro'yxatdan o'tishda xato"
+        axiosMsg ?? (err instanceof Error ? err.message : "Ro'yxatdan o'tishda xato yuz berdi")
       );
     }
   }

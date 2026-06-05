@@ -1,10 +1,10 @@
-﻿import type { Location, Review, Guide, Restaurant, Hotel } from "@/types";
+import type { Location, Review, Guide, Restaurant, Hotel } from "@/types";
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Locations в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Locations ─────────────────────────────────────────
 export const LOCATIONS: Location[] = [
   {
     id: "registan",
-    name: "Р РµРіРёСЃС‚Р°РЅ",
+    name: "Registon",
     city: "Samarqand",
     region: "Samarqand viloyati",
     category: "tarix",
@@ -13,21 +13,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1654608220640-a79c08a2f2a7?w=800&q=80",
     tags: ["UNESCO", "Arxitektura", "Madrasa", "Ipak yo'li"],
     shortDesc:
-      "Markaziy Osiyo meКјmorchiligining eng go'zal durdonasi вЂ” uchta ulug'vor madrasa bilan bezalgan maidoni.",
+      "Markaziy Osiyo me'morchiligining eng go'zal durdonasi — uchta ulug'vor madrasa bilan bezalgan maidoni.",
     fullDesc:
-      "Registon maydoni вЂ” Samarqandning qalbi. Bu yerda Ulug'bek (1420), Sher Dor (1636) va Tillakori (1660) madrasalari joylashgan. UNESCO Jahon merosi ro'yxatiga kiritilgan bu majmua, Temuriylar davrining oltin davri meКјmorchiligini aks ettiradi. Har bir madrasa noyob mozaika va ganchkor naqshlari bilan bezalgan.",
-    transport: "Taksi yoki avtobus в„–38 orqali markazdan 10 daqiqa",
-    hours: "08:00вЂ“20:00 (yoz), 09:00вЂ“18:00 (qish)",
+      "Registon maydoni — Samarqandning qalbi. Bu yerda Ulug'bek (1420), Sher Dor (1636) va Tillakori (1660) madrasalari joylashgan. UNESCO Jahon merosi ro'yxatiga kiritilgan bu majmua, Temuriylar davrining oltin davri me'morchiligini aks ettiradi. Har bir madrasa noyob mozaika va ganchkor naqshlari bilan bezalgan.",
+    transport: "Taksi yoki avtobus №38 orqali markazdan 10 daqiqa",
+    hours: "08:00–20:00 (yoz), 09:00–18:00 (qish)",
     price: "50 000 so'm",
     priceUSD: 4,
     googleMapsUrl: "https://maps.google.com/?q=Registan,Samarkand",
-    bestSeason: "AprelвЂ“Iyun, SentabrвЂ“Oktyabr",
-    duration: "2вЂ“3 soat",
+    bestSeason: "Aprel–Iyun, Sentabr–Oktyabr",
+    duration: "2–3 soat",
     featured: true,
   },
   {
     id: "ichan-kala",
-    name: "РС‡Р°РЅ-РљР°Р»Р°",
+    name: "Ichan-Qal'a",
     city: "Xiva",
     region: "Xorazm viloyati",
     category: "tarix",
@@ -36,21 +36,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1657810066977-e5b8289e0d24?w=800&q=80",
     tags: ["UNESCO", "Shahar-muzey", "Qal'a", "Xorazm"],
     shortDesc:
-      "Xivaning ichki qal'asi вЂ” tirik muzey shahar bo'lib, 400 yillik tarix nafasi ufurib turadi.",
+      "Xivaning ichki qal'asi — tirik muzey shahar bo'lib, 400 yillik tarix nafasi ufurib turadi.",
     fullDesc:
-      "Ichan-Qal'a вЂ” Xivaning 2,2 km uzunlikdagi devorlar bilan o'ralgan ichki shahrining qadimiy nomi. Bu yerda 60 dan ortiq tarixiy obida, jumladan Islam Xo'ja minorasi, Kalta Minor, Juma masjidi va ko'plab saroylar joylashgan. 1990-yilda UNESCO Jahon merosi ro'yxatiga kiritilgan.",
+      "Ichan-Qal'a — Xivaning 2,2 km uzunlikdagi devorlar bilan o'ralgan ichki shahrining qadimiy nomi. Bu yerda 60 dan ortiq tarixiy obida, jumladan Islam Xo'ja minorasi, Kalta Minor, Juma masjidi va ko'plab saroylar joylashgan. 1990-yilda UNESCO Jahon merosi ro'yxatiga kiritilgan.",
     transport: "Urganchdan taksi 35 daqiqa, Toshkentdan parvoz",
-    hours: "24/7 (muzeylar 09:00вЂ“18:00)",
+    hours: "24/7 (muzeylar 09:00–18:00)",
     price: "75 000 so'm (kompleks bilet)",
     priceUSD: 6,
     googleMapsUrl: "https://maps.google.com/?q=Ichan-Kala,Khiva",
-    bestSeason: "MartвЂ“May, SentabrвЂ“Noyabr",
+    bestSeason: "Mart–May, Sentabr–Noyabr",
     duration: "Butun kun",
     featured: true,
   },
   {
     id: "ark",
-    name: "РђСЂРє Т›Р°Р»СЉР°СЃРё",
+    name: "Ark Qal'asi",
     city: "Buxoro",
     region: "Buxoro viloyati",
     category: "tarix",
@@ -59,21 +59,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     tags: ["Qal'a", "Saroy", "Ipak yo'li", "Buxoro amiri"],
     shortDesc:
-      "Buxoroning 2500 yillik tarixi gavdalangan ulkan qal'a вЂ” amirlari saroyi va tarixiy muzey.",
+      "Buxoroning 2500 yillik tarixi gavdalangan ulkan qal'a — amirlari saroyi va tarixiy muzey.",
     fullDesc:
       "Ark qal'asi Buxoro shahrining eng qadimiy qismi bo'lib, tarixiy yozmalarga ko'ra miloddan avvalgi IV asrda qurilgan. 20 gektardan ortiq maydonni egallagan bu qal'a ichida tosh yo'llar, saroy xonalari, masjid, zindon va turli xil binolar mavjud. 1920-yilda yong'in natijasida qisman vayron bo'lgan.",
     transport: "Buxoro markazidan piyoda 10 daqiqa",
-    hours: "09:00вЂ“17:00 (dushanba dam olish kuni)",
+    hours: "09:00–17:00 (dushanba dam olish kuni)",
     price: "40 000 so'm",
     priceUSD: 3,
     googleMapsUrl: "https://maps.google.com/?q=Ark+Citadel,Bukhara",
-    bestSeason: "MartвЂ“May, SentabrвЂ“Noyabr",
-    duration: "1.5вЂ“2 soat",
+    bestSeason: "Mart–May, Sentabr–Noyabr",
+    duration: "1.5–2 soat",
     featured: false,
   },
   {
     id: "chimgan",
-    name: "Р§РёРјРіР°РЅ С‚РѕТ“Р»Р°СЂРё",
+    name: "Chimgan tog'lari",
     city: "Chimgan",
     region: "Toshkent viloyati",
     category: "tabiat",
@@ -82,21 +82,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
     tags: ["Tog'", "Ski", "Yurish", "Tabiat", "Qishloq turizmi"],
     shortDesc:
-      "Toshkentdan 80 km uzoqlikdagi tog' kurort вЂ” yozda treking, qishda ski va kanatli yo'l.",
+      "Toshkentdan 80 km uzoqlikdagi tog' kurort — yozda treking, qishda ski va kanatli yo'l.",
     fullDesc:
-      "Chimgan вЂ” Tyan-Shan tog' tizmasining bir qismi bo'lib, dengiz sathidan 3309 m balandlikda joylashgan. Yoz oylarida treking yo'llari va Charvak suv ombori, qish oylarida esa ski pistalari va kanatli yo'l turistlarni jalb qiladi. Chimgan atrofida Beldersoy va Amirsoy kurort zonalari ham mavjud.",
+      "Chimgan — Tyan-Shan tog' tizmasining bir qismi bo'lib, dengiz sathidan 3309 m balandlikda joylashgan. Yoz oylarida treking yo'llari va Charvak suv ombori, qish oylarida esa ski pistalari va kanatli yo'l turistlarni jalb qiladi. Chimgan atrofida Beldersoy va Amirsoy kurort zonalari ham mavjud.",
     transport: "Toshkentdan avtobus yoki taksi 1.5 soat",
     hours: "24/7",
     price: "Bepul (kanatli yo'l 60 000 so'm)",
     priceUSD: 0,
     googleMapsUrl: "https://maps.google.com/?q=Chimgan,Uzbekistan",
-    bestSeason: "DekabrвЂ“Mart (ski), IyunвЂ“Avgust (treking)",
-    duration: "1вЂ“3 kun",
+    bestSeason: "Dekabr–Mart (ski), Iyun–Avgust (treking)",
+    duration: "1–3 kun",
     featured: true,
   },
   {
     id: "guri-amir",
-    name: "Р“СѓСЂРё РђРјРёСЂ",
+    name: "Guri Amir",
     city: "Samarqand",
     region: "Samarqand viloyati",
     category: "din",
@@ -105,11 +105,11 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1581974944026-5d6ed762f617?w=800&q=80",
     tags: ["Maqbara", "Temur", "Gumbaz", "Ziyoratgoh"],
     shortDesc:
-      "Amir Temur va Temuriylar sulolasining maqbarasi вЂ” ko'k gumbazli Samarqand ramzi.",
+      "Amir Temur va Temuriylar sulolasining maqbarasi — ko'k gumbazli Samarqand ramzi.",
     fullDesc:
-      "Guri Amir ('Amirning qabri' ma'nosini anglatadi) вЂ” Amir Temur, uning o'g'illari va nabiralari, jumladan Ulug'bek dafn etilgan maqbara. 1403вЂ“1404-yillarda qurilgan bu inshoot o'zining ko'k rangdagi piyozsimon gumbazi bilan mashhur. Maqbaraning ichki qismi oltin naqs va lojuvard kashtalar bilan bezatilgan.",
+      "Guri Amir ('Amirning qabri' ma'nosini anglatadi) — Amir Temur, uning o'g'illari va nabiralari, jumladan Ulug'bek dafn etilgan maqbara. 1403–1404-yillarda qurilgan bu inshoot o'zining ko'k rangdagi piyozsimon gumbazi bilan mashhur. Maqbaraning ichki qismi oltin naqs va lojuvard kashtalar bilan bezatilgan.",
     transport: "Registon maydonidan 10 daqiqa piyoda",
-    hours: "08:00вЂ“19:00",
+    hours: "08:00–19:00",
     price: "30 000 so'm",
     priceUSD: 2,
     googleMapsUrl: "https://maps.google.com/?q=Gur-e-Amir,Samarkand",
@@ -119,7 +119,7 @@ export const LOCATIONS: Location[] = [
   },
   {
     id: "chorsu",
-    name: "Р§РѕСЂСЃСѓ Р±РѕР·РѕСЂРё",
+    name: "Chorsu bozori",
     city: "Toshkent",
     region: "Toshkent shahri",
     category: "madaniyat",
@@ -128,21 +128,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
     tags: ["Bozor", "Milliy taomlar", "Ziravorlar", "Hunarmandchilik"],
     shortDesc:
-      "Toshkentning 2000 yillik an'anaviy bozori вЂ” ziravorlar, mevalar va milliy hunarmandchilik markazi.",
+      "Toshkentning 2000 yillik an'anaviy bozori — ziravorlar, mevalar va milliy hunarmandchilik markazi.",
     fullDesc:
-      "Chorsu bozori вЂ” Markaziy Osiyoning eng qadimiy va katta bozorlaridan biri. Ko'k gumbaz ostida joylashgan bu bozorda 1000 dan ortiq savdo nuqtasi bor. Bu yerda ziravorlar, quruq mevalar, ipak gazlamalar, kulolchilik buyumlari va an'anaviy o'zbek taomlarini topish mumkin. Bozor atrofida qadimiy mahallalar ham saqlanib qolgan.",
+      "Chorsu bozori — Markaziy Osiyoning eng qadimiy va katta bozorlaridan biri. Ko'k gumbaz ostida joylashgan bu bozorda 1000 dan ortiq savdo nuqtasi bor. Bu yerda ziravorlar, quruq mevalar, ipak gazlamalar, kulolchilik buyumlari va an'anaviy o'zbek taomlarini topish mumkin. Bozor atrofida qadimiy mahallalar ham saqlanib qolgan.",
     transport: "Metro Chorsu bekatidan 2 daqiqa piyoda",
-    hours: "07:00вЂ“19:00 (yakshanba saboq kuni)",
+    hours: "07:00–19:00 (yakshanba saboq kuni)",
     price: "Bepul kirish",
     priceUSD: 0,
     googleMapsUrl: "https://maps.google.com/?q=Chorsu+Bazaar,Tashkent",
     bestSeason: "Yil bo'yi (yoz eng yaxshi)",
-    duration: "1вЂ“2 soat",
+    duration: "1–2 soat",
     featured: false,
   },
   {
     id: "shahi-zinda",
-    name: "РЁРѕС…Рё Р—РёРЅРґР°",
+    name: "Shoh-i Zinda",
     city: "Samarqand",
     region: "Samarqand viloyati",
     category: "din",
@@ -151,21 +151,21 @@ export const LOCATIONS: Location[] = [
     img: "https://images.unsplash.com/photo-1601055751955-3c4e2d9eb9cf?w=800&q=80",
     tags: ["Ziyoratgoh", "Maqbara", "Mozaika", "UNESCO"],
     shortDesc:
-      "Tirik shoh qabristonligi вЂ” rangli kashtalar bilan bezalgan XIVвЂ“XV asr maqbaralari kompleksi.",
+      "Tirik shoh qabristonligi — rangli kashtalar bilan bezalgan XIV–XV asr maqbaralari kompleksi.",
     fullDesc:
-      "Shoh-i Zinda ('Tirik shoh' degan ma'noni anglatadi) вЂ” 11 ta maqbaradan iborat nekropol majmuasi. XIвЂ“XV asrlarda qurilgan bu maqbaralar ayniqsa o'zining noyob ko'k, feruza va oltin rangdagi mozaikalari bilan mashhur. Rivoyatlarga ko'ra bu yerda Muhammad payg'ambarning amakivachchasi Qusam ibn Abbos dafn etilgan.",
+      "Shoh-i Zinda ('Tirik shoh' degan ma'noni anglatadi) — 11 ta maqbaradan iborat nekropol majmuasi. XI–XV asrlarda qurilgan bu maqbaralar ayniqsa o'zining noyob ko'k, feruza va oltin rangdagi mozaikalari bilan mashhur. Rivoyatlarga ko'ra bu yerda Muhammad payg'ambarning amakivachchasi Qusam ibn Abbos dafn etilgan.",
     transport: "Registon maydonidan taksi yoki piyoda 20 daqiqa",
-    hours: "08:00вЂ“19:00",
+    hours: "08:00–19:00",
     price: "25 000 so'm",
     priceUSD: 2,
     googleMapsUrl: "https://maps.google.com/?q=Shah-i-Zinda,Samarkand",
-    bestSeason: "AprelвЂ“Iyun, SentabrвЂ“Oktyabr",
-    duration: "1вЂ“1.5 soat",
+    bestSeason: "Aprel–Iyun, Sentabr–Oktyabr",
+    duration: "1–1.5 soat",
     featured: true,
   },
   {
     id: "lyabi-xovuz",
-    name: "Р›СЏР±Рё ТІРѕРІСѓР·",
+    name: "Lyabi Hovuz",
     city: "Buxoro",
     region: "Buxoro viloyati",
     category: "madaniyat",
@@ -176,19 +176,19 @@ export const LOCATIONS: Location[] = [
     shortDesc:
       "Buxoroning qadimiy markazidagi suv havuzi atrofida eski teraklar soyasida choy ichish va milliy taomlar.",
     fullDesc:
-      "Lyabi Hovuz ('Havuz bo'yida' degan ma'noni anglatadi) вЂ” Buxoro shahrining markazidagi XVII asr ansambli. Bu yerda uch tarixiy inshoot: Nadir Devonbegi xonaqosi, Nadir Devonbegi madrasasi va Ko'kaldosh madrasasi joylashgan. 360 yillik chinor daraxti soyasida joylashgan choyxonalar va restoranlar hozir ham kecha-kunduz jonli. Afsonaviy Xo'ja Nasriddin haykalchasi ham shu yerda.",
+      "Lyabi Hovuz ('Havuz bo'yida' degan ma'noni anglatadi) — Buxoro shahrining markazidagi XVII asr ansambli. Bu yerda uch tarixiy inshoot: Nadir Devonbegi xonaqosi, Nadir Devonbegi madrasasi va Ko'kaldosh madrasasi joylashgan. 360 yillik chinor daraxti soyasida joylashgan choyxonalar va restoranlar hozir ham kecha-kunduz jonli. Afsonaviy Xo'ja Nasriddin haykalchasi ham shu yerda.",
     transport: "Ark qal'asidan 10 daqiqa piyoda",
     hours: "24/7",
     price: "Bepul",
     priceUSD: 0,
     googleMapsUrl: "https://maps.google.com/?q=Lyabi-Hauz,Bukhara",
-    bestSeason: "AprelвЂ“Oktyabr",
-    duration: "1вЂ“3 soat",
+    bestSeason: "Aprel–Oktyabr",
+    duration: "1–3 soat",
     featured: false,
   },
 ];
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Restaurants в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Restaurants ───────────────────────────────────────
 export const RESTAURANTS: Restaurant[] = [
   {
     id: "rest-1",
@@ -196,9 +196,9 @@ export const RESTAURANTS: Restaurant[] = [
     city: "Samarqand",
     cuisine: "O'zbek milliy taomlar",
     rating: 4.7,
-    priceRange: "в‚©в‚©",
+    priceRange: "₩₩",
     address: "Registon ko'chasi 12",
-    hours: "10:00вЂ“23:00",
+    hours: "10:00–23:00",
     img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800",
     menu: [
       { name: "Osh (Plov)", price: 35000, description: "Samarqand uslubida palov, qo'y go'shti bilan" },
@@ -213,14 +213,14 @@ export const RESTAURANTS: Restaurant[] = [
     city: "Buxoro",
     cuisine: "Buxoro an'anaviy taomlar",
     rating: 4.8,
-    priceRange: "в‚©в‚©в‚©",
+    priceRange: "₩₩₩",
     address: "Lyabi Hovuz maydoni 3",
-    hours: "09:00вЂ“22:00",
+    hours: "09:00–22:00",
     img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
     menu: [
       { name: "Dimlama", price: 40000, description: "Sabzavot va go'sht bilan qo'shib dimlab pishirilgan taom" },
       { name: "Somsa", price: 8000, description: "Tandirda pishirilgan go'shtli pirozhki" },
-      { name: "QoК»zikovuq sho'rva", price: 32000, description: "Qo'zi go'shti bilan qaynagan sho'rva" },
+      { name: "Qo'zi go'sht sho'rva", price: 32000, description: "Qo'zi go'shti bilan qaynagan sho'rva" },
       { name: "Qovurilgan baliq", price: 55000, description: "Amudaryo baliqlari (zander)" },
     ],
   },
@@ -230,9 +230,9 @@ export const RESTAURANTS: Restaurant[] = [
     city: "Toshkent",
     cuisine: "O'zbek-Osiyo fusion",
     rating: 4.5,
-    priceRange: "в‚©",
+    priceRange: "₩",
     address: "Chorsu bozori yonida, 5-blok",
-    hours: "08:00вЂ“21:00",
+    hours: "08:00–21:00",
     img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800",
     menu: [
       { name: "Non tandirdan", price: 5000, description: "Yangi pishirilgan patir non" },
@@ -247,9 +247,9 @@ export const RESTAURANTS: Restaurant[] = [
     city: "Xiva",
     cuisine: "Xorazm milliy taomlar",
     rating: 4.6,
-    priceRange: "в‚©в‚©",
+    priceRange: "₩₩",
     address: "Ichan-Qal'a, Palvon Darvoza ko'chasi 8",
-    hours: "07:30вЂ“22:30",
+    hours: "07:30–22:30",
     img: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800",
     menu: [
       { name: "Xorazm oshi", price: 38000, description: "Xorazm uslubidagi qo'y go'shtli plov" },
@@ -260,7 +260,7 @@ export const RESTAURANTS: Restaurant[] = [
   },
 ];
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Hotels в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Hotels ────────────────────────────────────────────
 export const HOTELS: Hotel[] = [
   {
     id: "hotel-1",
@@ -312,7 +312,7 @@ export const HOTELS: Hotel[] = [
   },
 ];
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Guides в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Guides ────────────────────────────────────────────
 export const GUIDES: Guide[] = [
   {
     id: "guide-1",
@@ -334,7 +334,7 @@ export const GUIDES: Guide[] = [
     rating: 4.8,
     pricePerDay: 750000,
     available: true,
-    bio: "Buxoro arxitekturasi va hunarmandchiligi bo'yicha mutaxassis. 10 yillik tajribaga ega bo'lib, turistlarga Buxoro'ning yashirin burchaklarini ko'rsatadi. Gapirish uslubi qiziqarli va jonli.",
+    bio: "Buxoro arxitekturasi va hunarmandchiligi bo'yicha mutaxassis. 10 yillik tajribaga ega bo'lib, turistlarga Buxoroning yashirin burchaklarini ko'rsatadi.",
     verified: true,
     img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
   },
@@ -346,7 +346,7 @@ export const GUIDES: Guide[] = [
     rating: 4.7,
     pricePerDay: 700000,
     available: false,
-    bio: "Xorazm madaniyati va Ichan-Qal'a bo'yicha tajribali gid. Xiva me'morchiligini ota-bobolaridan o'rgangan mahalliy aholi vakili. Hunarmandchilik ustaxonalarini ziyorat qilishni tashkil etadi.",
+    bio: "Xorazm madaniyati va Ichan-Qal'a bo'yicha tajribali gid. Xiva me'morchiligini ota-bobolaridan o'rgangan mahalliy aholi vakili.",
     verified: true,
     img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400",
   },
@@ -358,13 +358,13 @@ export const GUIDES: Guide[] = [
     rating: 4.6,
     pricePerDay: 850000,
     available: true,
-    bio: "Toshkent va butun O'zbekiston bo'ylab guruhli sayohatlar mutaxassisi. Osiyo turistlariga yo'naltirilgan, madaniyatlararo aloqalarni yaxshi tushunadi. Milliy oshxona va bozorlarni alohida yaxshi biladi.",
+    bio: "Toshkent va butun O'zbekiston bo'ylab guruhli sayohatlar mutaxassisi. Osiyo turistlariga yo'naltirilgan, madaniyatlararo aloqalarni yaxshi tushunadi.",
     verified: false,
     img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
   },
 ];
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Currency Rates (UZS based) в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Currency Rates ────────────────────────────────────
 export const CURRENCY_RATES: Record<string, number> = {
   USD: 12800,
   EUR: 13900,
@@ -374,7 +374,7 @@ export const CURRENCY_RATES: Record<string, number> = {
   KZT: 27,
 };
 
-// в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ Initial Reviews в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+// ── Initial Reviews ───────────────────────────────────
 export const INIT_REVIEWS: Record<string, Review[]> = {
   registan: [
     {
@@ -407,7 +407,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Emma Wilson",
       country: "Buyuk Britaniya",
       stars: 5,
-      text: "UNESCO ro'yxatidagi joylar ichida eng ajoyib. Kechki yoritilish shousi fantastik! Bilet narxi kam вЂ” bunga nisbatan narxi mutlaqo arzon.",
+      text: "UNESCO ro'yxatidagi joylar ichida eng ajoyib. Kechki yoritilish shousi fantastik! Bilet narxi kam — bunga nisbatan narxi mutlaqo arzon.",
       time: "2025-01-15",
       trustScore: 95,
       aiTags: ["kechki shou", "narx", "UNESCO"],
@@ -421,7 +421,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Tanaka Hiroshi",
       country: "Yaponiya",
       stars: 5,
-      text: "Vaqt mashinasiga o'tirgandek his etdim вЂ” shahar butunlay qadimiy va saqlanib qolgan. Xiva Markaziy Osiyoning eng go'zal shahri deb o'ylayman.",
+      text: "Vaqt mashinasiga o'tirgandek his etdim — shahar butunlay qadimiy va saqlanib qolgan. Xiva Markaziy Osiyoning eng go'zal shahri deb o'ylayman.",
       time: "2025-04-01",
       trustScore: 91,
       aiTags: ["tarix", "saqlanish", "muhit"],
@@ -433,7 +433,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Carlos Garcia",
       country: "Ispaniya",
       stars: 4,
-      text: "Ajoyib joy, lekin yozda juda issiq (+45В°C). Bahorda borish yaxshiroq. Kompleks bilet barcha joylarga kirish uchun qulay.",
+      text: "Ajoyib joy, lekin yozda juda issiq (+45°C). Bahorda borish yaxshiroq. Kompleks bilet barcha joylarga kirish uchun qulay.",
       time: "2025-03-20",
       trustScore: 74,
       aiTags: ["ob-havo", "maslahat", "bilet"],
@@ -473,7 +473,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Aisha Nazarova",
       country: "Qozog'iston",
       stars: 5,
-      text: "Toshkentdan bir soatda bunchalik go'zal tabiatga yetib borish ajoyib! Qishda ski, yozda treking вЂ” har ikki mavsumda ham zo'r. Amirsoy yangi ski pisti juda professional.",
+      text: "Toshkentdan bir soatda bunchalik go'zal tabiatga yetib borish ajoyib! Qishda ski, yozda treking — har ikki mavsumda ham zo'r. Amirsoy yangi ski pisti juda professional.",
       time: "2025-03-05",
       trustScore: 88,
       aiTags: ["ski", "tabiat", "treking"],
@@ -499,7 +499,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Isabella Rossi",
       country: "Italiya",
       stars: 5,
-      text: "Ko'k gumbaz ostida Tamerlanning qabri вЂ” tarix bilan muloqot qilgandek. Ichki naqshlar Florentsiya Duomosidan ham boyroq deb o'ylayman. Mutlaqo unutilmas taassurot.",
+      text: "Ko'k gumbaz ostida Tamerlanning qabri — tarix bilan muloqot qilgandek. Ichki naqshlar Florentsiya Duomosidan ham boyroq deb o'ylayman. Mutlaqo unutilmas taassurot.",
       time: "2025-04-10",
       trustScore: 93,
       aiTags: ["arxitektura", "tarix", "Temur"],
@@ -511,7 +511,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Wang Lei",
       country: "Xitoy",
       stars: 4,
-      text: "Tarixan muhim joy. Bilet narxi arzon. Xitoy tilida izoh yo'q, lekin ingliz va rus tillarida yaxshi. Fotosuratga tushish uchun eng yaxshi vaqt kechqurun 17:00-19:00.",
+      text: "Tarixan muhim joy. Bilet narxi arzon. Fotosuratga tushish uchun eng yaxshi vaqt kechqurun 17:00–19:00.",
       time: "2025-03-18",
       trustScore: 71,
       aiTags: ["til", "fotosurat", "narx"],
@@ -525,7 +525,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Olga Smirnova",
       country: "Ukraina",
       stars: 4,
-      text: "Real hayotiy bozor вЂ” turistik emas. Ziravorlar bo'limida jahon ziravorlarini arzon narxda topish mumkin. Sotuvchilar bilan narx ustida kelishish an'anasi saqlanib qolgan.",
+      text: "Real hayotiy bozor — turistik emas. Ziravorlar bo'limida jahon ziravorlarini arzon narxda topish mumkin. Sotuvchilar bilan narx ustida kelishish an'anasi saqlanib qolgan.",
       time: "2025-03-25",
       trustScore: 62,
       aiTags: ["bozor", "ziravorlar", "narx"],
@@ -537,7 +537,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Lars Eriksson",
       country: "Shvetsiya",
       stars: 5,
-      text: "Non pishirilayotgan tandir oldida turish, yangi somsa yeyish вЂ” bularni hech qayerda his qila olmaysiz. Mahalliy hayotni ko'rish uchun eng yaxshi joy Toshkentda.",
+      text: "Non pishirilayotgan tandir oldida turish, yangi somsa yeyish — bularni hech qayerda his qila olmaysiz. Mahalliy hayotni ko'rish uchun eng yaxshi joy Toshkentda.",
       time: "2025-02-17",
       trustScore: 85,
       aiTags: ["milliy taom", "mahalliy hayot", "tajriba"],
@@ -563,7 +563,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Ahmed Al-Farsi",
       country: "Saudiya Arabistoni",
       stars: 5,
-      text: "Ziyoratgoh sifatida ham, tarixiy obida sifatida ham mukammal. Qusam ibn Abbosning maqbarasi xususan qabul qiluvchi va ilohiy kayfiyat beradi. Har bir musulmon kelishi shart.",
+      text: "Ziyoratgoh sifatida ham, tarixiy obida sifatida ham mukammal. Qusam ibn Abbosning maqbarasi xususan ilohiy kayfiyat beradi. Har bir musulmon kelishi shart.",
       time: "2025-03-30",
       trustScore: 88,
       aiTags: ["ziyoratgoh", "din", "tarix"],
@@ -577,7 +577,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Marie Dupont",
       country: "Fransiya",
       stars: 4,
-      text: "Kechqurun terraklar soyasida choy ichish va milliy musiqa tinglash вЂ” sof o'zbek tajribasi. Narxlar turistik, lekin muhit pulga arziydi.",
+      text: "Kechqurun teraklar soyasida choy ichish va milliy musiqa tinglash — sof o'zbek tajribasi. Narxlar turistik, lekin muhit pulga arziydi.",
       time: "2025-03-08",
       trustScore: 75,
       aiTags: ["kechqurun", "muhit", "choy"],
@@ -586,10 +586,10 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
     {
       id: "rev-lya-2",
       locationId: "lyabi-xovuz",
-      author: "Hans MГјller",
+      author: "Hans Müller",
       country: "Germaniya",
       stars: 3,
-      text: "Juda chiroyli joy, lekin turistlar uchun narxlar oshib ketgan. Haqiqiy mahalliy tajribani xohlasangiz, yon ko'chadagi oshxonalarga kiring вЂ” u yerde haqiqiy narxlar bor.",
+      text: "Juda chiroyli joy, lekin turistlar uchun narxlar oshib ketgan. Haqiqiy mahalliy tajribani xohlasangiz, yon ko'chadagi oshxonalarga kiring — u yerda haqiqiy narxlar bor.",
       time: "2025-02-10",
       trustScore: 22,
       aiTags: ["narx", "turist", "mahalliy"],
@@ -601,7 +601,7 @@ export const INIT_REVIEWS: Record<string, Review[]> = {
       author: "Aleksei Volkov",
       country: "Rossiya",
       stars: 5,
-      text: "Buxoroning eng romantik joyi. Kechqurun suvda aks etgan chiroqlar va yulduzlar вЂ” bu manzarani so'zlar bilan ifodalab bo'lmaydi. Xotinimning ham eng yoqtirgan joyi bo'ldi.",
+      text: "Buxoroning eng romantik joyi. Kechqurun suvda aks etgan chiroqlar va yulduzlar — bu manzarani so'zlar bilan ifodalab bo'lmaydi. Xotinimning ham eng yoqtirgan joyi bo'ldi.",
       time: "2025-01-20",
       trustScore: 82,
       aiTags: ["romantik", "kechqurun", "manzara"],

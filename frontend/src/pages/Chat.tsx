@@ -57,9 +57,10 @@ export default function Chat() {
         .filter((m) => m.id !== "welcome")
         .map((m) => ({ role: m.role, content: m.content }));
 
+      const apiMessages = [...history, { role: "user" as const, content: text.trim() }];
+
       const res = await apiClient.post<{ reply: string }>("/ai/chat", {
-        message: text.trim(),
-        history,
+        messages: apiMessages,
       });
 
       const assistantMsg: Message = {

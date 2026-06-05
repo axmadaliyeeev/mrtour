@@ -30,7 +30,7 @@ const registerSchema = z.object({
   email:    z.string().email().toLowerCase(),
   password: z.string().min(8).max(100),
   country:  z.string().max(60).optional(),
-  lang:     z.enum(["uz", "ru", "en"]).default("uz"),
+  lang:     z.string().max(5).default("uz"),
 });
 
 const loginSchema = z.object({

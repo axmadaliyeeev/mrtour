@@ -25,7 +25,16 @@ instance.interceptors.response.use(
     if (err.response?.status === 401 && !orig._retry) {
       orig._retry = true;
       try {
-        await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
+        const { data } = await axios.post<{ success: boolean; data: { accessToken: string } }>(
+          `${BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        const newToken = data?.data?.accessToken;
+        if (newToken) {
+          localStorage.setItem("mrtour-token", newToken);
+          if (orig.headers) orig.headers.Authorization = `Bearer ${newToken}`;
+        }
         return instance(orig);
       } catch {
         localStorage.removeItem("mrtour-token");

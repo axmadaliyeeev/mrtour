@@ -16,7 +16,7 @@ const envSchema = z.object({
     .min(32, "JWT_REFRESH_SECRET must be at least 32 characters"),
   JWT_EXPIRES_IN: z.string().default("15m"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
-  ANTHROPIC_API_KEY: z.string({ required_error: "ANTHROPIC_API_KEY is required" }),
+  GROQ_API_KEY: z.string({ required_error: "GROQ_API_KEY is required" }),
   FRONTEND_URL: z
     .string({ required_error: "FRONTEND_URL is required" })
     .url("FRONTEND_URL must be a valid URL"),

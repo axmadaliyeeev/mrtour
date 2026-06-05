@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { Error as MongooseError } from "mongoose";
-import { MongoServerError } from "mongodb";
+import { Prisma } from "@prisma/client";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { ZodError } from "zod";
 import { env } from "@/config/env";
@@ -36,33 +35,32 @@ export function errorHandler(
     isDev ? err : err.message
   );
 
-  // ── Mongoose: ValidationError ────────────────────────
-  if (err instanceof MongooseError.ValidationError) {
-    const messages = Object.values(err.errors).map((e) => e.message);
-    res.status(422).json({
+  // ── Prisma: unique constraint violation (P2002) ──────
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+    const fields = (err.meta?.target as string[] | undefined)?.join(", ") ?? "field";
+    res.status(409).json({
       success: false,
-      message: "Validation failed",
-      error: messages.join(", "),
-    });
-    return;
-  }
-
-  // ── Mongoose: CastError (invalid ObjectId) ───────────
-  if (err instanceof MongooseError.CastError) {
-    res.status(400).json({
-      success: false,
-      message: `Invalid value for field '${err.path}'`,
+      message: `${fields} already exists`,
       error: isDev ? err.message : undefined,
     });
     return;
   }
 
-  // ── MongoDB: Duplicate key (11000) ───────────────────
-  if (err instanceof MongoServerError && err.code === 11000) {
-    const field = Object.keys(err.keyValue ?? {})[0] ?? "field";
-    res.status(409).json({
+  // ── Prisma: record not found (P2025) ─────────────────
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+    res.status(404).json({
       success: false,
-      message: `${field} already exists`,
+      message: "Record not found",
+      error: isDev ? err.message : undefined,
+    });
+    return;
+  }
+
+  // ── Prisma: validation error ──────────────────────────
+  if (err instanceof Prisma.PrismaClientValidationError) {
+    res.status(422).json({
+      success: false,
+      message: "Invalid data provided",
       error: isDev ? err.message : undefined,
     });
     return;

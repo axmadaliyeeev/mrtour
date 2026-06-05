@@ -32,7 +32,7 @@ export function MainLayout() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen max-w-2xl mx-auto bg-[var(--background)]">
+    <div className="flex flex-col min-h-dvh bg-[var(--background)]">
       <TopHeader />
       <main className="flex-1 overflow-y-auto pb-20">
         <Outlet />

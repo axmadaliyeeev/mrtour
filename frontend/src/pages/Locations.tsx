@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
@@ -43,10 +43,9 @@ export default function Locations() {
 
   const debouncedSearch = useDebounce(search, 300);
 
-  const filtered = useCallback(() => {
+  const results = useMemo(() => {
     let result = [...LOCATIONS];
 
-    // Search filter
     if (debouncedSearch.trim()) {
       const q = debouncedSearch.toLowerCase();
       result = result.filter(
@@ -58,17 +57,14 @@ export default function Locations() {
       );
     }
 
-    // Category filter
     if (activeCategory !== "all") {
       result = result.filter((l) => l.category === activeCategory);
     }
 
-    // City filter
     if (activeCity !== "Barchasi") {
       result = result.filter((l) => l.city === activeCity);
     }
 
-    // Sort
     switch (sortBy) {
       case "rating":
         result.sort((a, b) => b.rating - a.rating);
@@ -86,8 +82,6 @@ export default function Locations() {
 
     return result;
   }, [debouncedSearch, activeCategory, activeCity, sortBy]);
-
-  const results = filtered();
   const hasActiveFilters =
     activeCategory !== "all" || activeCity !== "Barchasi" || sortBy !== "rating";
 
@@ -251,7 +245,7 @@ export default function Locations() {
           </button>
         </div>
       ) : (
-        <div className="px-4 grid grid-cols-2 gap-3">
+        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {results.map((loc) => (
             <LocationCard key={loc.id} location={loc} variant="default" />
           ))}

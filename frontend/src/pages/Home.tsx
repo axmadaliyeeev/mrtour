@@ -29,26 +29,26 @@ export default function Home() {
   return (
     <div className="pb-6">
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden px-4 pt-8 pb-10">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 via-transparent to-teal-600/5 pointer-events-none" />
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden px-4 pt-7 pb-9">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/8 via-transparent to-purple-500/5 pointer-events-none" />
+        <div className="absolute -top-24 -right-16 w-72 h-72 bg-teal-500/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-48 h-48 bg-teal-400/5 rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-400 text-xs font-semibold mb-4">
+        <div className="relative max-w-3xl">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-500/12 border border-teal-500/25 text-teal-400 text-xs font-semibold mb-4">
             🇺🇿 Rasmiy turizm gidi
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--foreground)] leading-tight mb-3">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[var(--foreground)] leading-tight mb-3">
             O&apos;zbekistonni{" "}
-            <span className="bg-gradient-to-r from-teal-400 to-teal-600 bg-clip-text text-transparent">
-              Kashf Et
+            <span className="bg-gradient-to-r from-teal-400 to-teal-500 bg-clip-text text-transparent">
+              Kashf&nbsp;Et
             </span>
           </h1>
-          <p className="text-[var(--muted-foreground)] text-sm md:text-base leading-relaxed mb-6 max-w-lg">
+          <p className="text-[var(--muted-foreground)] text-sm sm:text-base leading-relaxed mb-6 max-w-xl">
             Ipak yo&apos;li mamlakati — ming yillik tarix, go&apos;zal tabiat va
             mehmon do&apos;st xalq. AI yordamchi bilan sayohatingizni rejalashtiring.
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => navigate("/locations")}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold transition-all active:scale-[0.97] shadow-lg shadow-teal-500/25"
@@ -69,17 +69,17 @@ export default function Home() {
 
       {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-4 mb-6">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           {STATS.map(({ icon: Icon, value, label, color }) => (
             <div
               key={label}
-              className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]"
+              className="flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] hover:border-teal-500/20 transition-colors"
             >
-              <Icon className={cn("w-4 h-4", color)} />
-              <span className="text-base font-bold text-[var(--foreground)]">
+              <Icon className={cn("w-4 h-4 sm:w-5 sm:h-5", color)} />
+              <span className="text-sm sm:text-base font-extrabold text-[var(--foreground)]">
                 {value}
               </span>
-              <span className="text-[10px] text-[var(--muted-foreground)] text-center leading-tight">
+              <span className="text-[9px] sm:text-[10px] text-[var(--muted-foreground)] text-center leading-tight">
                 {label}
               </span>
             </div>
@@ -141,7 +141,7 @@ export default function Home() {
         <h2 className="text-base font-bold text-[var(--foreground)] mb-3">
           Barcha joylar
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {all.map((loc) => (
             <LocationCard key={loc.id} location={loc} variant="default" />
           ))}
