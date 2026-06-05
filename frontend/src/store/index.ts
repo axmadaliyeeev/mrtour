@@ -24,6 +24,9 @@ interface AppStore {
   // UI
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  authModalOpen: boolean;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
 }
 
 export const useAppStore = create<AppStore>()(
@@ -66,8 +69,11 @@ export const useAppStore = create<AppStore>()(
 
       // ── UI ────────────────────────────────────────────
       activeTab: "overview",
-
       setActiveTab: (tab) => set({ activeTab: tab }),
+
+      authModalOpen:  false,
+      openAuthModal:  () => set({ authModalOpen: true }),
+      closeAuthModal: () => set({ authModalOpen: false }),
     }),
     {
       name: "mrtour-store",
