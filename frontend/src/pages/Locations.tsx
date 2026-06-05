@@ -159,7 +159,7 @@ export default function Locations() {
             key={cat.key}
             onClick={() => setActiveCategory(cat.key)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium shrink-0 transition-all",
+              "flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-full border text-xs font-medium shrink-0 transition-all",
               activeCategory === cat.key
                 ? "bg-indigo-500 border-indigo-500 text-white"
                 : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
@@ -186,7 +186,7 @@ export default function Locations() {
                     key={city}
                     onClick={() => setActiveCity(city)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full border text-xs font-medium transition-all",
+                      "px-3.5 min-h-[44px] rounded-full border text-xs font-medium transition-all",
                       activeCity === city
                         ? "bg-indigo-500 border-indigo-500 text-white"
                         : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
@@ -209,7 +209,7 @@ export default function Locations() {
                     key={opt.key}
                     onClick={() => setSortBy(opt.key)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full border text-xs font-medium transition-all",
+                      "px-3.5 min-h-[44px] rounded-full border text-xs font-medium transition-all",
                       sortBy === opt.key
                         ? "bg-indigo-500 border-indigo-500 text-white"
                         : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"

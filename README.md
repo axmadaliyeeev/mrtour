@@ -1,284 +1,291 @@
-# MRTOUR.UZ 🇺🇿
+# MRTOUR.UZ
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://typescriptlang.org)
-[![Claude AI](https://img.shields.io/badge/Claude_AI-Anthropic-orange?logo=anthropic)](https://anthropic.com)
-[![MongoDB](https://img.shields.io/badge/MongoDB-8-green?logo=mongodb)](https://mongodb.com)
+[![Vite](https://img.shields.io/badge/Vite-6.4-646cff?logo=vite)](https://vitejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?logo=tailwindcss)](https://tailwindcss.com)
+[![Groq AI](https://img.shields.io/badge/Groq_AI-Llama_3.3-f55036)](https://groq.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql)](https://neon.tech)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-O'zbekiston turizmi uchun AI-powered to'liq stack veb-ilova. Claude AI bilan shaxsiy tur rejalash, real vaqt sharh tahlili va interaktiv sayohat yordamchisi.
+O'zbekiston turizmi uchun AI-powered full-stack veb-ilova. Groq AI (Llama 3.3 70B) bilan shaxsiy tur rejalash, real vaqt sharh tahlili va interaktiv sayohat yordamchisi **AI Bek**.
 
 ---
 
-## 🚀 Tezkor boshlash
-
-```bash
-# 1. Reponi clone qilish
-git clone https://github.com/axmadaliyeeev/mrtour.git
-cd mrtour
-
-# 2. Frontend sozlash
-cd frontend
-npm install
-cp .env.local.example .env.local
-# .env.local faylini to'ldiring
-npm run dev          # http://localhost:3000
-
-# 3. Backend sozlash (yangi terminal)
-cd backend
-npm install
-cp .env.example .env
-# .env faylini to'ldiring
-npm run dev          # http://localhost:5000
-
-# 4. Ikkalasini bir vaqtda ishga tushirish (root papkadan)
-cd ..
-npm install          # concurrently o'rnatish
-npm run dev          # frontend + backend parallel
-```
-
----
-
-## 📁 Loyiha Tuzilmasi
+## Loyiha tuzilmasi
 
 ```
 mrtour/
-├── frontend/                    # Next.js 14 App Router
-│   ├── src/
-│   │   ├── app/
-│   │   │   └── (main)/
-│   │   │       ├── chat/        # AI suhbat sahifasi
-│   │   │       ├── services/    # Restoranlar, hotellar, gidlar
-│   │   │       └── profile/     # Foydalanuvchi profili
-│   │   ├── components/
-│   │   │   ├── layout/          # Sidebar, BottomNav, TopHeader
-│   │   │   ├── chat/            # MessageBubble, TourFlow, QuickActions
-│   │   │   ├── review/          # ReviewCard, AIInsight, SmartPanel
-│   │   │   ├── auth/            # AuthModal (login + register)
-│   │   │   ├── shared/          # ThemeToggle, GoogleMapsBtn
-│   │   │   └── ui/              # Stars, TrustBadge, FilterPill, SearchBar...
-│   │   ├── hooks/               # useBreakpoint, useDebounce, useReviews, useAuth
-│   │   ├── store/               # Zustand (user, plan, theme, activeTab)
-│   │   ├── lib/                 # utils.ts, api-client.ts (axios + JWT)
-│   │   ├── data/                # Statik ma'lumotlar (8 joy, 4 restoran...)
-│   │   └── types/               # TypeScript interfeyslari
-│   ├── tailwind.config.ts       # Brand ranglar (teal, #080e1a)
-│   └── vercel.json              # Vercel deploy konfiguratsiyasi
+├── frontend/                    # React 19 + Vite + Tailwind CSS
+│   └── src/
+│       ├── components/
+│       │   ├── auth/            # AuthModal (login + ro'yxatdan o'tish)
+│       │   ├── layout/          # Sidebar, BottomNav, TopHeader, MainLayout
+│       │   ├── locations/       # LocationCard (skeleton loading, bookmark animatsiya)
+│       │   └── ui/              # Stars, Toaster
+│       ├── data/                # 8 ta lokatsiya + sharhlar + restoranlar/hotellar/gidlar
+│       │   ├── index.ts         # LOCATIONS, RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES
+│       │   └── *.jpg/avif/jpeg  # Mahalliy lokatsiya rasmlari (Vite import)
+│       ├── hooks/
+│       │   ├── useBreakpoint.ts # Mobile/tablet/desktop aniqlash
+│       │   ├── useInView.ts     # IntersectionObserver (entrance animatsiyalar)
+│       │   └── useAuth.ts       # Token tekshirish
+│       ├── i18n/
+│       │   └── translations.ts  # 6 til: uz/ru/en/zh/de/fr — 150+ kalit
+│       ├── lib/
+│       │   ├── api-client.ts    # Axios + JWT interceptor (auto token refresh)
+│       │   └── utils.ts         # cn() helper
+│       ├── pages/
+│       │   ├── Home.tsx         # Hero, featured, stats, AI banner
+│       │   ├── Locations.tsx    # Grid, filtr (kategoriya + shahar + saralash)
+│       │   ├── LocationDetail.tsx # Hero, ma'lumotlar, sharhlar, SmartReview AI
+│       │   ├── Chat.tsx         # AI Bek suhbat sahifasi
+│       │   ├── Services.tsx     # Restoranlar, hotellar, gidlar, transport, valyuta
+│       │   └── Profile.tsx      # Reja boshqaruv, til, mavzu, favqulodda raqamlar
+│       ├── store/
+│       │   └── index.ts         # Zustand (user, plan, theme, lang, toasts, reviews)
+│       └── types/               # TypeScript interfeyslari
 │
-└── backend/                     # Express.js REST API
+└── backend/                     # Express.js + TypeScript + Prisma
     └── src/
+        ├── config/
+        │   └── env.ts           # Zod orqali environment tekshiruvi
+        ├── data/
+        │   └── knowledge-base.ts # AI uchun O'zbekiston turizm ma'lumotlari
+        ├── lib/
+        │   └── prisma.ts        # Prisma client + withRetry (Neon wake-up)
+        ├── middleware/
+        │   ├── auth.ts          # JWT Bearer token tekshirish
+        │   ├── error-handler.ts # Global xato boshqaruvi
+        │   └── validate.ts      # Zod schema validatsiya
         ├── modules/
-        │   ├── ai/              # Claude AI: chat, review analysis, tour plan
-        │   ├── auth/            # JWT autentifikatsiya (register/login/refresh)
-        │   ├── locations/       # Joylar CRUD + qidiruv + filtrlash
-        │   ├── reviews/         # Sharhlar + AI trustScore tahlili
-        │   └── users/           # Profil, reja boshqaruv
-        ├── middleware/          # auth, validate (Zod), error-handler
-        ├── config/              # env (Zod), database (retry + graceful shutdown)
-        └── utils/               # JWT helpers, API response formatters
+        │   ├── ai/              # Groq API: chat, review tahlili, tur rejasi, insight
+        │   ├── auth/            # JWT register/login/refresh/logout
+        │   ├── locations/       # Joylar + filtr + qidiruv
+        │   ├── reviews/         # Sharhlar + AI trustScore
+        │   └── users/           # Profil + reja boshqaruv
+        └── utils/
+            └── jwt.ts           # Token yaratish va tekshirish
 ```
 
 ---
 
-## 🛠️ Texnologiyalar
+## Texnologiyalar
 
-| Qatlam         | Texnologiya                           | Versiya  |
-|----------------|---------------------------------------|----------|
-| **Frontend**   | Next.js (App Router)                  | 14.2     |
-| **UI**         | Tailwind CSS + Radix UI               | 3.4 / 1.x |
-| **State**      | Zustand (persist middleware)          | 5.0      |
-| **Forms**      | React Hook Form + Zod                 | 7.x / 3.x |
-| **HTTP**       | Axios (interceptors + token refresh)  | 1.7      |
-| **Backend**    | Express.js + TypeScript               | 4.21     |
-| **Database**   | MongoDB + Mongoose                    | 8.x      |
-| **AI**         | Anthropic Claude API                  | Latest   |
-| **Auth**       | JWT (access 15m + refresh 7d)         | —        |
-| **Deploy FE**  | Vercel                                | —        |
-| **Deploy BE**  | Railway                               | —        |
+| Qatlam | Texnologiya | Versiya |
+|--------|-------------|---------|
+| **Frontend** | React + Vite | 19 / 6.4 |
+| **UI** | Tailwind CSS + Radix UI (Dialog) | 3.4 / 1.x |
+| **State** | Zustand (persist middleware) | 5.0 |
+| **Router** | React Router | 6.x |
+| **HTTP** | Axios (JWT interceptor) | 1.7 |
+| **Icons** | Lucide React | Latest |
+| **i18n** | Custom hook (6 til) | — |
+| **Backend** | Express.js + TypeScript | 4.21 |
+| **ORM** | Prisma | 6.x |
+| **Database** | PostgreSQL (Neon serverless) | 16 |
+| **AI** | Groq API (Llama 3.3 70B + 3.1 8B) | Latest |
+| **Auth** | JWT (access 15m + refresh 7d) | — |
 
 ---
 
-## 🤖 AI Funksiyalar
+## AI funksiyalar
 
-### 1. Bek — AI Sayohat Yordamchisi
-Claude Sonnet bilan ishlaydi. O'zbekiston turizmi bo'yicha mutaxassis chatbot.
-Savolga javob beradi, tur rejasi tuzadi, narxlar va transport haqida ma'lumot beradi.
+### 1. AI Bek — sayohat yordamchisi
+`llama-3.3-70b-versatile` modeli bilan ishlaydi. O'zbekiston turizmi bo'yicha professional chatbot.
+
+- Savolga javob beradi: narxlar, vaqt, transport, mavsumlar
+- Tur rejasi tuzadi (4 savol: muddat → kishilar → viloyat → byudjet)
+- Foydalanuvchi saqlagan joylarni reja ichiga qo'shadi
+- 6 tilda javob beradi (uz/ru/en/zh/de/fr)
 
 ```
-Model:     claude-sonnet-4-6
-Endpoint:  POST /api/ai/chat
-Limit:     20 so'rov/daqiqa
+Model:    llama-3.3-70b-versatile
+Endpoint: POST /api/ai/chat
+Limit:    20 so'rov/daqiqa
+Context:  so'nggi 14 xabar + KNOWLEDGE_BASE
 ```
 
-### 2. Smart Review Tahlili
-Har bir foydalanuvchi sharhi Claude Haiku orqali avtomatik tahlil qilinadi:
+### 2. SmartReview — sharh tahlili
+Har yangi sharh `llama-3.1-8b-instant` orqali tahlil qilinadi:
+
 - `trustScore` (0–100): haqiqiylik darajasi
-- `aiTags`: mavzu teglar
-- `verified` belgisi
+- `aiTags`: mavzu teglar (o'zbekcha)
+- `verified` belgisi (70+ ball)
 
 ```
-Model:     claude-haiku-4-5
-Endpoint:  POST /api/ai/analyze-review
-Trigger:   Har yangi sharh saqlanganda avtomatik
+Model:    llama-3.1-8b-instant
+Endpoint: POST /api/ai/analyze-review
+Trigger:  Har yangi sharh qo'shilganda avtomatik
+Fallback: Matn uzunligiga asoslangan hisoblash (AI ishlamasa)
 ```
 
-### 3. Tur Rejasi Generatori
-4-bosqichli master (kun, kishilar, viloyatlar, byudjet) asosida Claude Opus
-kun-kun jadval, transport, narxlar bilan batafsil tur rejasi yaratadi.
+### 3. Joy insayti generatori
+`llama-3.3-70b-versatile` so'nggi 15 sharhni tahlil qilib 4–5 ta insight yaratadi.
 
 ```
-Model:     claude-opus-4-8
-Endpoint:  POST /api/ai/tour-plan
-Auth:      Login talab qilinadi
+Endpoint: POST /api/ai/analyze-reviews
+Trigger:  LocationDetail sahifasida "AI tahlil" tugmasi bosilganda
+Cache:    So'rovga qadar saqlanadi (reload qilingunga)
+```
+
+### 4. Tur rejasi generatori
+To'liq parametrlar (kun, kishilar, viloyat, byudjet) asosida kun-kun jadval.
+
+```
+Endpoint: POST /api/ai/tour-plan
+Auth:     Login talab qilinmaydi
 ```
 
 ---
 
-## 📱 Ilova Bo'limlari
+## Ilova bo'limlari
 
-| Bo'lim           | Tavsif                                              |
-|------------------|-----------------------------------------------------|
-| 🏠 **Asosiy**    | Featured joylar, AI intro, tezkor havolalar         |
-| 📍 **Joylar**    | 8 UNESCO joy, filtr, qidiruv, SmartReview paneli    |
-| 🤖 **AI Chat**   | Bek yordamchi, QuickActions, TourFlow master        |
-| ⚙️ **Xizmatlar** | Restoranlar, hotellar, gidlar, transport, valyuta   |
-| 👤 **Profil**    | Reja boshqaruv, sozlamalar, favqulodda raqamlar     |
+| Bo'lim | Tavsif |
+|--------|--------|
+| 🏠 **Asosiy** | Featured joylar, statistika, AI Bek banneri, havolalar |
+| 📍 **Joylar** | 8 lokatsiya, kategoriya/shahar/saralash filtri, skeleton loading |
+| 🗺️ **Joy tafsiloti** | Hero rasm, ma'lumotlar, SmartReview AI, sharhlar, rejaga qo'shish |
+| 🤖 **AI Bek** | Suhbat sahifasi, tezkor savollar, tur rejasi banneri |
+| ⚙️ **Xizmatlar** | Restoranlar, hotellar, gidlar, transport marshrutlari, valyuta konvertori |
+| 👤 **Profil** | Reja ro'yxati (mehmon + foydalanuvchi), til tanlash, mavzu, favqulodda raqamlar |
 
 ---
 
-## 🌐 API Endpointlar
+## API endpointlar
 
 ```
-POST   /api/auth/register        Yangi hisob yaratish
-POST   /api/auth/login           Tizimga kirish
-POST   /api/auth/refresh         Token yangilash
-DELETE /api/auth/logout          Chiqish
-GET    /api/auth/me              Joriy foydalanuvchi
+POST   /api/auth/register        Yangi hisob (name, surname, email, password, country, lang)
+POST   /api/auth/login           Kirish (email, password)
+POST   /api/auth/refresh         Access token yangilash
+DELETE /api/auth/logout          Chiqish (refresh token o'chirish)
+GET    /api/auth/me              Joriy foydalanuvchi ma'lumotlari
 
-GET    /api/locations            Joylar ro'yxati (filter + pagination)
-GET    /api/locations/featured   Featured joylar (bosh sahifa)
+GET    /api/locations            Joylar ro'yxati (filter: category, city, search)
+GET    /api/locations/featured   Featured joylar (bosh sahifa uchun)
 GET    /api/locations/:id        Joy tafsilotlari
 
-GET    /api/reviews/:locationId  Joy sharhlari
+GET    /api/reviews/:locationId  Joy sharhlari (saralangan: yangi birinchi)
 POST   /api/reviews              Yangi sharh (AI tahlil bilan)
-DELETE /api/reviews/:id          Sharhni o'chirish
+DELETE /api/reviews/:id          Sharhni o'chirish (faqat muallif)
 
-POST   /api/ai/chat              AI suhbat
-POST   /api/ai/analyze-review    Sharh tahlili
-POST   /api/ai/tour-plan         Tur rejasi (auth required)
-POST   /api/ai/analyze-reviews   Joy insight generatsiyasi
+POST   /api/ai/chat              AI Bek suhbati (messages array + userContext)
+POST   /api/ai/analyze-review    Sharh tahlili → trustScore + aiTags
+POST   /api/ai/analyze-reviews   Joy insayti generatsiyasi
+POST   /api/ai/tour-plan         Tur rejasi (days, people, regions, budget)
 
-PATCH  /api/users/me             Profilni yangilash
+PATCH  /api/users/me             Profilni yangilash (name, country, lang)
+GET    /api/users/me/plan        Foydalanuvchi rejasi
 POST   /api/users/me/plan        Rejaga joy qo'shish
 DELETE /api/users/me/plan/:id    Rejadan o'chirish
 ```
 
 ---
 
-## 🚢 Deploy
+## Ishga tushirish
 
-### Frontend → Vercel
+### Kerakli muhit o'zgaruvchilari
 
-```bash
-# 1. Vercel CLI o'rnatish
-npm i -g vercel
-
-# 2. Deploy
-cd frontend && vercel
-
-# 3. Environment variables Vercel dashboard'da sozlash:
-#    NEXT_PUBLIC_API_URL = https://your-backend.up.railway.app/api
+**`backend/.env`:**
+```env
+DATABASE_URL="postgresql://user:pass@host/db?sslmode=require&connect_timeout=30"
+JWT_SECRET="kamida-32-belgi"
+JWT_REFRESH_SECRET="kamida-32-belgi"
+GROQ_API_KEY="gsk_..."
+PORT=5000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
 ```
 
-### Backend → Railway
+**`frontend/.env`** (ixtiyoriy):
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### Ishga tushirish
 
 ```bash
-# 1. Railway CLI o'rnatish
-npm i -g @railway/cli
+# 1. Reponi clone qilish
+git clone https://github.com/axmadaliyeeev/mrtour.git
+cd mrtour
 
-# 2. Login + deploy
+# 2. Backend
 cd backend
-railway login
-railway init
-railway up
+npm install
+npm run dev        # http://localhost:5000
 
-# 3. Environment variables Railway dashboard'da:
-#    NODE_ENV, PORT, MONGODB_URI, JWT_SECRET,
-#    JWT_REFRESH_SECRET, ANTHROPIC_API_KEY, FRONTEND_URL
-```
+# 3. Frontend (yangi terminal)
+cd frontend
+npm install
+npm run dev        # http://localhost:5173
 
-### MongoDB Atlas (baza)
-
-```
-1. atlas.mongodb.com → Create Cluster (M0 free tier)
-2. Database Access → Add User
-3. Network Access → Allow from anywhere (0.0.0.0/0)
-4. Connect → Copy connection string → MONGODB_URI
+# 4. Prisma migratsiya (birinchi marta)
+cd backend
+npx prisma migrate dev
+npx prisma generate
 ```
 
 ---
 
-## 🔑 Mentor uchun: AI Funksiyalarni Sinash
+## Muhim texnik yechimlar
 
-> **Muhim:** AI funksiyalari ishlashi uchun `ANTHROPIC_API_KEY` talab qilinadi.
+### Neon DB auto-pause
+Neon bepul tier faolsizlikdan keyin ma'lumotlar bazasini to'xtatadi. Muammo:
+
+```
+Can't reach database server at ep-*.neon.tech:5432
+```
+
+Yechim — `backend/src/lib/prisma.ts` da `withRetry` wrapper:
+- 3 urinish, eksponent kechikish (2s → 4s → 6s)
+- `P1001/P1002/P1008/P1017` Prisma kodlari va tarmoq xatolarini ushlaydi
+- `connect_timeout=30` DATABASE_URL da
+
+### Mahalliy rasmlar (Vite import)
+8 ta lokatsiya rasmi `frontend/src/data/` papkasida va TypeScript import orqali ulangan:
+
+```typescript
+import registanImg from "./registan.jpg";
+// ...
+img: registanImg  // LOCATIONS massivida
+```
+
+Vite build vaqtida rasmlarni hash nomlar bilan `dist/assets/` ga ko'chiradi.
+
+### i18n — 6 til
+`frontend/src/i18n/translations.ts` da 6 ta til ob'ekti (uz/ru/en/zh/de/fr), 150+ kalit.
+Zustand store da `lang` persist qilinadi — foydalanuvchi tanlagan til qayta yuklanganda ham saqlanadi.
+
+### Animatsiyalar
+Framer Motion ishlatilmagan — faqat CSS keyframes + `useInView` hook (IntersectionObserver).
+`animation-fill-mode: both` delay bilan kirish animatsiyalariga imkon beradi.
+
+---
+
+## Skriptlar
 
 ```bash
-# API kalitini olish: https://console.anthropic.com/
-# Bepul tier: $5 kredit (ko'plab test uchun yetarli)
+# Frontend (frontend/ papkasidan)
+npm run dev      # Vite dev server (port 5173)
+npm run build    # Production build (dist/)
+npm run preview  # Build natijasini tekshirish
+npm run lint     # ESLint
 
-# backend/.env fayliga qo'shish:
-ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxxxxx
-
-# Test qilish:
-curl -X POST http://localhost:5000/api/ai/chat \
-  -H "Content-Type: application/json" \
-  -d '{"messages": [{"role": "user", "content": "Samarqand haqida ayt"}]}'
-```
-
-**AI funksiyalarsiz ham ilova ishlaydi** — statik ma'lumotlar (8 joy, sharhlar, xizmatlar) to'liq ko'rinadi.
-
----
-
-## 📦 Skriptlar
-
-```bash
-# Root (monorepo)
-npm run dev           # Frontend + Backend parallel
-npm run dev:frontend  # Faqat frontend (port 3000)
-npm run dev:backend   # Faqat backend (port 5000)
-npm run build         # Ikkalasini build qilish
-
-# Frontend
-npm run dev           # Ishlab chiqish serveri
-npm run build         # Production build
-npm run lint          # ESLint tekshirish
-
-# Backend
-npm run dev           # ts-node-dev (hot reload)
-npm run build         # TypeScript → JavaScript
-npm run start         # Production (dist/server.js)
+# Backend (backend/ papkasidan)
+npm run dev      # ts-node-dev bilan (hot reload)
+npm run build    # TypeScript → JavaScript (dist/)
+npm run start    # Production (node dist/server.js)
 ```
 
 ---
 
-## 👥 Jamoa
-
-| Rol                  | Texnologiya                                 |
-|----------------------|---------------------------------------------|
-| Frontend Developer   | Next.js, React, TypeScript, Tailwind CSS    |
-| Backend Developer    | Node.js, Express, MongoDB, TypeScript       |
-| AI Integration       | Anthropic Claude API, Prompt Engineering    |
-| UI/UX Designer       | shadcn/ui, Radix UI, CSS Animations         |
-
----
-
-## 📄 Litsenziya
+## Litsenziya
 
 [MIT](LICENSE) © 2026 MRTOUR.UZ
 
 ---
 
 <div align="center">
-  <strong>🇺🇿 O'zbekistonni dunyo bilan tanishtirish</strong><br/>
-  Made with ❤️ and Claude AI
+  <strong>O'zbekistonni dunyo bilan tanishtirish</strong><br/>
+  Made with Groq AI + Llama 3.3
 </div>

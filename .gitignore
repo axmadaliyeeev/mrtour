@@ -8,8 +8,9 @@ frontend/.next/
 frontend/out/
 frontend/.vercel
 
-# Backend build
+# Build outputs
 backend/dist/
+frontend/dist/
 
 # Environment variables
 .env

@@ -1,5 +1,14 @@
 import type { Location, Review, Guide, Restaurant, Hotel } from "@/types";
 
+import registanImg      from "./registan.jpg";
+import ichanQalaImg     from "./ichan-qala.jpg";
+import arkQalasiImg     from "./ark-qalasi.avif";
+import chimganImg       from "./chimgan-toglari.jpeg";
+import guriAmirImg      from "./guri-amir.jpeg";
+import chorsuImg        from "./chorsu-rinok.jpg";
+import shahiZindaImg    from "./shohi-zinda.jpg";
+import lyabiXovuzImg   from "./lyabu-hovuz.jpg";
+
 // ── Locations ─────────────────────────────────────────
 export const LOCATIONS: Location[] = [
   {
@@ -10,7 +19,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.9,
     reviewCount: 3841,
-    img: "https://images.unsplash.com/photo-1596476756289-35ef9a50f29a?w=800&q=80",
+    img: registanImg,
     tags: ["UNESCO", "Arxitektura", "Madrasa", "Ipak yo'li"],
     shortDesc:
       "Markaziy Osiyo me'morchiligining eng go'zal durdonasi — uchta ulug'vor madrasa bilan bezalgan maidoni.",
@@ -33,7 +42,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.8,
     reviewCount: 2156,
-    img: "https://images.unsplash.com/photo-1604867254142-5b1e88e75785?w=800&q=80",
+    img: ichanQalaImg,
     tags: ["UNESCO", "Shahar-muzey", "Qal'a", "Xorazm"],
     shortDesc:
       "Xivaning ichki qal'asi — tirik muzey shahar bo'lib, 400 yillik tarix nafasi ufurib turadi.",
@@ -56,7 +65,7 @@ export const LOCATIONS: Location[] = [
     category: "tarix",
     rating: 4.7,
     reviewCount: 1893,
-    img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80",
+    img: arkQalasiImg,
     tags: ["Qal'a", "Saroy", "Ipak yo'li", "Buxoro amiri"],
     shortDesc:
       "Buxoroning 2500 yillik tarixi gavdalangan ulkan qal'a — amirlari saroyi va tarixiy muzey.",
@@ -79,7 +88,7 @@ export const LOCATIONS: Location[] = [
     category: "tabiat",
     rating: 4.6,
     reviewCount: 2740,
-    img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    img: chimganImg,
     tags: ["Tog'", "Ski", "Yurish", "Tabiat", "Qishloq turizmi"],
     shortDesc:
       "Toshkentdan 80 km uzoqlikdagi tog' kurort — yozda treking, qishda ski va kanatli yo'l.",
@@ -102,7 +111,7 @@ export const LOCATIONS: Location[] = [
     category: "din",
     rating: 4.8,
     reviewCount: 2312,
-    img: "https://images.unsplash.com/photo-1593014978541-85e0df597b19?w=800&q=80",
+    img: guriAmirImg,
     tags: ["Maqbara", "Temur", "Gumbaz", "Ziyoratgoh"],
     shortDesc:
       "Amir Temur va Temuriylar sulolasining maqbarasi — ko'k gumbazli Samarqand ramzi.",
@@ -125,7 +134,7 @@ export const LOCATIONS: Location[] = [
     category: "madaniyat",
     rating: 4.5,
     reviewCount: 4120,
-    img: "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=800&q=80",
+    img: chorsuImg,
     tags: ["Bozor", "Milliy taomlar", "Ziravorlar", "Hunarmandchilik"],
     shortDesc:
       "Toshkentning 2000 yillik an'anaviy bozori — ziravorlar, mevalar va milliy hunarmandchilik markazi.",
@@ -148,7 +157,7 @@ export const LOCATIONS: Location[] = [
     category: "din",
     rating: 4.9,
     reviewCount: 1987,
-    img: "https://images.unsplash.com/photo-1567168544813-cc03465b4fa8?w=800&q=80",
+    img: shahiZindaImg,
     tags: ["Ziyoratgoh", "Maqbara", "Mozaika", "UNESCO"],
     shortDesc:
       "Tirik shoh qabristonligi — rangli kashtalar bilan bezalgan XIV–XV asr maqbaralari kompleksi.",
@@ -171,7 +180,7 @@ export const LOCATIONS: Location[] = [
     category: "madaniyat",
     rating: 4.6,
     reviewCount: 1543,
-    img: "https://images.unsplash.com/photo-1590845947376-2638caa89309?w=800&q=80",
+    img: lyabiXovuzImg,
     tags: ["Havuz", "Choyxona", "Milliy muhit", "Tungi hayot"],
     shortDesc:
       "Buxoroning qadimiy markazidagi suv havuzi atrofida eski teraklar soyasida choy ichish va milliy taomlar.",

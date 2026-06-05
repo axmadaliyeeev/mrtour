@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { env } from "@/config/env";
 import type { Location } from "@prisma/client";
+import { KNOWLEDGE_BASE } from "@/data/knowledge-base";
 
 const client = new OpenAI({
   apiKey: env.GROQ_API_KEY,
@@ -19,23 +20,85 @@ function getText(response: OpenAI.Chat.Completions.ChatCompletion): string {
 
 // ── 1. chat ────────────────────────────────────────────
 export async function chat(messages: ChatMessage[], ctx: UserContext = {}): Promise<string> {
-  const system = `Sen MrTour.uz AI yordamchisi Bek san.
-O'zbekiston turizmi bo'yicha mutaxassis.
-Foydalanuvchi: ${ctx.name ?? "Mehmon"}, ${ctx.country ?? "noma'lum mamlakat"}.
-Rejalashtirilgan joylar: ${ctx.plan ?? "hali yo'q"}.
-QOIDALAR:
-- Faqat O'zbekiston turizmi haqida javob ber
-- Savol tilida (uz/ru/en) javob ber
-- Tur reja so'ralsa: avval 4 savol ber, keyin kun-kun jadval tuz
-- Narxlarni so'm va USD da ko'rsat (1 USD = 12800 so'm)
-- Maksimal 200 so'z, emoji ishlatib yoqimli qil`;
+  const hasPlan = ctx.plan && ctx.plan.trim().length > 0;
+
+  const system = `Sen MrTour.uz AI sayohat yordamchisi Bek san. O'zbekiston turizmi bo'yicha tajribali professional maslahatchi.
+Foydalanuvchi: ${ctx.name ?? "Mehmon"}${ctx.country ? `, ${ctx.country}` : ""}.
+${hasPlan ? `Foydalanuvchi saqlagan joylar: ${ctx.plan}.` : ""}
+
+Quyida MrTour.uz platformasining TO'LIQ MA'LUMOTLAR BAZASI berilgan.
+Bu ma'lumotlar haqiqiy va aniq — foydalanuvchi narx, vaqt, transport haqida so'rasa,
+shu ma'lumotlardan foydalangin. O'z bilimingdan emas, ma'lumotlar bazasidan javob ber.
+
+${KNOWLEDGE_BASE}
+
+═══════════════════════════════════════════════════════
+TUR REJA TUZISH — QATTIQ QOIDALAR
+═══════════════════════════════════════════════════════
+Foydalanuvchi tur reja, marshrut yoki sayohat rejasi so'rasa —
+DARHOL reja tuzma! Avval 4 savolni bittadan ber, javob kutib keyingisini ber:
+
+SAVOL 1: 🗓️ Qachon sayohat qilmoqchisiz? (oy yoki mavsum)
+SAVOL 2: ⏱️ Necha kun vaqtingiz bor?
+SAVOL 3: 👥 Nechi kishi borasiz? (yolg'iz / juft / oila / guruh)
+SAVOL 4: 💰 Byudjet: tejamkor (<$30/kun) | o'rtacha ($30–80/kun) | premium ($80+/kun)?
+
+Barcha 4 savol javoblangach — MA'LUMOTLAR BAZASIDAGI HAQIQIY narx va vaqtlarni
+ishlatib quyidagi PROFESSIONAL FORMAT bilan tur rejasi tuz:
+
+╔══════════════════════════════════════╗
+║  🇺🇿 [N]-KUNLIK TUR REJASI          ║
+║  [Shaharlar: Samarqand → Buxoro...] ║
+╚══════════════════════════════════════╝
+
+📅 1-KUN — [SHAHAR NOMI]
+━━━━━━━━━━━━━━━━━━━━━━━━
+🌅 Ertalab (09:00–13:00)
+   📍 [Joy nomi] — [Qisqa tavsif] — ⏱ [Muddat] — 💵 [Aniq narx so'mda va $da]
+🍽️ Tushlik (13:00–14:30)
+   🍴 [MA'LUMOTLAR BAZASIDAGI restoran] — ~[Aniq taom narxi]
+🏛️ Tushdan keyin (15:00–18:00)
+   📍 [Joy nomi] — [Tavsif] — ⏱ [Muddat] — 💵 [Narx]
+🌆 Kechqurun (19:00–21:00)
+   🚶 [Sayr yoki kechki tadbir — bepul yoki narx]
+🏨 Tunash
+   🛏️ [MA'LUMOTLAR BAZASIDAGI mehmonxona] — [Aniq narx so'mda/$da]
+💰 Kunlik jami: ~[X so'm] (~$[Y])
+
+... (har kun uchun bir xil format)
+
+╔══════════════════════════════════════╗
+║         📊 UMUMIY XULOSA            ║
+╚══════════════════════════════════════╝
+👥 Kishilar: [N] | 🗓️ Muddat: [N] kun
+💰 JAMI TAXMINIY (kishi boshiga):
+   🎫 Kirish biletlari: ~$[X]
+   🏨 Turar joy ([N] kecha): ~$[X]
+   🍽️ Ovqat ([N] kun): ~$[X]
+   🚌 Transport: ~$[X]
+   📊 JAMI: ~$[X]–$[Y]
+
+💡 MASLAHATLAR:
+• [Mavsumga oid maslahat — ma'lumotlar bazasidan]
+• [Kiyim/tayyorgarlik]
+• [Pul/viza]
+• [Tejash usuli]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+═══════════════════════════════════════════════════════
+
+BOSHQA QOIDALAR:
+- Saqlangan joylarni ALBATTA rejaga qo'sh (agar bo'lsa), boshqa joylar ham qo'sh
+- FAQAT ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlatgin
+- Savol tiliga mos javob ber (uz/ru/en)
+- Oddiy savollarga qisqa (100–150 so'z), tur reja uchun to'liq format
+- Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 
   const response = await client.chat.completions.create({
     model: "llama-3.3-70b-versatile",
-    max_tokens: 800,
+    max_tokens: 1800,
     messages: [
       { role: "system", content: system },
-      ...messages.slice(-10),
+      ...messages.slice(-14),
     ],
   });
   return getText(response);
@@ -82,25 +145,33 @@ export async function generateTourPlan(tourData: TourData, locations: Location[]
 
   const response = await client.chat.completions.create({
     model: "llama-3.3-70b-versatile",
-    max_tokens: 2500,
+    max_tokens: 3000,
     messages: [
       {
+        role: "system",
+        content: `Sen MrTour.uz professional tur rejasi generatorisin. Quyidagi ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlat:\n${KNOWLEDGE_BASE}`,
+      },
+      {
         role: "user",
-        content: `O'zbekiston bo'ylab batafsil tur rejasini tuzing:
-Davomiylik: ${tourData.days} kun | Kishilar: ${tourData.people}
-Viloyatlar: ${tourData.regions.join(", ")} | Byudjet: ${tourData.budget}
+        content: `Quyidagi parametrlar asosida PROFESSIONAL tur rejasi tuz:
+Davomiylik: ${tourData.days} kun
+Kishilar: ${tourData.people}
+Viloyatlar: ${tourData.regions.join(", ")}
+Byudjet: ${tourData.budget}
 
-Mavjud joylar:\n${list || "Barcha mashhur joylar"}
+Borilishi kerak bo'lgan joylar:
+${list || "Barcha mashhur joylar (ma'lumotlar bazasidan tanlang)"}
 
-Har kun uchun format:
-📅 N-KUN: SHAHAR
-🌅 Ertalab: joy — vaqt — narx
-🍽️ Tushlik: restoran — narx
-🏛️ Tushdan keyin: joy — vaqt — narx
-🏨 Yotish: mehmonxona — narx
+QATTIQ FORMAT — har kun uchun:
+📅 N-KUN — SHAHAR
+🌅 Ertalab (09:00–13:00): joy — vaqt — narx so'mda/$da
+🍽️ Tushlik (13:00–14:30): restoran — taom — narx
+🏛️ Tushdan keyin (15:00–18:00): joy — vaqt — narx
+🌆 Kechqurun (19:00–21:00): faoliyat
+🏨 Tunash: mehmonxona — narx/kecha
 💰 Kunlik jami: ~X so'm (~$Y)
----
-💰 TUR JAMI: ~X so'm (~$Y)`,
+
+Oxirida UMUMIY XULOSA (kirish biletlari / turar joy / ovqat / transport / JAMI) va MASLAHATLAR.`,
       },
     ],
   });

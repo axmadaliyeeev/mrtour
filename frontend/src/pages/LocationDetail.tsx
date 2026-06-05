@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Bookmark, BookmarkCheck, MapPin, Clock, DollarSign,
@@ -172,7 +172,7 @@ function SmartReview({
 export default function LocationDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToPlan, removeFromPlan, isInPlan, user, addUserReview, userReviews } = useAppStore();
+  const { addToPlan, removeFromPlan, isInPlan, showToast, user, addUserReview, userReviews } = useAppStore();
   const { t } = useTranslation();
 
   const location = LOCATIONS.find((l) => l.id === id);
@@ -185,6 +185,20 @@ export default function LocationDetail() {
   const [stars, setStars] = useState(0);
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  // Sticky plan bar — visible when inline action buttons scroll out of view
+  const actionRef = useRef<HTMLDivElement>(null);
+  const [stickyVisible, setStickyVisible] = useState(false);
+  useEffect(() => {
+    const el = actionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setStickyVisible(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   if (!location) {
     return (
@@ -205,9 +219,17 @@ export default function LocationDetail() {
   const loc = location; // non-null; guard above guarantees this
   const inPlan = isInPlan(loc.id);
   function togglePlan() {
-    if (inPlan) removeFromPlan(loc.id);
-    else addToPlan(loc);
+    if (inPlan) {
+      removeFromPlan(loc.id);
+      showToast(`${loc.name} ${t("card", "removed_toast")}`, "🗑️", "info");
+    } else {
+      addToPlan(loc);
+      showToast(`${loc.name} ${t("card", "added_toast")}`, "📍", "success");
+    }
   }
+
+  const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); }, []);
 
   function submitReview() {
     if (!stars || !text.trim()) return;
@@ -224,7 +246,7 @@ export default function LocationDetail() {
     setStars(0);
     setText("");
     setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setReviewOpen(false); }, 2500);
+    reviewTimerRef.current = setTimeout(() => { setSubmitted(false); setReviewOpen(false); }, 2500);
   }
 
   return (
@@ -244,7 +266,7 @@ export default function LocationDetail() {
 
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors"
+          className="absolute top-4 left-4 w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors active:scale-90"
           aria-label={t("detail", "back")}
         >
           <ArrowLeft className="w-4 h-4" />
@@ -253,7 +275,7 @@ export default function LocationDetail() {
         <button
           onClick={togglePlan}
           className={cn(
-            "absolute top-4 right-4 w-9 h-9 rounded-full backdrop-blur-sm text-white flex items-center justify-center transition-all active:scale-90",
+            "absolute top-4 right-4 w-11 h-11 rounded-full backdrop-blur-sm text-white flex items-center justify-center transition-all active:scale-90",
             inPlan ? "bg-indigo-500" : "bg-black/50 hover:bg-indigo-500/70"
           )}
           aria-label={inPlan ? t("detail", "remove_plan") : t("detail", "add_plan")}
@@ -447,7 +469,7 @@ export default function LocationDetail() {
       </section>
 
       {/* ── Action buttons ──────────────────────────────────────── */}
-      <div className="px-4 flex gap-3">
+      <div ref={actionRef} className="px-4 flex gap-3">
         <button
           onClick={togglePlan}
           className={cn(
@@ -473,6 +495,33 @@ export default function LocationDetail() {
           <ExternalLink className="w-4 h-4 text-indigo-400" />
           {t("detail", "map")}
         </a>
+      </div>
+
+      {/* ── Sticky plan bar (appears when action buttons scroll off screen) ── */}
+      <div
+        className={cn(
+          "fixed left-0 right-0 z-40 transition-all duration-300",
+          "bottom-[62px] md:bottom-0",
+          stickyVisible ? "translate-y-0 opacity-100 pointer-events-auto" : "translate-y-full opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="mx-auto max-w-2xl px-4 pb-3 pt-2 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent">
+          <button
+            onClick={togglePlan}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition-all active:scale-[0.98] shadow-lg",
+              inPlan
+                ? "bg-indigo-500/15 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/25"
+                : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30"
+            )}
+          >
+            {inPlan ? (
+              <><BookmarkCheck className="w-4 h-4" /> {t("detail", "remove_plan")}</>
+            ) : (
+              <><Bookmark className="w-4 h-4" /> {t("detail", "add_plan")}</>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

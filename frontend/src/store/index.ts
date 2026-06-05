@@ -3,6 +3,13 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { User, Location, Review } from "@/types";
 import type { Lang } from "@/i18n/translations";
 
+export interface Toast {
+  id: string;
+  message: string;
+  icon?: string;
+  type?: "success" | "info" | "error";
+}
+
 interface AppStore {
   // Auth
   user: User | null;
@@ -30,6 +37,11 @@ interface AppStore {
   authModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+
+  // Toasts
+  toasts: Toast[];
+  showToast: (message: string, icon?: string, type?: Toast["type"]) => void;
+  dismissToast: (id: string) => void;
 
   // User reviews (persisted locally, works without backend)
   userReviews: Record<string, Review[]>;
@@ -92,6 +104,20 @@ export const useAppStore = create<AppStore>()(
       authModalOpen: false,
       openAuthModal: () => set({ authModalOpen: true }),
       closeAuthModal: () => set({ authModalOpen: false }),
+
+      // ── Toasts ────────────────────────────────────────
+      toasts: [],
+
+      showToast: (message, icon, type = "success") => {
+        const id = Date.now().toString();
+        set((state) => ({ toasts: [...state.toasts, { id, message, icon, type }] }));
+        setTimeout(() => {
+          set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
+        }, 3000);
+      },
+
+      dismissToast: (id) =>
+        set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
 
       // ── User Reviews (local-first) ────────────────────
       userReviews: {},

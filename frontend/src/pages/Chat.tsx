@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface Message {
   id: string;
@@ -17,6 +18,7 @@ export default function Chat() {
   const { plan } = useAppStore();
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
+  const { isDesktop } = useBreakpoint();
 
   function makeWelcomeMessage(): Message {
     return { id: "welcome", role: "assistant", content: t("chat", "welcome"), timestamp: new Date() };
@@ -134,7 +136,14 @@ export default function Chat() {
   const showQuickActions = messages.length <= 1;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] max-h-[calc(100vh-3.5rem)] overflow-hidden">
+    <div
+      className="flex flex-col overflow-hidden"
+      style={{
+        height: isDesktop
+          ? "calc(100dvh - 3.5rem)"
+          : "calc(100dvh - 3.5rem - 72px - env(safe-area-inset-bottom, 0px))",
+      }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)] shrink-0">
         <div className="flex items-center gap-3">
@@ -242,10 +251,12 @@ export default function Chat() {
               <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-indigo-500/5 -translate-y-6 translate-x-6 pointer-events-none" />
               <button
                 onClick={() => setPlanBannerDismissed(true)}
-                className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+                className="absolute top-0 right-0 w-11 h-11 rounded-full flex items-center justify-center text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
                 aria-label="Close"
               >
-                <X className="w-3 h-3" />
+                <span className="w-5 h-5 rounded-full bg-[var(--muted)] flex items-center justify-center">
+                  <X className="w-3 h-3" />
+                </span>
               </button>
               <div className="flex items-start gap-2.5 pr-6">
                 <div className="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center shrink-0">

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { type User } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import { prisma, withRetry } from "@/lib/prisma";
 import { generateTokens, verifyRefreshToken, type TokenPair } from "@/utils/jwt";
 import { createError } from "@/middleware/error-handler";
 
@@ -41,29 +41,33 @@ function buildTokens(user: User): TokenPair {
 export async function register(
   dto: RegisterDto
 ): Promise<{ user: SafeUser; tokens: TokenPair }> {
-  const exists = await prisma.user.findUnique({
-    where: { email: dto.email.toLowerCase() },
-  });
+  const exists = await withRetry(() =>
+    prisma.user.findUnique({ where: { email: dto.email.toLowerCase() } })
+  );
   if (exists) throw createError("Bu email allaqachon ro'yxatdan o'tgan", 409);
 
   const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
 
-  const user = await prisma.user.create({
-    data: {
-      name:         dto.name.trim(),
-      surname:      dto.surname.trim(),
-      email:        dto.email.toLowerCase().trim(),
-      passwordHash,
-      country:      dto.country ?? "",
-      lang:         dto.lang ?? "uz",
-    },
-  });
+  const user = await withRetry(() =>
+    prisma.user.create({
+      data: {
+        name:         dto.name.trim(),
+        surname:      dto.surname.trim(),
+        email:        dto.email.toLowerCase().trim(),
+        passwordHash,
+        country:      dto.country ?? "",
+        lang:         dto.lang ?? "uz",
+      },
+    })
+  );
 
   const finalTokens = buildTokens(user);
-  await prisma.user.update({
-    where: { id: user.id },
-    data:  { refreshToken: finalTokens.refreshToken },
-  });
+  await withRetry(() =>
+    prisma.user.update({
+      where: { id: user.id },
+      data:  { refreshToken: finalTokens.refreshToken },
+    })
+  );
 
   return { user: sanitize(user), tokens: finalTokens };
 }
@@ -72,9 +76,9 @@ export async function register(
 export async function login(
   dto: LoginDto
 ): Promise<{ user: SafeUser; tokens: TokenPair }> {
-  const user = await prisma.user.findUnique({
-    where: { email: dto.email.toLowerCase() },
-  });
+  const user = await withRetry(() =>
+    prisma.user.findUnique({ where: { email: dto.email.toLowerCase() } })
+  );
   if (!user) throw createError("Email yoki parol noto'g'ri", 401);
 
   const isMatch = await bcrypt.compare(dto.password, user.passwordHash);
@@ -82,10 +86,12 @@ export async function login(
 
   const tokens = buildTokens(user);
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data:  { refreshToken: tokens.refreshToken },
-  });
+  await withRetry(() =>
+    prisma.user.update({
+      where: { id: user.id },
+      data:  { refreshToken: tokens.refreshToken },
+    })
+  );
 
   return { user: sanitize(user), tokens };
 }
@@ -97,25 +103,31 @@ export async function refresh(
   const payload = verifyRefreshToken(incomingToken);
   if (!payload) throw createError("Token yaroqsiz yoki muddati o'tgan", 401);
 
-  const user = await prisma.user.findFirst({
-    where: { id: payload.userId, refreshToken: incomingToken },
-  });
+  const user = await withRetry(() =>
+    prisma.user.findFirst({
+      where: { id: payload.userId, refreshToken: incomingToken },
+    })
+  );
   if (!user) throw createError("Token topilmadi — iltimos qayta kiring", 401);
 
   const tokens = buildTokens(user);
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data:  { refreshToken: tokens.refreshToken },
-  });
+  await withRetry(() =>
+    prisma.user.update({
+      where: { id: user.id },
+      data:  { refreshToken: tokens.refreshToken },
+    })
+  );
 
   return { tokens };
 }
 
 // ── logout ────────────────────────────────────────────
 export async function logout(userId: string): Promise<void> {
-  await prisma.user.update({
-    where: { id: userId },
-    data:  { refreshToken: null },
-  });
+  await withRetry(() =>
+    prisma.user.update({
+      where: { id: userId },
+      data:  { refreshToken: null },
+    })
+  );
 }

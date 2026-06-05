@@ -12,6 +12,7 @@ import {
   Shield,
   Sparkles,
   Phone,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -118,6 +119,77 @@ export default function Profile() {
             </button>
           </div>
         </div>
+
+        {/* Plan list for guests (if they added items) */}
+        {plan.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
+                📋 {t("profile", "plan_title")}
+                <span className="ml-1 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
+                  {plan.length}
+                </span>
+              </h3>
+              <button
+                onClick={() => navigate("/locations")}
+                className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+              >
+                {t("profile", "plan_add")} <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {plan.map((loc) => (
+                <div
+                  key={loc.id}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] group"
+                >
+                  <img
+                    src={loc.img}
+                    alt={loc.name}
+                    className="w-12 h-12 rounded-xl object-cover shrink-0"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=100&q=60";
+                    }}
+                  />
+                  <div
+                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => navigate(`/locations/${loc.id}`)}
+                  >
+                    <p className="text-sm font-semibold text-[var(--foreground)] truncate">{loc.name}</p>
+                    <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />{loc.city}
+                    </p>
+                    <Stars rating={loc.rating} size="sm" showNumber />
+                  </div>
+                  <button
+                    onClick={() => removeFromPlan(loc.id)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    aria-label={t("detail", "remove_plan")}
+                  >
+                    <BookmarkX className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Save prompt */}
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/8 border border-amber-500/25">
+                <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+                <p className="text-xs text-[var(--muted-foreground)]">
+                  {t("profile", "guest_plan_save_hint")}
+                  {" "}
+                  <button
+                    onClick={openAuthModal}
+                    className="text-indigo-400 font-semibold hover:underline"
+                  >
+                    {t("profile", "login_btn")}
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Language selector for guest */}
         <div className="mb-6">

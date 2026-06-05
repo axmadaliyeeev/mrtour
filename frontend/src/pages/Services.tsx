@@ -447,11 +447,12 @@ function CurrencyTab() {
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {currencies.map(({ code, rate }) => (
-            <div
+            <button
               key={code}
+              type="button"
               onClick={() => setFromCurrency(code)}
               className={cn(
-                "flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all",
+                "flex items-center gap-2.5 p-3 rounded-xl border transition-all text-left min-h-[56px]",
                 fromCurrency === code
                   ? "bg-indigo-500/10 border-indigo-500/40"
                   : "bg-[var(--card)] border-[var(--border)] hover:border-indigo-500/20"
@@ -464,7 +465,7 @@ function CurrencyTab() {
                   {new Intl.NumberFormat("uz-UZ").format(rate)}
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -512,7 +513,7 @@ export default function Services() {
             key={tab.key}
             onClick={() => { setActiveTab(tab.key); setSearch(""); }}
             className={cn(
-              "flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all",
+              "flex items-center gap-1.5 px-3.5 rounded-xl border text-xs font-semibold shrink-0 transition-all min-h-[44px]",
               activeTab === tab.key
                 ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/20"
                 : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"

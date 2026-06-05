@@ -51,6 +51,8 @@ export interface TranslationSchema {
   card: {
     add_plan: string;
     in_plan: string;
+    added_toast: string;
+    removed_toast: string;
   };
   detail: {
     hours: string;
@@ -188,6 +190,7 @@ export interface TranslationSchema {
     benefit3_desc: string;
     benefit4_title: string;
     benefit4_desc: string;
+    guest_plan_save_hint: string;
     theme_title: string;
     theme_dark: string;
     theme_light: string;
@@ -302,6 +305,8 @@ const UZ: TranslationSchema = {
   card: {
     add_plan: "Rejaga qo'sh",
     in_plan: "Rejada",
+    added_toast: "rejaga qo'shildi!",
+    removed_toast: "rejadan olib tashlandi",
   },
   detail: {
     hours: "Ish vaqti",
@@ -441,6 +446,7 @@ const UZ: TranslationSchema = {
     benefit3_desc: "Bo'lgan joylar haqida fikr bildiring",
     benefit4_title: "Ma'lumotlarni saqlash",
     benefit4_desc: "Reja va sozlamalar bulutda saqlanadi",
+    guest_plan_save_hint: "Rejaingizni saqlash uchun",
     theme_title: "Sozlamalar",
     theme_dark: "Tungi rejim",
     theme_light: "Kunduzgi rejim",
@@ -556,6 +562,8 @@ const RU: TranslationSchema = {
   card: {
     add_plan: "Добавить в план",
     in_plan: "В плане",
+    added_toast: "добавлено в план!",
+    removed_toast: "удалено из плана",
   },
   detail: {
     hours: "Часы работы",
@@ -696,6 +704,7 @@ const RU: TranslationSchema = {
     benefit3_desc: "Делитесь впечатлениями о посещённых местах",
     benefit4_title: "Сохранение данных",
     benefit4_desc: "Маршруты и настройки хранятся в облаке",
+    guest_plan_save_hint: "Чтобы сохранить маршрут,",
     theme_title: "Настройки",
     theme_dark: "Тёмная тема",
     theme_light: "Светлая тема",
@@ -810,6 +819,8 @@ const EN: TranslationSchema = {
   card: {
     add_plan: "Add to Plan",
     in_plan: "In Plan",
+    added_toast: "added to plan!",
+    removed_toast: "removed from plan",
   },
   detail: {
     hours: "Opening Hours",
@@ -950,6 +961,7 @@ const EN: TranslationSchema = {
     benefit3_desc: "Share your experience of the places you've visited",
     benefit4_title: "Save Your Data",
     benefit4_desc: "Plans and settings are stored in the cloud",
+    guest_plan_save_hint: "To save your plan,",
     theme_title: "Settings",
     theme_dark: "Dark Mode",
     theme_light: "Light Mode",
@@ -1064,6 +1076,8 @@ const ZH: TranslationSchema = {
   card: {
     add_plan: "加入行程",
     in_plan: "已加入",
+    added_toast: "已加入行程！",
+    removed_toast: "已从行程中移除",
   },
   detail: {
     hours: "开放时间",
@@ -1202,6 +1216,7 @@ const ZH: TranslationSchema = {
     benefit3_desc: "分享您对游览地点的感受",
     benefit4_title: "数据云端保存",
     benefit4_desc: "行程与设置同步保存至云端",
+    guest_plan_save_hint: "要保存您的行程，请",
     theme_title: "设置",
     theme_dark: "深色模式",
     theme_light: "浅色模式",
@@ -1317,6 +1332,8 @@ const DE: TranslationSchema = {
   card: {
     add_plan: "Zum Plan hinzufügen",
     in_plan: "Im Plan",
+    added_toast: "zum Plan hinzugefügt!",
+    removed_toast: "aus dem Plan entfernt",
   },
   detail: {
     hours: "Öffnungszeiten",
@@ -1458,6 +1475,7 @@ const DE: TranslationSchema = {
     benefit3_desc: "Teilen Sie Ihre Erlebnisse aus besuchten Orten",
     benefit4_title: "Daten sichern",
     benefit4_desc: "Pläne und Einstellungen werden in der Cloud gespeichert",
+    guest_plan_save_hint: "Um Ihren Plan zu speichern,",
     theme_title: "Einstellungen",
     theme_dark: "Dunkles Design",
     theme_light: "Helles Design",
@@ -1573,6 +1591,8 @@ const FR: TranslationSchema = {
   card: {
     add_plan: "Ajouter au plan",
     in_plan: "Dans le plan",
+    added_toast: "ajouté au plan !",
+    removed_toast: "retiré du plan",
   },
   detail: {
     hours: "Horaires d'ouverture",
@@ -1714,6 +1734,7 @@ const FR: TranslationSchema = {
     benefit3_desc: "Partagez vos expériences sur les lieux visités",
     benefit4_title: "Sauvegarder vos données",
     benefit4_desc: "Plans et paramètres synchronisés dans le cloud",
+    guest_plan_save_hint: "Pour sauvegarder votre plan,",
     theme_title: "Paramètres",
     theme_dark: "Mode sombre",
     theme_light: "Mode clair",

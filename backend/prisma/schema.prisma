@@ -7,16 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ── Enums ─────────────────────────────────────────────
-enum Category {
-  tarix
-  tabiat
-  madaniyat
-  din
-  arxeologiya
-}
-
-// ── Models ────────────────────────────────────────────
 model User {
   id           String     @id @default(cuid())
   name         String
@@ -30,8 +20,8 @@ model User {
   preferences  String[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  plan         UserPlan[]
   reviews      Review[]
+  plan         UserPlan[]
 }
 
 model Location {
@@ -64,14 +54,13 @@ model Location {
   @@index([rating])
 }
 
-// Junction table: User ↔ Location (plan)
 model UserPlan {
   id         String   @id @default(cuid())
   userId     String
   locationId String
   createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, locationId])
 }
@@ -89,8 +78,16 @@ model Review {
   verified   Boolean  @default(false)
   createdAt  DateTime @default(now())
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user       User?    @relation(fields: [userId], references: [id])
 
   @@index([locationId])
   @@index([createdAt])
+}
+
+enum Category {
+  tarix
+  tabiat
+  madaniyat
+  din
+  arxeologiya
 }

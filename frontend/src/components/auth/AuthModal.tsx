@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X, Eye, EyeOff, ChevronRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -270,10 +270,14 @@ export function AuthModal() {
   const { authModalOpen, closeAuthModal } = useAppStore();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const tabResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (tabResetTimer.current) clearTimeout(tabResetTimer.current); }, []);
 
   function handleClose() {
     closeAuthModal();
-    setTimeout(() => setActiveTab("login"), 300);
+    if (tabResetTimer.current) clearTimeout(tabResetTimer.current);
+    tabResetTimer.current = setTimeout(() => setActiveTab("login"), 300);
   }
 
   return (
@@ -292,8 +296,10 @@ export function AuthModal() {
               <span className="font-bold text-[var(--foreground)]">MR<span className="text-indigo-500">TOUR</span></span>
             </div>
             <Dialog.Close asChild>
-              <button className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors" aria-label="Close">
-                <X className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+              <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">
+                <span className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors">
+                  <X className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+                </span>
               </button>
             </Dialog.Close>
           </div>
