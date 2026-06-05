@@ -20,13 +20,13 @@ import { Stars } from "@/components/ui/stars";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 
-const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
-  { code: "uz", label: "O'zbek",   flag: "🇺🇿" },
-  { code: "ru", label: "Русский",  flag: "🇷🇺" },
-  { code: "en", label: "English",  flag: "🇬🇧" },
-  { code: "zh", label: "中文",     flag: "🇨🇳" },
-  { code: "de", label: "Deutsch",  flag: "🇩🇪" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
+const LANGUAGES: { code: Lang; label: string }[] = [
+  { code: "uz", label: "O'zbek"   },
+  { code: "ru", label: "Русский"  },
+  { code: "en", label: "English"  },
+  { code: "zh", label: "中文"     },
+  { code: "de", label: "Deutsch"  },
+  { code: "fr", label: "Français" },
 ];
 
 const EMERGENCY_NUMBERS_RAW = [
@@ -136,7 +136,6 @@ export default function Profile() {
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
                 )}
               >
-                <span className="text-xl">{l.flag}</span>
                 {l.label}
               </button>
             ))}
@@ -335,7 +334,6 @@ export default function Profile() {
                   : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
               )}
             >
-              <span className="text-xl">{l.flag}</span>
               {l.label}
             </button>
           ))}

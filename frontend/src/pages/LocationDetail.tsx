@@ -73,7 +73,7 @@ export default function LocationDetail() {
         <button
           onClick={() => navigate(-1)}
           className="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors"
-          aria-label="Orqaga"
+          aria-label={t("detail", "back")}
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -97,8 +97,7 @@ export default function LocationDetail() {
         {/* Hero text */}
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/80 text-white backdrop-blur-sm mb-2">
-            {location.category.charAt(0).toUpperCase() +
-              location.category.slice(1)}
+            {t("home", `cat_${location.category}` as Parameters<typeof t>[1])}
           </span>
           <h1 className="text-2xl font-extrabold text-white leading-tight mb-1">
             {location.name}
@@ -124,7 +123,7 @@ export default function LocationDetail() {
         <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
           <DollarSign className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
-            {location.price}
+            {location.priceUSD === 0 ? t("detail", "free") : location.price}
           </span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "price_label")}</span>
         </div>

@@ -1,6 +1,6 @@
 ﻿import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, Eye, EyeOff, ChevronRight } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -8,13 +8,13 @@ import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { User } from "@/types";
 
-const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
-  { code: "uz", label: "O'zbek",   flag: "🇺🇿" },
-  { code: "ru", label: "Русский",  flag: "🇷🇺" },
-  { code: "en", label: "English",  flag: "🇬🇧" },
-  { code: "zh", label: "中文",     flag: "🇨🇳" },
-  { code: "de", label: "Deutsch",  flag: "🇩🇪" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
+const LANGUAGES: { code: Lang; label: string }[] = [
+  { code: "uz", label: "O'zbek"   },
+  { code: "ru", label: "Русский"  },
+  { code: "en", label: "English"  },
+  { code: "zh", label: "中文"     },
+  { code: "de", label: "Deutsch"  },
+  { code: "fr", label: "Français" },
 ];
 
 // ── Shared input ──────────────────────────────────────────────────────────────
@@ -187,11 +187,10 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-2">
             {LANGUAGES.map((l) => (
               <button key={l.code} type="button" onClick={() => setSelectedLang(l.code)}
-                className={cn("flex items-center gap-2.5 px-3 py-3 rounded-xl border text-sm font-medium transition-all",
+                className={cn("flex items-center justify-center px-3 py-3 rounded-xl border text-sm font-medium transition-all",
                   selectedLang === l.code
-                    ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400"
+                    ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400 font-semibold"
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/20")}>
-                <span className="text-xl">{l.flag}</span>
                 {l.label}
               </button>
             ))}
@@ -287,7 +286,9 @@ export function AuthModal() {
         )}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="text-xl">🇺🇿</span>
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
+                <MapPin className="w-3 h-3 text-white" />
+              </div>
               <span className="font-bold text-[var(--foreground)]">MR<span className="text-indigo-500">TOUR</span></span>
             </div>
             <Dialog.Close asChild>
