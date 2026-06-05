@@ -10,6 +10,7 @@ const instance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 // ── Request: attach JWT ────────────────────────────────
@@ -17,77 +18,38 @@ instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("mrtour-token");
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      if (token) config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (err) => Promise.reject(err)
 );
 
-// ── Response: refresh on 401 ──────────────────────────
-let isRefreshing = false;
-let refreshQueue: Array<(token: string) => void> = [];
-
+// ── Response: unwrap { success, data } wrapper ─────────
 instance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Backend always returns { success: true, data: ... }
+    // Unwrap so callers get the actual data directly
+    if (response.data?.success !== undefined) {
+      response.data = response.data.data;
+    }
+    return response;
+  },
   async (error) => {
     const original = error.config as AxiosRequestConfig & { _retry?: boolean };
-
     if (error.response?.status !== 401 || original._retry) {
       return Promise.reject(error);
     }
-
     original._retry = true;
 
-    if (isRefreshing) {
-      return new Promise((resolve) => {
-        refreshQueue.push((token: string) => {
-          if (original.headers) {
-            (original.headers as Record<string, string>).Authorization =
-              `Bearer ${token}`;
-          }
-          resolve(instance(original));
-        });
-      });
-    }
-
-    isRefreshing = true;
-
     try {
-      const refreshToken =
-        typeof window !== "undefined"
-          ? localStorage.getItem("mrtour-refresh-token")
-          : null;
-
-      const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {
-        refreshToken,
-      });
-
-      const newToken: string = data.accessToken;
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("mrtour-token", newToken);
-      }
-
-      refreshQueue.forEach((cb) => cb(newToken));
-      refreshQueue = [];
-
-      if (original.headers) {
-        (original.headers as Record<string, string>).Authorization =
-          `Bearer ${newToken}`;
-      }
-
+      await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true });
       return instance(original);
     } catch {
       if (typeof window !== "undefined") {
         localStorage.removeItem("mrtour-token");
-        localStorage.removeItem("mrtour-refresh-token");
       }
       return Promise.reject(error);
-    } finally {
-      isRefreshing = false;
     }
   }
 );
@@ -95,15 +57,15 @@ instance.interceptors.response.use(
 // ── Typed convenience methods ─────────────────────────
 export const apiClient = {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return instance.get<T>(url, config).then((r) => r.data);
+    return instance.get<T>(url, config).then((r) => r.data as T);
   },
   post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return instance.post<T>(url, data, config).then((r) => r.data);
+    return instance.post<T>(url, data, config).then((r) => r.data as T);
   },
-  put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    return instance.put<T>(url, data, config).then((r) => r.data);
+  patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+    return instance.patch<T>(url, data, config).then((r) => r.data as T);
   },
   delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return instance.delete<T>(url, config).then((r) => r.data);
+    return instance.delete<T>(url, config).then((r) => r.data as T);
   },
 };

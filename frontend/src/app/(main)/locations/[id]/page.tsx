@@ -5,7 +5,7 @@ import { ArrowLeft, MapPin, Clock, Star, Bookmark, BookmarkCheck, ExternalLink, 
 import { cn } from "@/lib/utils";
 import { Stars } from "@/components/ui/stars";
 import { useAppStore } from "@/store";
-import { LOCATIONS, REVIEWS } from "@/data";
+import { LOCATIONS, INIT_REVIEWS } from "@/data";
 
 const CATEGORY_COLOR: Record<string, string> = {
   tarix:       "bg-amber-500/20 text-amber-400 border-amber-500/30",
@@ -41,7 +41,7 @@ export default function LocationDetailPage({ params }: { params: { id: string } 
   }
 
   const inPlan      = isInPlan(location.id);
-  const locationReviews = REVIEWS.filter((r) => r.locationId === location.id).slice(0, 5);
+  const locationReviews = (INIT_REVIEWS[location.id] ?? []).slice(0, 5);
   const catColor    = CATEGORY_COLOR[location.category] ?? "";
   const catEmoji    = CATEGORY_EMOJI[location.category] ?? "📍";
 
