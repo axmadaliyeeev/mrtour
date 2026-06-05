@@ -1,6 +1,5 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -16,22 +15,15 @@ const config: Config = {
           600: "#0d9488",
         },
         brand: {
-          bg: "#080e1a",
-          card: "#111827",
+          bg:     "#080e1a",
+          card:   "#111827",
           border: "#1e3a5f",
         },
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        sans: ["Sora", "sans-serif"],
       },
     },
   },
   plugins: [],
 };
-
-export default config;
