@@ -52,7 +52,7 @@ locationRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { page, limit, sort, category, region, search, featured } =
-        req.query as z.infer<typeof listQuerySchema>;
+        req.query as unknown as z.infer<typeof listQuerySchema>;
 
       const result = await service.getAll(
         { category, region, search, featured },

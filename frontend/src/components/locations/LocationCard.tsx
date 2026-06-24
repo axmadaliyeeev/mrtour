@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation } from "lucide-react";
 import { cn, truncate } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -33,14 +34,11 @@ export function LocationCard({ location, variant = "default", className }: Locat
   const freeLabel = t("detail", "free");
 
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [bookmarkAnim, setBookmarkAnim] = useState(false);
 
   const go = () => navigate(`/locations/${location.id}`);
 
   const bookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setBookmarkAnim(true);
-    setTimeout(() => setBookmarkAnim(false), 400);
     if (inPlan) {
       removeFromPlan(location.id);
       showToast(`${location.name} ${t("card", "removed_toast")}`, "🗑️", "info");
@@ -53,8 +51,9 @@ export function LocationCard({ location, variant = "default", className }: Locat
   /* ── Featured variant ──────────────────────────────────── */
   if (variant === "featured") {
     return (
-      <div
+      <motion.div
         onClick={go}
+        whileTap={{ scale: 0.97 }}
         className={cn(
           "relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
           "shadow-md hover:shadow-xl hover:shadow-black/30 transition-all duration-300 hover:-translate-y-1",
@@ -100,18 +99,28 @@ export function LocationCard({ location, variant = "default", className }: Locat
         </span>
 
         {/* Bookmark button */}
-        <button
+        <motion.button
           onClick={bookmark}
+          whileTap={{ scale: 0.85 }}
           className={cn(
-            "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all",
-            inPlan ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/50" : "bg-black/40 text-white hover:bg-indigo-500/80",
-            bookmarkAnim && "scale-125"
+            "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors",
+            inPlan ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/50" : "bg-black/40 text-white hover:bg-indigo-500/80"
           )}
-          style={{ transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), background 0.2s" }}
           aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
         >
-          {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-        </button>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={inPlan ? "in" : "out"}
+              initial={{ scale: 0.4, rotate: -45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.4, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className="flex"
+            >
+              {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
 
         {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -129,14 +138,15 @@ export function LocationCard({ location, variant = "default", className }: Locat
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   /* ── Default variant ───────────────────────────────────── */
   return (
-    <div
+    <motion.div
       onClick={go}
+      whileTap={{ scale: 0.98 }}
       className={cn(
         "rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
         "hover:border-indigo-500/40 hover:shadow-lg",
@@ -186,20 +196,30 @@ export function LocationCard({ location, variant = "default", className }: Locat
         </span>
 
         {/* Bookmark */}
-        <button
+        <motion.button
           onClick={bookmark}
+          whileTap={{ scale: 0.85 }}
           className={cn(
-            "absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-md",
+            "absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-md transition-colors",
             inPlan
               ? "bg-indigo-500 text-white shadow-indigo-500/50"
-              : "bg-black/50 text-white/80 hover:bg-indigo-500/90",
-            bookmarkAnim && "scale-125"
+              : "bg-black/50 text-white/80 hover:bg-indigo-500/90"
           )}
-          style={{ transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), background 0.2s" }}
           aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
         >
-          {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-        </button>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={inPlan ? "in" : "out"}
+              initial={{ scale: 0.4, rotate: -45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.4, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className="flex"
+            >
+              {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </div>
 
       {/* Body */}
@@ -267,6 +287,6 @@ export function LocationCard({ location, variant = "default", className }: Locat
           )}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

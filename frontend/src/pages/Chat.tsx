@@ -1,4 +1,5 @@
 ﻿import { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -178,9 +179,13 @@ export default function Chat() {
 
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        <AnimatePresence initial={false}>
         {messages.map((msg) => (
-          <div
+          <motion.div
             key={msg.id}
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}
             className={cn(
               "flex gap-2.5",
               msg.role === "user" ? "flex-row-reverse" : "flex-row"
@@ -222,11 +227,16 @@ export default function Chat() {
                 {formatTime(msg.timestamp)}
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
 
         {isLoading && (
-          <div className="flex gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex gap-2.5"
+          >
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
               <Bot className="w-3.5 h-3.5 text-white" />
             </div>
@@ -236,8 +246,9 @@ export default function Chat() {
                 <span className="text-xs text-[var(--muted-foreground)]">{t("chat", "typing")}</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         <div ref={messagesEndRef} />
       </div>

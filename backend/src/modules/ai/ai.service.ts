@@ -94,7 +94,7 @@ BOSHQA QOIDALAR:
 - Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 
   const response = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     max_tokens: 1800,
     messages: [
       { role: "system", content: system },
@@ -107,7 +107,7 @@ BOSHQA QOIDALAR:
 // ── 2. analyzeReview ───────────────────────────────────
 export async function analyzeReview(text: string, stars: number): Promise<AnalysisResult> {
   const response = await client.chat.completions.create({
-    model: "llama-3.1-8b-instant",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     max_tokens: 200,
     messages: [
       {
@@ -144,7 +144,7 @@ export async function generateTourPlan(tourData: TourData, locations: Location[]
     .join("\n");
 
   const response = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     max_tokens: 3000,
     messages: [
       {
@@ -191,7 +191,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     .join("\n");
 
   const response = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     max_tokens: 600,
     messages: [
       {

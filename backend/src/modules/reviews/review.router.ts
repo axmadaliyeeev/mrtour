@@ -37,7 +37,7 @@ reviewRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { locationId } = req.params;
-      const { page, limit } = req.query as z.infer<typeof listQuerySchema>;
+      const { page, limit } = req.query as unknown as z.infer<typeof listQuerySchema>;
 
       const result = await reviewService.getByLocation(locationId, page, limit);
 

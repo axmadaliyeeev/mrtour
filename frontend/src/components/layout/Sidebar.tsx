@@ -1,8 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Home, MapPin, Bot, LayoutGrid, User, Sun, Moon, ChevronRight, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
+
+const SPRING = { type: "spring" as const, stiffness: 420, damping: 34 };
 
 const NAV_TABS = [
   { route: "/home",      Icon: Home,       key: "home"      },
@@ -54,11 +57,14 @@ export function Sidebar() {
                   : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
               )}
             >
-              {/* Left active bar */}
-              <span className={cn(
-                "absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full bg-indigo-500 transition-all duration-300",
-                active ? "w-[3px] h-6 opacity-100" : "w-0 opacity-0"
-              )} />
+              {/* Left active bar — shared sliding indicator */}
+              {active && (
+                <motion.span
+                  layoutId="sidebar-indicator"
+                  transition={SPRING}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-indigo-500"
+                />
+              )}
 
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
@@ -105,7 +111,11 @@ export function Sidebar() {
                 )}
               >
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-indigo-500 rounded-r-full" />
+                  <motion.span
+                    layoutId="sidebar-indicator"
+                    transition={SPRING}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-indigo-500 rounded-r-full"
+                  />
                 )}
                 <div className={cn(
                   "w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md transition-all",
@@ -147,10 +157,13 @@ export function Sidebar() {
                     : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
                 )}
               >
-                <span className={cn(
-                  "absolute left-0 top-1/2 -translate-y-1/2 rounded-r-full bg-indigo-500 transition-all duration-300",
-                  active ? "w-[3px] h-6 opacity-100" : "w-0 opacity-0"
-                )} />
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-indicator"
+                    transition={SPRING}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-indigo-500"
+                  />
+                )}
                 <div className={cn(
                   "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
                   active

@@ -1,5 +1,6 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { AnimatePresence, motion } from "framer-motion";
 import { X, Eye, EyeOff, ChevronRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -180,9 +181,17 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
       </div>
       <p className="text-[11px] text-[var(--muted-foreground)] text-center mb-4">{STEPS[step - 1]}</p>
 
+      <AnimatePresence mode="wait" initial={false}>
       {/* Step 1 — Language */}
       {step === 1 && (
-        <div className="space-y-4">
+        <motion.div
+          key="step1"
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-4"
+        >
           <p className="text-sm text-center text-[var(--foreground)] font-medium">{t("auth", "lang_question")}</p>
           <div className="grid grid-cols-2 gap-2">
             {LANGUAGES.map((l) => (
@@ -199,12 +208,21 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors active:scale-[0.98]">
             {t("auth", "continue")} <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 2 — Form */}
       {step === 2 && (
-        <form onSubmit={onSubmit} noValidate className="space-y-3">
+        <motion.form
+          key="step2"
+          onSubmit={onSubmit}
+          noValidate
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-3"
+        >
           <div className="grid grid-cols-2 gap-3">
             <Field label={t("auth", "name")} value={name} onChange={setName}
               placeholder={t("auth", "name_placeholder")} autoComplete="given-name" error={errors.name} />
@@ -235,12 +253,18 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
               {loading ? t("auth", "loading_register") : t("auth", "register_btn")}
             </button>
           </div>
-        </form>
+        </motion.form>
       )}
 
       {/* Step 3 — Success */}
       {step === 3 && (
-        <div className="text-center py-4 space-y-4">
+        <motion.div
+          key="step3"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 320, damping: 26 }}
+          className="text-center py-4 space-y-4"
+        >
           <div className="text-6xl">🎉</div>
           <div>
             <h3 className="text-xl font-bold text-[var(--foreground)]">{t("auth", "success_title")}, {doneUser}!</h3>
@@ -259,8 +283,9 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
             className="w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-colors">
             {t("auth", "start")} 🚀
           </button>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -283,10 +308,16 @@ export function AuthModal() {
   return (
     <Dialog.Root open={authModalOpen} onOpenChange={(open) => !open && handleClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+        <Dialog.Overlay className={cn(
+          "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
+          "data-[state=open]:animate-[dialogOverlayIn_0.2s_ease-out]",
+          "data-[state=closed]:animate-[dialogOverlayOut_0.15s_ease-in]"
+        )} />
         <Dialog.Content className={cn(
-          "fixed z-50 w-full max-w-sm left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-          "rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-5 max-h-[90vh] overflow-y-auto"
+          "fixed z-50 w-full max-w-sm left-1/2 top-1/2",
+          "rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-5 max-h-[90vh] overflow-y-auto",
+          "data-[state=open]:animate-[dialogContentIn_0.25s_cubic-bezier(0.16,1,0.3,1)]",
+          "data-[state=closed]:animate-[dialogContentOut_0.15s_ease-in]"
         )}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">

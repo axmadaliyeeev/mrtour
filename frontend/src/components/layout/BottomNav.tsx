@@ -1,8 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Home, MapPin, Bot, LayoutGrid, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
 import { useAppStore } from "@/store";
+
+const SPRING = { type: "spring" as const, stiffness: 420, damping: 34 };
 
 export function BottomNav() {
   const navigate = useNavigate();
@@ -73,11 +76,14 @@ export function BottomNav() {
                 active ? "opacity-100" : "opacity-50 hover:opacity-80"
               )}
             >
-              {/* Active top line */}
-              <span className={cn(
-                "absolute top-0 h-0.5 rounded-b-full bg-indigo-500 transition-all duration-300",
-                active ? "w-6 opacity-100" : "w-0 opacity-0"
-              )} />
+              {/* Active top line — shared sliding indicator */}
+              {active && (
+                <motion.span
+                  layoutId="bottomnav-indicator"
+                  transition={SPRING}
+                  className="absolute top-0 w-6 h-0.5 rounded-b-full bg-indigo-500"
+                />
+              )}
 
               {/* Icon + badge */}
               <div className="relative flex items-center justify-center w-6 h-6">

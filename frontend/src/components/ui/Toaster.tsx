@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { X, CheckCircle, Info, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -13,9 +13,11 @@ export function Toaster() {
       aria-atomic="false"
       className="fixed top-16 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 items-center pointer-events-none w-full max-w-sm px-4"
     >
-      {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onDismiss={dismissToast} />
-      ))}
+      <AnimatePresence>
+        {toasts.map((toast) => (
+          <ToastItem key={toast.id} toast={toast} onDismiss={dismissToast} />
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
@@ -27,20 +29,6 @@ function ToastItem({
   toast: Toast;
   onDismiss: (id: string) => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.animate(
-      [
-        { opacity: "0", transform: "translateY(-10px) scale(0.94)" },
-        { opacity: "1", transform: "translateY(0) scale(1)" },
-      ],
-      { duration: 220, easing: "cubic-bezier(0.16,1,0.3,1)", fill: "forwards" }
-    );
-  }, []);
-
   const styles = {
     success: "border-indigo-500/25 shadow-indigo-500/8",
     info:    "border-blue-500/25 shadow-blue-500/8",
@@ -53,8 +41,12 @@ function ToastItem({
                              <CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" />;
 
   return (
-    <div
-      ref={ref}
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -16, scale: 0.92 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.92, transition: { duration: 0.15 } }}
+      transition={{ type: "spring", stiffness: 420, damping: 32 }}
       role="status"
       className={cn(
         "pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl border shadow-xl w-full",
@@ -77,6 +69,6 @@ function ToastItem({
       >
         <X className="w-3 h-3" />
       </button>
-    </div>
+    </motion.div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft, Bookmark, BookmarkCheck, MapPin, Clock, DollarSign,
   Calendar, Bus, ExternalLink, Tag, Star, Send, Sparkles, Loader2,
@@ -158,12 +159,22 @@ function SmartReview({
       </button>
 
       {/* AI insight text */}
-      {open && insight && (
-        <div className="px-4 pb-4 border-t border-indigo-500/15">
-          <p className="text-[11px] font-semibold text-indigo-400 mt-3 mb-1.5">{t("detail", "insight_title")}</p>
-          <p className="text-xs text-[var(--foreground)]/80 leading-relaxed whitespace-pre-wrap">{insight}</p>
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {open && insight && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 border-t border-indigo-500/15">
+              <p className="text-[11px] font-semibold text-indigo-400 mt-3 mb-1.5">{t("detail", "insight_title")}</p>
+              <p className="text-xs text-[var(--foreground)]/80 leading-relaxed whitespace-pre-wrap">{insight}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -396,7 +407,15 @@ export default function LocationDetail() {
         </div>
 
         {/* Review form */}
+        <AnimatePresence initial={false}>
         {reviewOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
           <div className="mb-4 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-3">
             {submitted ? (
               <div className="flex items-center justify-center gap-2 py-4">
@@ -445,7 +464,9 @@ export default function LocationDetail() {
               </>
             )}
           </div>
+          </motion.div>
         )}
+        </AnimatePresence>
 
         {/* Reviews list */}
         {allReviews.length === 0 ? (

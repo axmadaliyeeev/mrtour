@@ -7,10 +7,10 @@
     "backend"
   ],
   "scripts": {
-    "dev:frontend": "cd frontend && next dev",
-    "dev:backend": "cd backend && ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
     "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"cyan,green\" \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build:frontend": "cd frontend && next build",
+    "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && tsc",
     "build": "npm run build:frontend && npm run build:backend",
     "lint": "concurrently \"npm run lint --workspace=frontend\" \"npm run lint --workspace=backend\"",
@@ -18,5 +18,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "overrides": {
+    "@types/express": "^4.17.21"
   }
 }

@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
@@ -8,6 +9,30 @@ import { Toaster } from "@/components/ui/Toaster";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -6 },
+};
+
+function PageTransition({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 function ScrollToTop() {
   const [visible, setVisible] = useState(false);
@@ -49,7 +74,6 @@ function ScrollToTop() {
 export function MainLayout() {
   const { isDesktop } = useBreakpoint();
   const { checkAuth } = useAuth();
-  const { pathname } = useLocation();
   const checked = useRef(false);
 
   useEffect(() => {
@@ -64,8 +88,10 @@ export function MainLayout() {
         <Sidebar />
         <div className="ml-60 flex-1 flex flex-col min-h-screen overflow-hidden">
           <TopHeader />
-          <main key={pathname} className="scroll-main flex-1 overflow-y-auto animate-page-in">
-            <Outlet />
+          <main className="scroll-main flex-1 overflow-y-auto">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
           </main>
         </div>
         <Toaster />
@@ -78,11 +104,12 @@ export function MainLayout() {
     <div className="flex flex-col min-h-dvh bg-[var(--background)]">
       <TopHeader />
       <main
-        key={pathname}
-        className="scroll-main flex-1 overflow-y-auto animate-page-in"
+        className="scroll-main flex-1 overflow-y-auto"
         style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom, 0px))" }}
       >
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </main>
       <BottomNav />
       <Toaster />

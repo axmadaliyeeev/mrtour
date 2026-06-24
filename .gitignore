@@ -3,11 +3,6 @@ node_modules/
 .pnp
 .pnp.js
 
-# Next.js
-frontend/.next/
-frontend/out/
-frontend/.vercel
-
 # Build outputs
 backend/dist/
 frontend/dist/
@@ -51,7 +46,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
 
 # Testing
 coverage/
@@ -60,3 +54,4 @@ coverage/
 # Misc
 .cache/
 .turbo/
+.claude/worktrees/

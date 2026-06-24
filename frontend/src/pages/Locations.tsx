@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
@@ -172,8 +173,15 @@ export default function Locations() {
       </div>
 
       {/* Expanded filters */}
+      <AnimatePresence initial={false}>
       {showFilters && (
-        <div className="px-4 mb-4 space-y-3">
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="px-4 mb-4 overflow-hidden"
+        >
           <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-4">
             {/* City */}
             <div>
@@ -231,8 +239,9 @@ export default function Locations() {
               </button>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Results */}
       {results.length === 0 ? (
