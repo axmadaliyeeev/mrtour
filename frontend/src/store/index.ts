@@ -37,6 +37,8 @@ interface AppStore {
   authModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
+  searchOpen: boolean;
+  setSearchOpen: (open: boolean) => void;
 
   // Toasts
   toasts: Toast[];
@@ -86,7 +88,7 @@ export const useAppStore = create<AppStore>()(
       clearPlan: () => set({ plan: [] }),
 
       // ── Language ──────────────────────────────────────
-      lang: "uz",
+      lang: "en",
 
       setLang: (lang) =>
         set((state) => ({
@@ -104,6 +106,9 @@ export const useAppStore = create<AppStore>()(
       authModalOpen: false,
       openAuthModal: () => set({ authModalOpen: true }),
       closeAuthModal: () => set({ authModalOpen: false }),
+
+      searchOpen: false,
+      setSearchOpen: (open) => set({ searchOpen: open }),
 
       // ── Toasts ────────────────────────────────────────
       toasts: [],
@@ -138,7 +143,7 @@ export const useAppStore = create<AppStore>()(
         }),
     }),
     {
-      name: "mrtour-v2",
+      name: "karvon-v1",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
@@ -147,6 +152,15 @@ export const useAppStore = create<AppStore>()(
         lang: state.lang,
         userReviews: state.userReviews,
       }),
+      // Bumping this forces a one-time migration: browsers that already
+      // persisted "uz" from before the default changed to English get
+      // reset to "en" instead of being stuck on the old value forever.
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as { lang?: Lang };
+        if (version < 1) state.lang = "en";
+        return state;
+      },
     }
   )
 );

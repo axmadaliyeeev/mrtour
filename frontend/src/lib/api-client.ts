@@ -10,10 +10,34 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("mrtour-token");
+  const token = localStorage.getItem("karvon-token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+
+// Multiple requests can 401 at once (e.g. several components fetching on
+// mount). Without sharing one in-flight refresh, each would call
+// /auth/refresh independently — the backend rotates the refresh token on
+// every call, so the second response invalidates the first's new token
+// before it's even used, spuriously logging the user out.
+let refreshPromise: Promise<string | null> | null = null;
+
+function refreshAccessToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    refreshPromise = axios
+      .post<{ success: boolean; data: { accessToken: string } }>(
+        `${BASE_URL}/auth/refresh`,
+        {},
+        { withCredentials: true }
+      )
+      .then(({ data }) => data?.data?.accessToken ?? null)
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
 
 instance.interceptors.response.use(
   (res) => {
@@ -24,21 +48,13 @@ instance.interceptors.response.use(
     const orig = err.config as AxiosRequestConfig & { _retry?: boolean };
     if (err.response?.status === 401 && !orig._retry) {
       orig._retry = true;
-      try {
-        const { data } = await axios.post<{ success: boolean; data: { accessToken: string } }>(
-          `${BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
-        const newToken = data?.data?.accessToken;
-        if (newToken) {
-          localStorage.setItem("mrtour-token", newToken);
-          if (orig.headers) orig.headers.Authorization = `Bearer ${newToken}`;
-        }
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        localStorage.setItem("karvon-token", newToken);
+        if (orig.headers) orig.headers.Authorization = `Bearer ${newToken}`;
         return instance(orig);
-      } catch {
-        localStorage.removeItem("mrtour-token");
       }
+      localStorage.removeItem("karvon-token");
     }
     return Promise.reject(err);
   }

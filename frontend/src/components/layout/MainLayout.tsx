@@ -84,14 +84,20 @@ export function MainLayout() {
 
   if (isDesktop) {
     return (
-      <div className="flex min-h-screen bg-[var(--background)]">
+      // h-screen (not min-h-screen) gives every descendant a bounded height
+      // to size against — without it, flex-1+overflow-y-auto on <main>
+      // never gets a real height to overflow within, so it silently never
+      // scrolls (content just gets clipped by the ancestor's overflow-hidden).
+      <div className="flex h-screen app-bg overflow-hidden">
         <Sidebar />
-        <div className="ml-60 flex-1 flex flex-col min-h-screen overflow-hidden">
+        <div className="ml-60 flex-1 flex flex-col h-full overflow-hidden">
           <TopHeader />
           <main className="scroll-main flex-1 overflow-y-auto">
-            <PageTransition>
-              <Outlet />
-            </PageTransition>
+            <div className="mx-auto w-full max-w-6xl">
+              <PageTransition>
+                <Outlet />
+              </PageTransition>
+            </div>
           </main>
         </div>
         <Toaster />
@@ -101,7 +107,7 @@ export function MainLayout() {
   }
 
   return (
-    <div className="flex flex-col min-h-dvh bg-[var(--background)]">
+    <div className="flex flex-col h-dvh app-bg overflow-hidden">
       <TopHeader />
       <main
         className="scroll-main flex-1 overflow-y-auto"

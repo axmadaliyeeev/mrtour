@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Search, MapPin, Clock, Phone, CheckCircle, Star,
   Wifi, Car, Coffee, Dumbbell, Utensils, Hotel, Compass,
@@ -365,9 +366,8 @@ function CurrencyTab() {
   const baseRate = CURRENCY_RATES[fromCurrency] ?? 1;
   const uzsAmount = numericAmount * baseRate;
 
-  const FLAG: Record<string, string> = {
-    USD: "🇺🇸", EUR: "🇪🇺", RUB: "🇷🇺", GBP: "🇬🇧", CNY: "🇨🇳", KZT: "🇰🇿",
-  };
+  // No flag emojis — Windows without color-emoji font support renders
+  // regional-indicator flags as literal two-letter text pills, not a flag.
 
   return (
     <div className="space-y-4">
@@ -407,9 +407,9 @@ function CurrencyTab() {
             )}
           >
             {currencies.map(({ code }) => (
-              <option key={code} value={code}>{FLAG[code] ?? ""} {code}</option>
+              <option key={code} value={code}>{code}</option>
             ))}
-            <option value="UZS">🇺🇿 UZS</option>
+            <option value="UZS">UZS</option>
           </select>
         </div>
 
@@ -458,7 +458,14 @@ function CurrencyTab() {
                   : "bg-[var(--card)] border-[var(--border)] hover:border-indigo-500/20"
               )}
             >
-              <span className="text-xl shrink-0">{FLAG[code] ?? "💵"}</span>
+              <span className={cn(
+                "w-9 h-9 shrink-0 rounded-lg flex items-center justify-center text-[10px] font-extrabold tracking-tight",
+                fromCurrency === code
+                  ? "bg-indigo-500 text-white"
+                  : "bg-[var(--muted)] text-[var(--muted-foreground)] border border-[var(--border)]"
+              )}>
+                {code}
+              </span>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-[var(--foreground)]">{code}</p>
                 <p className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
@@ -559,11 +566,21 @@ export default function Services() {
 
       {/* Content */}
       <div className="px-4">
-        {activeTab === "restoranlar" && <RestaurantsTab search={search} />}
-        {activeTab === "hotellar"    && <HotelsTab    search={search} />}
-        {activeTab === "gidlar"      && <GuidesTab    search={search} />}
-        {activeTab === "transport"   && <TransportTab />}
-        {activeTab === "valyuta"     && <CurrencyTab />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {activeTab === "restoranlar" && <RestaurantsTab search={search} />}
+            {activeTab === "hotellar"    && <HotelsTab    search={search} />}
+            {activeTab === "gidlar"      && <GuidesTab    search={search} />}
+            {activeTab === "transport"   && <TransportTab />}
+            {activeTab === "valyuta"     && <CurrencyTab />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

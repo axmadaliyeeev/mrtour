@@ -354,7 +354,7 @@ const UZ: TranslationSchema = {
     subtitle: "Onlayn · Doimo tayyor",
     reset: "Yangi",
     welcome:
-      "Salom! Men AI Bek — MRTOUR ning sun'iy intellekt yordamchisiman. 🇺🇿\n\nO'zbekistondagi sayohatingiz bo'yicha har qanday savolga javob bera olaman:\n• Joylar va diqqatga sazovor ob'ektlar\n• Mehmonxona va restoran tavsiyalari\n• Transport va yo'l yo'riqlari\n• Valyuta kurslari\n• Madaniyat va urf-odatlar\n\nNima haqida bilmoqchisiz?",
+      "Salom! Men AI Bek — KARVON ning sun'iy intellekt yordamchisiman.\n\nO'zbekistondagi sayohatingiz bo'yicha har qanday savolga javob bera olaman:\n• Joylar va diqqatga sazovor ob'ektlar\n• Mehmonxona va restoran tavsiyalari\n• Transport va yo'l yo'riqlari\n• Valyuta kurslari\n• Madaniyat va urf-odatlar\n\nNima haqida bilmoqchisiz?",
     quick_samarqand: "Samarqand sayohati",
     quick_hotel: "Mehmonxona",
     quick_transport: "Transport",
@@ -611,7 +611,7 @@ const RU: TranslationSchema = {
     subtitle: "Онлайн · Всегда на связи",
     reset: "Новый чат",
     welcome:
-      "Здравствуйте! Я ИИ Бек — искусственный интеллект платформы MRTOUR. 🇺🇿\n\nЯ готов ответить на любые вопросы о путешествии по Узбекистану:\n• Достопримечательности и интересные места\n• Рекомендации отелей и ресторанов\n• Транспорт и маршруты\n• Курсы валют\n• Культура и традиции\n\nО чём вы хотели бы узнать?",
+      "Здравствуйте! Я ИИ Бек — искусственный интеллект платформы KARVON.\n\nЯ готов ответить на любые вопросы о путешествии по Узбекистану:\n• Достопримечательности и интересные места\n• Рекомендации отелей и ресторанов\n• Транспорт и маршруты\n• Курсы валют\n• Культура и традиции\n\nО чём вы хотели бы узнать?",
     quick_samarqand: "Поездка в Самарканд",
     quick_hotel: "Отели",
     quick_transport: "Транспорт",
@@ -868,7 +868,7 @@ const EN: TranslationSchema = {
     subtitle: "Online · Always Ready",
     reset: "New Chat",
     welcome:
-      "Hello! I'm AI Bek — the intelligent travel assistant of MRTOUR. 🇺🇿\n\nI can answer any question about travelling in Uzbekistan:\n• Sights and points of interest\n• Hotel and restaurant recommendations\n• Transport and directions\n• Currency exchange rates\n• Culture and local customs\n\nWhat would you like to know?",
+      "Hello! I'm AI Bek — the intelligent travel assistant of KARVON.\n\nI can answer any question about travelling in Uzbekistan:\n• Sights and points of interest\n• Hotel and restaurant recommendations\n• Transport and directions\n• Currency exchange rates\n• Culture and local customs\n\nWhat would you like to know?",
     quick_samarqand: "Trip to Samarkand",
     quick_hotel: "Hotels",
     quick_transport: "Transport",
@@ -1125,7 +1125,7 @@ const ZH: TranslationSchema = {
     subtitle: "在线 · 随时待命",
     reset: "新对话",
     welcome:
-      "您好！我是 AI Bek — MRTOUR 的智能旅行助手。🇺🇿\n\n关于乌兹别克斯坦的旅行，我可以解答您的任何问题：\n• 景点与名胜古迹\n• 酒店与餐厅推荐\n• 交通与路线指引\n• 汇率信息\n• 文化与风俗习惯\n\n请问您想了解什么？",
+      "您好！我是 AI Bek — KARVON 的智能旅行助手。\n\n关于乌兹别克斯坦的旅行，我可以解答您的任何问题：\n• 景点与名胜古迹\n• 酒店与餐厅推荐\n• 交通与路线指引\n• 汇率信息\n• 文化与风俗习惯\n\n请问您想了解什么？",
     quick_samarqand: "撒马尔罕之旅",
     quick_hotel: "酒店",
     quick_transport: "交通",
@@ -1382,7 +1382,7 @@ const DE: TranslationSchema = {
     subtitle: "Online · Immer bereit",
     reset: "Neuer Chat",
     welcome:
-      "Hallo! Ich bin AI Bek — der intelligente Reiseassistent von MRTOUR. 🇺🇿\n\nIch beantworte Ihnen gerne alle Fragen rund um Ihre Reise nach Usbekistan:\n• Sehenswürdigkeiten und interessante Orte\n• Hotel- und Restaurantempfehlungen\n• Transport und Wegbeschreibungen\n• Wechselkurse\n• Kultur und Traditionen\n\nWas möchten Sie wissen?",
+      "Hallo! Ich bin AI Bek — der intelligente Reiseassistent von KARVON.\n\nIch beantworte Ihnen gerne alle Fragen rund um Ihre Reise nach Usbekistan:\n• Sehenswürdigkeiten und interessante Orte\n• Hotel- und Restaurantempfehlungen\n• Transport und Wegbeschreibungen\n• Wechselkurse\n• Kultur und Traditionen\n\nWas möchten Sie wissen?",
     quick_samarqand: "Reise nach Samarkand",
     quick_hotel: "Hotels",
     quick_transport: "Transport",
@@ -1641,7 +1641,7 @@ const FR: TranslationSchema = {
     subtitle: "En ligne · Toujours disponible",
     reset: "Nouvelle conversation",
     welcome:
-      "Bonjour ! Je suis AI Bek — l'assistant intelligent de MRTOUR. 🇺🇿\n\nJe suis à votre disposition pour répondre à toutes vos questions sur l'Ouzbékistan :\n• Sites touristiques et points d'intérêt\n• Recommandations d'hôtels et de restaurants\n• Transports et itinéraires\n• Taux de change\n• Culture et traditions locales\n\nQue souhaitez-vous savoir ?",
+      "Bonjour ! Je suis AI Bek — l'assistant intelligent de KARVON.\n\nJe suis à votre disposition pour répondre à toutes vos questions sur l'Ouzbékistan :\n• Sites touristiques et points d'intérêt\n• Recommandations d'hôtels et de restaurants\n• Transports et itinéraires\n• Taux de change\n• Culture et traditions locales\n\nQue souhaitez-vous savoir ?",
     quick_samarqand: "Voyage à Samarcande",
     quick_hotel: "Hôtels",
     quick_transport: "Transports",

@@ -8,6 +8,7 @@ import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
 import { useTranslation } from "@/i18n";
 import { useInView } from "@/hooks/useInView";
+import heroImg from "@/data/registan.jpg";
 import type { Location } from "@/types";
 
 // ── Reusable animated section wrapper ─────────────────
@@ -47,73 +48,84 @@ export default function Home() {
     { key: "arxeologiya", label: t("home", "cat_arxeologiya"), emoji: "⛏️" },
   ];
 
+  // Brand-cohesive stat tiles — every tile stays within the emerald/gold
+  // palette (varied by shade+opacity) instead of unrelated rainbow pastels.
   const STATS = [
-    { icon: Compass,    value: "200+", label: t("home", "stats_places"),    color: "text-indigo-500",  bg: "bg-indigo-500/10 border-indigo-500/20",  glow: "shadow-indigo-500/20" },
-    { icon: Star,       value: "4.8",  label: t("home", "stats_rating"),    color: "text-amber-500",  bg: "bg-amber-500/10 border-amber-500/20",    glow: "shadow-amber-500/20" },
-    { icon: Users,      value: "50K+", label: t("home", "stats_travelers"), color: "text-purple-500", bg: "bg-purple-500/10 border-purple-500/20",  glow: "shadow-purple-500/20" },
-    { icon: Globe,      value: "6",    label: t("home", "stats_langs"),     color: "text-blue-500",   bg: "bg-blue-500/10 border-blue-500/20",      glow: "shadow-blue-500/20" },
+    { icon: Compass, value: "200+", label: t("home", "stats_places"),    color: "text-indigo-500", bg: "bg-indigo-500/10 border-indigo-500/25", glow: "shadow-indigo-500/20" },
+    { icon: Star,    value: "4.8",  label: t("home", "stats_rating"),    color: "text-gold-500",   bg: "bg-gold-500/10 border-gold-500/25",     glow: "shadow-gold-500/20" },
+    { icon: Users,   value: "50K+", label: t("home", "stats_travelers"), color: "text-indigo-600", bg: "bg-indigo-600/10 border-indigo-600/25", glow: "shadow-indigo-600/20" },
+    { icon: Globe,   value: "6",    label: t("home", "stats_langs"),     color: "text-gold-600",   bg: "bg-gold-600/10 border-gold-600/25",     glow: "shadow-gold-600/20" },
   ];
 
   return (
     <div className="pb-8">
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden px-4 pt-8 pb-10">
-        {/* Animated gradient orbs */}
-        <div className="absolute -top-32 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-breathe" />
-        <div className="absolute top-8 left-1/2 w-64 h-64 bg-purple-500/6 rounded-full blur-3xl pointer-events-none"
-          style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-0 -left-16 w-80 h-60 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+      <section className="px-4 pt-4 pb-2">
+        <div className="grain-overlay relative overflow-hidden rounded-3xl border border-[var(--border)] shadow-2xl shadow-black/10">
+          {/* Background photo, kept crisp — a single soft scrim (not several
+              stacked gradients/blends) keeps the headline legible without
+              muddying the photo underneath it. */}
+          <img
+            src={heroImg}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover object-[center_30%] opacity-90 dark:opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/90 to-[var(--background)]/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)]/60 via-transparent to-transparent" />
+          <div className="aurora-overlay absolute inset-0 opacity-40 pointer-events-none" />
 
-        <div className="relative max-w-3xl">
-          {/* Badge */}
-          <div className="animate-fade-up inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 dark:text-indigo-400 text-xs font-semibold mb-4">
-            🇺🇿 {t("home", "badge")}
-          </div>
-
-          {/* Headline */}
-          <h1 className="animate-fade-up delay-75 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[var(--foreground)] leading-none mb-4 tracking-tight">
-            {t("home", "hero_title")}
-          </h1>
-
-          {/* Subtitle */}
-          <p className="animate-fade-up delay-150 text-[var(--muted-foreground)] text-sm sm:text-base leading-relaxed mb-7 max-w-lg">
-            {t("home", "hero_subtitle")}
-          </p>
-
-          {/* CTAs */}
-          <div className="animate-fade-up delay-200 flex flex-wrap gap-3">
-            <button
-              onClick={() => navigate("/locations")}
-              className="group flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-all active:scale-[0.97] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
-            >
-              {t("home", "explore_btn")}
-              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-            <button
-              onClick={() => navigate("/chat")}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--foreground)] text-sm font-semibold transition-all active:scale-[0.97] shadow-sm"
-            >
-              <Bot className="w-4 h-4 text-indigo-400" />
-              {t("home", "ai_btn")}
-            </button>
-          </div>
-
-          {/* Trust indicators */}
-          <div className="animate-fade-up delay-300 flex items-center gap-4 mt-6">
-            <div className="flex -space-x-1.5">
-              {["#6366f1","#8b5cf6","#ec4899","#f59e0b","#10b981"].map((c, i) => (
-                <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--background)]" style={{ backgroundColor: c }} />
-              ))}
+          <div className="relative px-5 sm:px-8 pt-10 pb-10 max-w-3xl">
+            {/* Badge */}
+            <div className="glint animate-fade-up inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-500 dark:text-indigo-400 text-xs font-semibold mb-4 backdrop-blur-sm">
+              <Compass className="w-3.5 h-3.5" /> {t("home", "badge")}
             </div>
-            <span className="text-xs text-[var(--muted-foreground)]">
-              <span className="font-semibold text-[var(--foreground)]">50,000+</span>{" "}
-              {t("home", "stats_travelers")}
-            </span>
-            <div className="flex items-center gap-1">
-              {[1,2,3,4,5].map((i) => (
-                <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />
-              ))}
-              <span className="text-xs font-semibold text-[var(--foreground)] ml-0.5">4.8</span>
+
+            {/* Headline */}
+            <h1 className="animate-fade-up delay-75 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gradient leading-[1.05] pb-1 mb-4 tracking-tight">
+              {t("home", "hero_title")}
+            </h1>
+
+            {/* Subtitle */}
+            <p className="animate-fade-up delay-150 text-[var(--muted-foreground)] text-sm sm:text-base leading-relaxed mb-7 max-w-lg">
+              {t("home", "hero_subtitle")}
+            </p>
+
+            {/* CTAs */}
+            <div className="animate-fade-up delay-200 flex flex-wrap gap-3">
+              <button
+                onClick={() => navigate("/locations")}
+                className="btn-shine btn-aura ripple group flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-all active:scale-[0.97] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
+              >
+                {t("home", "explore_btn")}
+                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </button>
+              <button
+                onClick={() => navigate("/chat")}
+                className="ripple flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--card)]/90 backdrop-blur-sm border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--foreground)] text-sm font-semibold transition-all active:scale-[0.97] shadow-sm"
+              >
+                <Bot className="w-4 h-4 text-indigo-400" />
+                {t("home", "ai_btn")}
+              </button>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="animate-fade-up delay-300 flex items-center gap-4 mt-6">
+              <div className="flex -space-x-1.5">
+                {["#0aab98","#25c8b3","#d4901f","#f3da8f","#07897b"].map((c, i) => (
+                  <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--background)]" style={{ backgroundColor: c }} />
+                ))}
+              </div>
+              <span className="text-xs text-[var(--muted-foreground)]">
+                <span className="font-semibold text-[var(--foreground)]">50,000+</span>{" "}
+                {t("home", "stats_travelers")}
+              </span>
+              <div className="flex items-center gap-1">
+                {[1,2,3,4,5].map((i) => (
+                  <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />
+                ))}
+                <span className="text-xs font-semibold text-[var(--foreground)] ml-0.5">4.8</span>
+              </div>
             </div>
           </div>
         </div>
@@ -122,17 +134,20 @@ export default function Home() {
       {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-4 mb-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {STATS.map(({ icon: Icon, value, label, color, bg, glow }, i) => (
+          {STATS.map(({ icon: Icon, value, label, color, glow }, i) => (
             <div
               key={label}
               className={cn(
-                "animate-fade-up flex flex-col items-center gap-2.5 p-4 rounded-2xl border",
-                "hover:shadow-lg transition-all duration-300 cursor-default hover:-translate-y-0.5",
-                bg, `hover:shadow-lg ${glow}`
+                "tilt-hover animate-fade-up flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-[var(--border)]",
+                "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-lg transition-all duration-300 cursor-default",
+                `hover:${glow}`
               )}
               style={{ animationDelay: `${i * 80 + 100}ms` }}
             >
-              <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", bg, "border shadow-sm")}>
+              <div className={cn(
+                "w-11 h-11 rounded-2xl flex items-center justify-center shadow-md",
+                "bg-gradient-to-br from-[var(--muted)] to-[var(--card)] border border-[var(--border)]"
+              )}>
                 <Icon className={cn("w-5 h-5", color)} />
               </div>
               <span className="text-xl font-extrabold text-[var(--foreground)] tabular-nums">
@@ -181,7 +196,7 @@ export default function Home() {
       <Section className="mb-8" delay={0}>
         <div className="px-4 flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-[var(--foreground)]">
+            <h2 className="reveal-wipe text-base font-bold text-[var(--foreground)]">
               {t("home", "featured_title")}
             </h2>
             <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 text-[10px] font-bold border border-indigo-500/20">
@@ -212,7 +227,7 @@ export default function Home() {
       {/* ── All locations grid ────────────────────────────────── */}
       <Section className="px-4 mb-8" delay={0}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-[var(--foreground)]">
+          <h2 className="reveal-wipe text-base font-bold text-[var(--foreground)]">
             {t("home", "all_title")}
           </h2>
           <div className="flex items-center gap-2">
@@ -222,7 +237,7 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {all.map((loc, i) => (
             <div
               key={loc.id}
@@ -239,7 +254,7 @@ export default function Home() {
       <Section className="px-4" delay={0}>
         <button
           onClick={() => navigate("/chat")}
-          className="group w-full relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 p-6 text-left transition-all hover:shadow-2xl hover:shadow-indigo-500/30 active:scale-[0.99] hover:-translate-y-0.5"
+          className="btn-shine ripple group w-full relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 p-6 text-left transition-all hover:shadow-2xl hover:shadow-indigo-500/30 active:scale-[0.99] hover:-translate-y-0.5"
         >
           {/* Decorative orbs */}
           <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full pointer-events-none" />

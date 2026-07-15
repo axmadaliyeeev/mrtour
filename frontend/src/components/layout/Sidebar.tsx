@@ -32,8 +32,8 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-xl font-extrabold tracking-tight leading-none">
-            <span className="text-[var(--foreground)]">MR</span>
-            <span className="text-indigo-500">TOUR</span>
+            <span className="text-[var(--foreground)]">KAR</span>
+            <span className="text-indigo-500">VON</span>
           </span>
           <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5">
             Travel Guide
@@ -118,7 +118,7 @@ export function Sidebar() {
                   />
                 )}
                 <div className={cn(
-                  "w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md transition-all",
+                  "border-glow-spin w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md transition-all",
                   active ? "shadow-indigo-500/50 scale-105" : "shadow-indigo-500/25 hover:scale-105"
                 )}>
                   <Bot className="w-4 h-4 text-white" />
@@ -134,7 +134,7 @@ export function Sidebar() {
                     Sayohat yordamchisi
                   </p>
                 </div>
-                <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-500 font-bold border border-indigo-500/20">
+                <span className="glint shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-gold-500/15 text-shimmer-gold font-bold border border-gold-500/30">
                   AI
                 </span>
               </button>
@@ -261,6 +261,11 @@ export function Sidebar() {
             </div>
           )}
         </div>
+
+        {/* Credit */}
+        <p className="text-center text-[9px] text-[var(--muted-foreground)]/60 pb-2 tracking-wide">
+          mrforce.uz tomonidan ishlab chiqildi
+        </p>
       </div>
     </aside>
   );

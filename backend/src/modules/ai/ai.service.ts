@@ -22,11 +22,11 @@ function getText(response: OpenAI.Chat.Completions.ChatCompletion): string {
 export async function chat(messages: ChatMessage[], ctx: UserContext = {}): Promise<string> {
   const hasPlan = ctx.plan && ctx.plan.trim().length > 0;
 
-  const system = `Sen MrTour.uz AI sayohat yordamchisi Bek san. O'zbekiston turizmi bo'yicha tajribali professional maslahatchi.
+  const system = `Sen Karvon.uz AI sayohat yordamchisi Bek san. O'zbekiston turizmi bo'yicha tajribali professional maslahatchi.
 Foydalanuvchi: ${ctx.name ?? "Mehmon"}${ctx.country ? `, ${ctx.country}` : ""}.
 ${hasPlan ? `Foydalanuvchi saqlagan joylar: ${ctx.plan}.` : ""}
 
-Quyida MrTour.uz platformasining TO'LIQ MA'LUMOTLAR BAZASI berilgan.
+Quyida Karvon.uz platformasining TO'LIQ MA'LUMOTLAR BAZASI berilgan.
 Bu ma'lumotlar haqiqiy va aniq — foydalanuvchi narx, vaqt, transport haqida so'rasa,
 shu ma'lumotlardan foydalangin. O'z bilimingdan emas, ma'lumotlar bazasidan javob ber.
 
@@ -149,7 +149,7 @@ export async function generateTourPlan(tourData: TourData, locations: Location[]
     messages: [
       {
         role: "system",
-        content: `Sen MrTour.uz professional tur rejasi generatorisin. Quyidagi ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlat:\n${KNOWLEDGE_BASE}`,
+        content: `Sen Karvon.uz professional tur rejasi generatorisin. Quyidagi ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlat:\n${KNOWLEDGE_BASE}`,
       },
       {
         role: "user",

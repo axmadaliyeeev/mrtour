@@ -17,16 +17,47 @@ import {
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
+import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { Stars } from "@/components/ui/stars";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
+import type { Location } from "@/types";
 
+/* Trip totals computed from the saved plan */
+function PlanSummary({ plan, freeLabel }: { plan: Location[]; freeLabel: string }) {
+  const cities = new Set(plan.map((l) => l.city)).size;
+  const total = plan.reduce((sum, l) => sum + (l.priceUSD ?? 0), 0);
+  const items = [
+    { emoji: "📍", value: plan.length },
+    { emoji: "🏙️", value: cities },
+    { emoji: "💵", value: total === 0 ? freeLabel : `~$${total}` },
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-2 mb-3">
+      {items.map((it) => (
+        <div
+          key={it.emoji}
+          className="flex flex-col items-center gap-0.5 py-2.5 rounded-xl bg-indigo-500/8 border border-indigo-500/20"
+        >
+          <span className="text-sm">{it.emoji}</span>
+          <span className="text-sm font-extrabold text-[var(--foreground)] tabular-nums">
+            {it.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Flag emojis are dropped on purpose — Windows without color-emoji font
+// support renders them as literal two-letter text pills ("UZ", "RU"...)
+// instead of a flag, which reads as a broken/unfinished UI.
 const LANGUAGES: { code: Lang; label: string }[] = [
-  { code: "uz", label: "O'zbek"   },
-  { code: "ru", label: "Русский"  },
-  { code: "en", label: "English"  },
-  { code: "zh", label: "中文"     },
-  { code: "de", label: "Deutsch"  },
+  { code: "uz", label: "O'zbek" },
+  { code: "ru", label: "Русский" },
+  { code: "en", label: "English" },
+  { code: "zh", label: "中文" },
+  { code: "de", label: "Deutsch" },
   { code: "fr", label: "Français" },
 ];
 
@@ -55,7 +86,11 @@ export default function Profile() {
   } = useAppStore();
 
   function handleLogout() {
-    localStorage.removeItem("mrtour-token");
+    // Best-effort: also terminate the session server-side (clears the
+    // httpOnly refresh cookie + DB refreshToken) so a stray 401 elsewhere
+    // can't silently mint a fresh access token after "logging out".
+    apiClient.delete("/auth/logout").catch(() => {});
+    localStorage.removeItem("karvon-token");
     logout();
   }
 
@@ -80,7 +115,7 @@ export default function Profile() {
   /* ── Guest view ───────────────────────────────────────────── */
   if (!isLoggedIn || !user) {
     return (
-      <div className="pb-8 px-4">
+      <div className="pb-8 px-4 w-full max-w-2xl mx-auto">
         {/* Header */}
         <div className="pt-4 pb-6">
           <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
@@ -92,9 +127,11 @@ export default function Profile() {
         </div>
 
         {/* Guest card */}
-        <div className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-6 text-center">
-          <div className="w-20 h-20 rounded-full bg-[var(--muted)] border-2 border-[var(--border)] flex items-center justify-center">
-            <UserIcon className="w-9 h-9 text-[var(--muted-foreground)]" />
+        <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-6 text-center shadow-[var(--shadow-card)]">
+          <div className="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
+          <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/8 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/15 border-2 border-indigo-500/25 flex items-center justify-center animate-pop-in">
+            <UserIcon className="w-9 h-9 text-indigo-400" />
           </div>
           <div>
             <h2 className="text-base font-bold text-[var(--foreground)] mb-1">
@@ -107,7 +144,7 @@ export default function Profile() {
           <div className="flex gap-2 w-full">
             <button
               onClick={openAuthModal}
-              className="flex-1 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-colors"
+              className="btn-shine ripple flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-500/25 transition-all active:scale-[0.98]"
             >
               {t("profile", "login_btn")}
             </button>
@@ -138,6 +175,7 @@ export default function Profile() {
               </button>
             </div>
 
+            <PlanSummary plan={plan} freeLabel={t("detail", "free")} />
             <div className="space-y-2">
               {plan.map((loc) => (
                 <div
@@ -164,7 +202,7 @@ export default function Profile() {
                     <Stars rating={loc.rating} size="sm" showNumber />
                   </div>
                   <button
-                    onClick={() => removeFromPlan(loc.id)}
+                    onClick={() => { removeFromPlan(loc.id); syncRemoveFromPlan(loc.id); }}
                     className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all"
                     aria-label={t("detail", "remove_plan")}
                   >
@@ -219,12 +257,13 @@ export default function Profile() {
           <p className="text-sm font-bold text-[var(--foreground)] mb-3">
             {t("profile", "benefits_title")}
           </p>
-          {GUEST_BENEFITS.map((b) => (
+          {GUEST_BENEFITS.map((b, i) => (
             <div
               key={b.title}
-              className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]"
+              className="animate-fade-up flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/35 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all"
+              style={{ animationDelay: `${i * 70}ms` }}
             >
-              <span className="text-2xl">{b.icon}</span>
+              <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl">{b.icon}</span>
               <div>
                 <p className="text-sm font-semibold text-[var(--foreground)]">{b.title}</p>
                 <p className="text-xs text-[var(--muted-foreground)]">{b.desc}</p>
@@ -262,23 +301,28 @@ export default function Profile() {
             </button>
           </div>
         </div>
+
+        <p className="text-center text-[10px] text-[var(--muted-foreground)]/60 mt-6">
+          mrforce.uz tomonidan ishlab chiqildi
+        </p>
       </div>
     );
   }
 
   /* ── Authenticated view ───────────────────────────────────── */
   return (
-    <div className="pb-8">
+    <div className="pb-8 w-full max-w-2xl mx-auto">
       {/* Avatar + name header */}
       <div className="relative overflow-hidden px-4 pt-5 pb-6">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/12 via-transparent to-purple-500/8 pointer-events-none" />
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
         <div className="relative flex items-center gap-4">
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg">
+          <div className="relative animate-pop-in">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-500/25 ring-offset-2 ring-offset-[var(--background)]">
               {user.name.charAt(0).toUpperCase()}
             </div>
             {user.isPremium && (
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-400 border-2 border-[var(--background)] flex items-center justify-center">
+              <div className="glint absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gold-500 border-2 border-[var(--background)] flex items-center justify-center">
                 <Star className="w-3 h-3 text-white fill-white" />
               </div>
             )}
@@ -295,8 +339,8 @@ export default function Profile() {
                 </span>
               )}
               {user.isPremium && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-400 border border-amber-400/30 font-semibold flex items-center gap-1">
-                  <Shield className="w-2.5 h-2.5" /> Premium
+                <span className="border-glow-spin text-[10px] px-2 py-0.5 rounded-full bg-gold-500/15 border border-gold-500/30 font-semibold flex items-center gap-1">
+                  <Shield className="w-2.5 h-2.5 text-gold-500" /> <span className="text-shimmer-gold">Premium</span>
                 </span>
               )}
             </div>
@@ -340,6 +384,8 @@ export default function Profile() {
             </button>
           </div>
         ) : (
+          <>
+          <PlanSummary plan={plan} freeLabel={t("detail", "free")} />
           <div className="space-y-2">
             {plan.map((loc) => (
               <div
@@ -368,7 +414,7 @@ export default function Profile() {
                   <Stars rating={loc.rating} size="sm" showNumber />
                 </div>
                 <button
-                  onClick={() => removeFromPlan(loc.id)}
+                  onClick={() => { removeFromPlan(loc.id); syncRemoveFromPlan(loc.id); }}
                   className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
                   aria-label={t("detail", "remove_plan")}
                 >
@@ -386,6 +432,7 @@ export default function Profile() {
               {t("profile", "plan_ai_btn")}
             </button>
           </div>
+          </>
         )}
       </section>
 
@@ -480,6 +527,10 @@ export default function Profile() {
           {t("profile", "logout")}
         </button>
       </div>
+
+      <p className="text-center text-[10px] text-[var(--muted-foreground)]/60 mt-6">
+        mrforce.uz tomonidan ishlab chiqildi
+      </p>
     </div>
   );
 }

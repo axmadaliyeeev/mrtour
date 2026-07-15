@@ -68,7 +68,9 @@ export default function Chat() {
         .filter((m) => m.id !== "welcome")
         .map((m) => ({ role: m.role, content: m.content }));
 
-      const apiMessages = [...history, { role: "user" as const, content: text.trim() }];
+      // Backend caps chat history at 10 messages (ai.router.ts chatSchema) —
+      // keep only the most recent turns so long conversations don't 422.
+      const apiMessages = [...history, { role: "user" as const, content: text.trim() }].slice(-10);
 
       const res = await apiClient.post<{ reply: string }>("/ai/chat", {
         messages: apiMessages,
@@ -107,7 +109,9 @@ export default function Chat() {
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Skip while an IME composition is active (e.g. Chinese/Japanese input) —
+    // otherwise Enter-to-confirm-candidate would send the message mid-composition.
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       sendMessage(input);
     }
@@ -129,8 +133,12 @@ export default function Chat() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
 
+  const LOCALE_MAP: Record<string, string> = {
+    uz: "uz-UZ", ru: "ru-RU", en: "en-US", zh: "zh-CN", de: "de-DE", fr: "fr-FR",
+  };
+
   function formatTime(date: Date) {
-    return date.toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString(LOCALE_MAP[lang] ?? "uz-UZ", { hour: "2-digit", minute: "2-digit" });
   }
 
   const showPlanBanner = plan.length > 0 && !planBannerDismissed && messages.length <= 1;
@@ -138,7 +146,7 @@ export default function Chat() {
 
   return (
     <div
-      className="flex flex-col overflow-hidden"
+      className="flex flex-col overflow-hidden w-full max-w-3xl mx-auto"
       style={{
         height: isDesktop
           ? "calc(100dvh - 3.5rem)"
@@ -148,7 +156,7 @@ export default function Chat() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)] shrink-0">
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
+          <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
             <Bot className="w-4 h-4" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[var(--background)]" />
           </div>
@@ -217,8 +225,8 @@ export default function Chat() {
                 className={cn(
                   "px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                   msg.role === "assistant"
-                    ? "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm"
-                    : "bg-indigo-500 text-white rounded-tr-sm shadow-md shadow-indigo-500/20"
+                    ? "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
+                    : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-tr-sm shadow-md shadow-indigo-500/25"
                 )}
               >
                 {msg.content}
@@ -229,6 +237,30 @@ export default function Chat() {
             </div>
           </motion.div>
         ))}
+
+        {/* Suggestion cards fill the empty space on a fresh chat */}
+        {showQuickActions && !isLoading && (
+          <div className="max-w-lg pt-4 animate-fade-up delay-200">
+            <p className="text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
+              <MessageCircle className="w-3 h-3 text-indigo-400" />
+              {t("chat", "quick_label")}
+            </p>
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
+              {QUICK_ACTIONS.map((action, i) => (
+                <button
+                  key={action.label}
+                  onClick={() => sendMessage(action.text)}
+                  className="animate-fade-up group flex items-center gap-2.5 px-3.5 py-3 rounded-xl bg-[var(--card)] border border-[var(--border)] text-left text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/45 hover:bg-indigo-500/5 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all active:scale-[0.97]"
+                  style={{ animationDelay: `${250 + i * 60}ms` }}
+                >
+                  <span className="text-base">{action.label.slice(0, 2)}</span>
+                  <span className="flex-1">{action.label.slice(2).trim()}</span>
+                  <Send className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isLoading && (
           <motion.div
@@ -253,8 +285,8 @@ export default function Chat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Plan banner + Quick actions */}
-      {showQuickActions && (
+      {/* Plan banner */}
+      {showPlanBanner && (
         <div className="px-4 pb-3 shrink-0 space-y-3">
           {/* Plan-aware tour creation banner */}
           {showPlanBanner && (
@@ -302,39 +334,19 @@ export default function Chat() {
             </div>
           )}
 
-          {/* Quick actions */}
-          <div>
-            <p className="text-[11px] text-[var(--muted-foreground)] mb-2 flex items-center gap-1">
-              <MessageCircle className="w-3 h-3" />
-              {t("chat", "quick_label")}
-            </p>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {plan.length > 0 && (
-                <button
-                  onClick={sendPlanTourRequest}
-                  className="shrink-0 px-3 py-2 rounded-xl bg-indigo-500/15 border border-indigo-500/40 text-xs text-indigo-400 font-semibold hover:bg-indigo-500/20 transition-all whitespace-nowrap flex items-center gap-1.5"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {t("chat", "plan_quick")}: {plan.length} {t("chat", "places")}
-                </button>
-              )}
-              {QUICK_ACTIONS.map((action) => (
-                <button
-                  key={action.label}
-                  onClick={() => sendMessage(action.text)}
-                  className="shrink-0 px-3 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-xs text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all whitespace-nowrap"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
       {/* Input area */}
       <div className="px-4 pb-4 pt-2 border-t border-[var(--border)] bg-[var(--background)] shrink-0">
-        <div className="flex items-end gap-2">
+        <div
+          className={cn(
+            "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--card)] border transition-all",
+            input.trim()
+              ? "border-indigo-500/50 shadow-md shadow-indigo-500/10"
+              : "border-[var(--border)] shadow-[var(--shadow-card)]"
+          )}
+        >
           <textarea
             ref={inputRef}
             value={input}
@@ -343,13 +355,11 @@ export default function Chat() {
             placeholder={t("chat", "input_placeholder")}
             rows={1}
             className={cn(
-              "flex-1 px-4 py-3 rounded-xl resize-none",
-              "bg-[var(--muted)] border border-[var(--border)]",
+              "flex-1 px-3 py-2.5 rounded-xl resize-none bg-transparent",
               "text-[var(--foreground)] text-sm placeholder:text-[var(--muted-foreground)]",
-              "outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all",
-              "max-h-32 overflow-y-auto"
+              "outline-none max-h-32 overflow-y-auto"
             )}
-            style={{ height: "auto", minHeight: "44px" }}
+            style={{ height: "auto", minHeight: "40px" }}
             onInput={(e) => {
               const el = e.currentTarget;
               el.style.height = "auto";
@@ -361,10 +371,10 @@ export default function Chat() {
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             className={cn(
-              "flex items-center justify-center w-11 h-11 rounded-xl transition-all active:scale-95 shrink-0",
+              "ripple flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-95 shrink-0",
               input.trim() && !isLoading
-                ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md shadow-indigo-500/25"
-                : "bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] cursor-not-allowed"
+                ? "btn-aura bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-md shadow-indigo-500/30"
+                : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
             )}
             aria-label={t("chat", "input_placeholder")}
           >
@@ -375,7 +385,7 @@ export default function Chat() {
             )}
           </button>
         </div>
-        <p className="text-[10px] text-[var(--muted-foreground)]/60 text-center mt-2">
+        <p className="hidden sm:block text-[10px] text-[var(--muted-foreground)]/60 text-center mt-2">
           {t("chat", "hint")}
         </p>
       </div>

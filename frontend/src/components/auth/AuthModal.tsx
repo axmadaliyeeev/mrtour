@@ -5,6 +5,7 @@ import { X, Eye, EyeOff, ChevronRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
+import { mergePlanOnLogin } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { User } from "@/types";
@@ -84,11 +85,12 @@ function LoginTab({ onClose }: { onClose: () => void }) {
       const res = await apiClient.post<{ user: User; accessToken: string }>(
         "/auth/login", { email: email.trim().toLowerCase(), password }
       );
-      localStorage.setItem("mrtour-token", res.accessToken);
+      localStorage.setItem("karvon-token", res.accessToken);
       login(res.user);
+      mergePlanOnLogin();
       onClose();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setApiError(msg ?? t("auth", "err_login"));
     } finally {
       setLoading(false);
@@ -156,12 +158,13 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
         "/auth/register",
         { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang }
       );
-      localStorage.setItem("mrtour-token", res.accessToken);
+      localStorage.setItem("karvon-token", res.accessToken);
       setDoneUser(res.user.name);
       login(res.user);
+      mergePlanOnLogin();
       setStep(3);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setApiError(msg ?? t("auth", "err_register"));
     } finally {
       setLoading(false);
@@ -307,49 +310,62 @@ export function AuthModal() {
 
   return (
     <Dialog.Root open={authModalOpen} onOpenChange={(open) => !open && handleClose()}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={cn(
-          "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
-          "data-[state=open]:animate-[dialogOverlayIn_0.2s_ease-out]",
-          "data-[state=closed]:animate-[dialogOverlayOut_0.15s_ease-in]"
-        )} />
-        <Dialog.Content className={cn(
-          "fixed z-50 w-full max-w-sm left-1/2 top-1/2",
-          "rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-5 max-h-[90vh] overflow-y-auto",
-          "data-[state=open]:animate-[dialogContentIn_0.25s_cubic-bezier(0.16,1,0.3,1)]",
-          "data-[state=closed]:animate-[dialogContentOut_0.15s_ease-in]"
-        )}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
-                <MapPin className="w-3 h-3 text-white" />
+      <AnimatePresence>
+        {authModalOpen && (
+          <Dialog.Portal forceMount>
+            <Dialog.Overlay asChild forceMount>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+              />
+            </Dialog.Overlay>
+            <Dialog.Content asChild forceMount>
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 outline-none">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.94, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.94, y: 8 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-5 max-h-[90vh] overflow-y-auto"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
+                        <MapPin className="w-3 h-3 text-white" />
+                      </div>
+                      <span className="font-bold text-[var(--foreground)]">KAR<span className="text-indigo-500">VON</span></span>
+                    </div>
+                    <Dialog.Close asChild>
+                      <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">
+                        <span className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors">
+                          <X className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+                        </span>
+                      </button>
+                    </Dialog.Close>
+                  </div>
+
+                  <div className="flex rounded-xl bg-[var(--muted)] p-1 mb-5 gap-1">
+                    {(["login", "register"] as const).map((tab) => (
+                      <button key={tab} onClick={() => setActiveTab(tab)}
+                        className={cn("flex-1 py-2 rounded-lg text-sm font-medium transition-all",
+                          activeTab === tab
+                            ? "bg-[var(--card)] text-[var(--foreground)] shadow-sm"
+                            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]")}>
+                        {tab === "login" ? t("auth", "login") : t("auth", "register")}
+                      </button>
+                    ))}
+                  </div>
+
+                  {activeTab === "login" ? <LoginTab onClose={handleClose} /> : <RegisterTab onClose={handleClose} />}
+                </motion.div>
               </div>
-              <span className="font-bold text-[var(--foreground)]">MR<span className="text-indigo-500">TOUR</span></span>
-            </div>
-            <Dialog.Close asChild>
-              <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">
-                <span className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors">
-                  <X className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
-                </span>
-              </button>
-            </Dialog.Close>
-          </div>
-
-          <div className="flex rounded-xl bg-[var(--muted)] p-1 mb-5 gap-1">
-            {(["login", "register"] as const).map((tab) => (
-              <button key={tab} onClick={() => setActiveTab(tab)}
-                className={cn("flex-1 py-2 rounded-lg text-sm font-medium transition-all",
-                  activeTab === tab
-                    ? "bg-[var(--card)] text-[var(--foreground)] shadow-sm"
-                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]")}>
-                {tab === "login" ? t("auth", "login") : t("auth", "register")}
-              </button>
-            ))}
-          </div>
-
-          {activeTab === "login" ? <LoginTab onClose={handleClose} /> : <RegisterTab onClose={handleClose} />}
-        </Dialog.Content>
-      </Dialog.Portal>
+            </Dialog.Content>
+          </Dialog.Portal>
+        )}
+      </AnimatePresence>
     </Dialog.Root>
   );
 }

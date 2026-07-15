@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
+import { mergePlanOnLogin } from "@/lib/plan-sync";
 import type { User } from "@/types";
 
 interface UseAuthReturn {
@@ -29,14 +30,21 @@ export function useAuth(): UseAuthReturn {
   } = useAppStore();
 
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem("mrtour-token");
+    const token = localStorage.getItem("karvon-token");
     if (!token) return;
     try {
       const me = await apiClient.get<User>("/auth/me");
       login(me);
-    } catch {
-      localStorage.removeItem("mrtour-token");
-      logout();
+      mergePlanOnLogin();
+    } catch (err) {
+      // Only drop the session on an actual auth rejection (401) — a
+      // transient network error here shouldn't log out a valid session,
+      // it would otherwise wipe the user's plan/profile on a flaky connection.
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 401) {
+        localStorage.removeItem("karvon-token");
+        logout();
+      }
     }
   }, [login, logout]);
 

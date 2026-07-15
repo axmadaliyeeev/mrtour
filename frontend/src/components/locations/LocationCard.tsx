@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation } from "lucide-react";
 import { cn, truncate } from "@/lib/utils";
 import { useAppStore } from "@/store";
+import { syncAddToPlan, syncRemoveFromPlan } from "@/lib/plan-sync";
+import { useSpotlight } from "@/hooks/useSpotlight";
 import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
@@ -34,6 +36,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
   const freeLabel = t("detail", "free");
 
   const [imgLoaded, setImgLoaded] = useState(false);
+  const spotlight = useSpotlight<HTMLDivElement>();
 
   const go = () => navigate(`/locations/${location.id}`);
 
@@ -41,9 +44,11 @@ export function LocationCard({ location, variant = "default", className }: Locat
     e.stopPropagation();
     if (inPlan) {
       removeFromPlan(location.id);
+      syncRemoveFromPlan(location.id);
       showToast(`${location.name} ${t("card", "removed_toast")}`, "🗑️", "info");
     } else {
       addToPlan(location);
+      syncAddToPlan(location.id);
       showToast(`${location.name} ${t("card", "added_toast")}`, "📍", "success");
     }
   };
@@ -52,10 +57,12 @@ export function LocationCard({ location, variant = "default", className }: Locat
   if (variant === "featured") {
     return (
       <motion.div
+        ref={spotlight.ref}
+        onMouseMove={spotlight.onMouseMove}
         onClick={go}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
+          "spotlight-card tilt-hover relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
           "shadow-md hover:shadow-xl hover:shadow-black/30 transition-all duration-300 hover:-translate-y-1",
           className
         )}
@@ -90,10 +97,10 @@ export function LocationCard({ location, variant = "default", className }: Locat
 
         {/* Price badge */}
         <span className={cn(
-          "absolute top-3 right-12 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md",
+          "glint absolute top-3 right-12 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md",
           location.priceUSD === 0
             ? "bg-emerald-500/90 text-white"
-            : "bg-black/55 text-indigo-300 border border-indigo-500/30"
+            : "bg-black/55 text-gold-300 border border-gold-500/30"
         )}>
           {location.priceUSD === 0 ? freeLabel : `~$${location.priceUSD}`}
         </span>
@@ -145,12 +152,14 @@ export function LocationCard({ location, variant = "default", className }: Locat
   /* ── Default variant ───────────────────────────────────── */
   return (
     <motion.div
+      ref={spotlight.ref}
+      onMouseMove={spotlight.onMouseMove}
       onClick={go}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        "rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
-        "hover:border-indigo-500/40 hover:shadow-lg",
-        "transition-all duration-300 group hover:-translate-y-1",
+        "spotlight-card tilt-hover rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
+        "hover:border-indigo-500/50 hover:shadow-lg hover:ring-1 hover:ring-indigo-500/25",
+        "transition-all duration-300 group",
         "shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]",
         className
       )}
@@ -234,7 +243,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
             <MapPin className="w-3 h-3 shrink-0 text-indigo-500" />
             {location.city}
           </span>
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/20">
             <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
             <span className="text-[11px] font-bold text-[var(--foreground)] tabular-nums">{location.rating}</span>
             <span className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
@@ -274,9 +283,9 @@ export function LocationCard({ location, variant = "default", className }: Locat
         <button
           onClick={bookmark}
           className={cn(
-            "w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer",
+            "ripple w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer",
             inPlan
-              ? "bg-indigo-500/12 border border-indigo-500/35 text-indigo-500 hover:bg-indigo-500/20"
+              ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/8 border border-indigo-500/35 text-indigo-500 hover:bg-indigo-500/20"
               : "bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] hover:border-indigo-500/40 hover:text-indigo-500 hover:bg-indigo-500/6"
           )}
         >

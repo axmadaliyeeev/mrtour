@@ -40,7 +40,8 @@ export function errorHandler(
     const fields = (err.meta?.target as string[] | undefined)?.join(", ") ?? "field";
     res.status(409).json({
       success: false,
-      message: `${fields} already exists`,
+      // Column names are internal schema details — only surface them in dev.
+      message: isDev ? `${fields} already exists` : "This record already exists",
       error: isDev ? err.message : undefined,
     });
     return;

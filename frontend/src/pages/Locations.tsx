@@ -9,7 +9,7 @@ import type { Location } from "@/types";
 
 type CategoryFilter = Location["category"] | "all";
 
-const CITIES = ["Barchasi", "Toshkent", "Samarqand", "Buxoro", "Xiva", "Chimgan"];
+const CITIES = ["Barchasi", ...Array.from(new Set(LOCATIONS.map((l) => l.city))).sort()];
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -263,8 +263,15 @@ export default function Locations() {
       ) : (
         <div className="px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {results.map((loc) => (
-              <LocationCard key={loc.id} location={loc} variant="default" />
+            {results.map((loc, i) => (
+              <motion.div
+                key={loc.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: Math.min(i * 0.03, 0.3), ease: [0.16, 1, 0.3, 1] }}
+              >
+                <LocationCard location={loc} variant="default" />
+              </motion.div>
             ))}
           </div>
         </div>

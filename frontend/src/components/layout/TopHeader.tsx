@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bookmark, LogIn, ChevronRight, Sun, Moon, MapPin } from "lucide-react";
+import { Bookmark, LogIn, ChevronRight, Sun, Moon, MapPin, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAppStore } from "@/store";
@@ -9,7 +9,7 @@ export function TopHeader() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { isDesktop } = useBreakpoint();
-  const { user, plan, theme, toggleTheme, openAuthModal } = useAppStore();
+  const { user, plan, theme, toggleTheme, openAuthModal, setSearchOpen } = useAppStore();
   const { t } = useTranslation();
   const planCount = plan.length;
 
@@ -32,7 +32,7 @@ export function TopHeader() {
       {isDesktop ? (
         <div className="flex items-center gap-1.5 text-sm flex-1 min-w-0">
           <span className="text-[var(--muted-foreground)] text-xs font-semibold tracking-wider uppercase">
-            MRTOUR
+            KARVON
           </span>
           {label && (
             <>
@@ -51,15 +51,38 @@ export function TopHeader() {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/30">
             <MapPin className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-lg font-extrabold tracking-tight">
-            <span className="text-[var(--foreground)]">MR</span>
-            <span className="text-indigo-500">TOUR</span>
+          <span className="text-lg font-extrabold tracking-tight whitespace-nowrap">
+            <span className="text-[var(--foreground)]">KAR</span>
+            <span className="text-indigo-500">VON</span>
           </span>
         </button>
       )}
 
       {/* ── Right controls ── */}
       <div className="flex items-center gap-1.5 shrink-0">
+
+        {/* Global search */}
+        {isDesktop ? (
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center gap-2 h-8 px-3 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 text-[var(--muted-foreground)] transition-all active:scale-95"
+            aria-label={t("locations", "search_placeholder")}
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span className="text-xs">{t("locations", "search_placeholder")}</span>
+            <kbd className="text-[9px] font-semibold bg-[var(--card)] border border-[var(--border)] rounded px-1 py-px">
+              Ctrl K
+            </kbd>
+          </button>
+        ) : (
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+            aria-label={t("locations", "search_placeholder")}
+          >
+            <Search className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+          </button>
+        )}
 
         {/* Theme toggle */}
         <button
@@ -77,7 +100,7 @@ export function TopHeader() {
         {/* Plan bookmark */}
         <button
           onClick={() => navigate("/profile")}
-          className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+          className="relative hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
           aria-label={`${planCount} ${t("profile", "plan_count_suffix")}`}
         >
           <Bookmark

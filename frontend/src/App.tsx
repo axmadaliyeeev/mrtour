@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { CommandPalette } from "@/components/shared/CommandPalette";
 import Home from "@/pages/Home";
 import Locations from "@/pages/Locations";
 import LocationDetail from "@/pages/LocationDetail";
@@ -11,20 +12,24 @@ import Profile from "@/pages/Profile";
 import { useAppStore } from "@/store";
 
 function ThemeApplier() {
-  const { theme } = useAppStore();
+  const { theme, lang } = useAppStore();
   useEffect(() => {
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(theme);
-    localStorage.setItem("mrtour-theme", theme);
+    localStorage.setItem("karvon-theme", theme);
   }, [theme]);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   return null;
 }
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ThemeApplier />
       <AuthModal />
+      <CommandPalette />
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route element={<MainLayout />}>

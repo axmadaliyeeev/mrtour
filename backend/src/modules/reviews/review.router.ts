@@ -1,6 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { z } from "zod";
 import * as reviewService from "./review.service";
+import { prisma } from "@/lib/prisma";
 import { optionalAuth, authenticate } from "@/middleware/auth.middleware";
 import { validateBody, validateQuery, validateParams } from "@/middleware/validate";
 import { sendSuccess, sendPaginated, sendError } from "@/utils/response";
@@ -71,12 +72,21 @@ reviewRouter.post(
     try {
       const body = req.body as z.infer<typeof createSchema>;
 
+      // Authenticated users can't spoof their displayed author name —
+      // always resolve it from their real account, never from client input.
+      let author = body.author;
+      if (req.user) {
+        const account = await prisma.user.findUnique({
+          where: { id: req.user.userId },
+          select: { name: true, surname: true },
+        });
+        author = account ? `${account.name} ${account.surname}`.trim() : req.user.email.split("@")[0];
+      }
+
       const review = await reviewService.create({
         ...body,
         ...(req.user && { userId: req.user.userId }),
-        author: req.user
-          ? body.author ?? req.user.email.split("@")[0]
-          : body.author,
+        author,
       });
 
       sendSuccess(res, review, "Sharh qabul qilindi", 201);

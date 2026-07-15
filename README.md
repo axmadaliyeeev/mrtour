@@ -1,4 +1,4 @@
-# MRTOUR.UZ
+# KARVON.UZ
 
 [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://typescriptlang.org)
@@ -15,7 +15,7 @@ O'zbekiston turizmi uchun AI-powered full-stack veb-ilova. Groq AI (Llama 3.3 70
 ## Loyiha tuzilmasi
 
 ```
-mrtour/
+karvon/
 ├── frontend/                    # React 19 + Vite + Tailwind CSS
 │   └── src/
 │       ├── components/
@@ -206,8 +206,8 @@ VITE_API_URL=http://localhost:5000/api
 
 ```bash
 # 1. Reponi clone qilish
-git clone https://github.com/axmadaliyeeev/mrtour.git
-cd mrtour
+git clone https://github.com/axmadaliyeeev/karvon.git
+cd karvon
 
 # 2. Backend
 cd backend
@@ -281,7 +281,7 @@ npm run start    # Production (node dist/server.js)
 
 ## Litsenziya
 
-[MIT](LICENSE) © 2026 MRTOUR.UZ
+[MIT](LICENSE) © 2026 KARVON.UZ
 
 ---
 

@@ -4,12 +4,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft, Bookmark, BookmarkCheck, MapPin, Clock, DollarSign,
   Calendar, Bus, ExternalLink, Tag, Star, Send, Sparkles, Loader2,
-  ChevronDown, ChevronUp,
+  ChevronDown, ChevronUp, Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS, INIT_REVIEWS } from "@/data";
 import { Stars } from "@/components/ui/stars";
 import { useAppStore } from "@/store";
+import { syncAddToPlan, syncRemoveFromPlan } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
 import { apiClient } from "@/lib/api-client";
 import type { Review } from "@/types";
@@ -232,10 +233,27 @@ export default function LocationDetail() {
   function togglePlan() {
     if (inPlan) {
       removeFromPlan(loc.id);
+      syncRemoveFromPlan(loc.id);
       showToast(`${loc.name} ${t("card", "removed_toast")}`, "🗑️", "info");
     } else {
       addToPlan(loc);
+      syncAddToPlan(loc.id);
       showToast(`${loc.name} ${t("card", "added_toast")}`, "📍", "success");
+    }
+  }
+
+  async function shareLocation() {
+    const url = window.location.href;
+    const data = { title: `${loc.name} — KARVON`, text: loc.shortDesc ?? loc.name, url };
+    try {
+      if (navigator.share) {
+        await navigator.share(data);
+      } else {
+        await navigator.clipboard.writeText(url);
+        showToast(url, "🔗", "info");
+      }
+    } catch {
+      // user cancelled the share sheet — nothing to do
     }
   }
 
@@ -281,6 +299,14 @@ export default function LocationDetail() {
           aria-label={t("detail", "back")}
         >
           <ArrowLeft className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={shareLocation}
+          className="absolute top-4 right-[68px] w-11 h-11 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-all active:scale-90"
+          aria-label="Share"
+        >
+          <Share2 className="w-4 h-4" />
         </button>
 
         <button
