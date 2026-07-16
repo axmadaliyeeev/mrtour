@@ -1,22 +1,36 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X, MessageCircle } from "lucide-react";
+import {
+  Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
+  MessageCircle, Copy, Check, RefreshCw, ChevronDown,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { MessageContent } from "@/components/chat/MessageContent";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isError?: boolean;
+}
+
+// A timed-out/network failure (most often a free-tier backend cold-booting)
+// reads very differently to a user than a genuine server error.
+function extractChatError(err: unknown, fallback: string, wakingUp: string): string {
+  const e = err as { code?: string; response?: { data?: { message?: string } } };
+  if (e?.response?.data?.message) return e.response.data.message;
+  if (e?.code === "ECONNABORTED" || !e?.response) return wakingUp;
+  return fallback;
 }
 
 export default function Chat() {
-  const { plan } = useAppStore();
+  const { plan, user } = useAppStore();
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const { isDesktop } = useBreakpoint();
@@ -37,12 +51,34 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [planBannerDismissed, setPlanBannerDismissed] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const lastUserTextRef = useRef("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const wasNearBottomRef = useRef(true);
 
+  // Only auto-scroll to new messages if the user was already near the
+  // bottom — jumping the view while someone has scrolled up to reread
+  // earlier replies is exactly the kind of thing that reads as unpolished.
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (wasNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
+
+  function handleScroll() {
+    const el = scrollAreaRef.current;
+    if (!el) return;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    wasNearBottomRef.current = nearBottom;
+    setShowScrollButton(!nearBottom);
+  }
+
+  function scrollToBottom() {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
 
   function buildPlanContext(): string | undefined {
     if (!plan.length) return undefined;
@@ -51,6 +87,7 @@ export default function Chat() {
 
   async function sendMessage(text: string) {
     if (!text.trim() || isLoading) return;
+    lastUserTextRef.current = text.trim();
 
     const userMsg: Message = {
       id: Date.now().toString(),
@@ -62,10 +99,11 @@ export default function Chat() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
+    wasNearBottomRef.current = true;
 
     try {
       const history = messages
-        .filter((m) => m.id !== "welcome")
+        .filter((m) => m.id !== "welcome" && !m.isError)
         .map((m) => ({ role: m.role, content: m.content }));
 
       // Backend caps chat history at 10 messages (ai.router.ts chatSchema) —
@@ -87,17 +125,34 @@ export default function Chat() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch {
+    } catch (err) {
       const errMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: t("chat", "error"),
+        content: extractChatError(err, t("chat", "error"), t("chat", "waking_up")),
         timestamp: new Date(),
+        isError: true,
       };
       setMessages((prev) => [...prev, errMsg]);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
+    }
+  }
+
+  function retryLastMessage() {
+    if (!lastUserTextRef.current) return;
+    setMessages((prev) => prev.filter((m) => !m.isError));
+    sendMessage(lastUserTextRef.current);
+  }
+
+  async function copyMessage(msg: Message) {
+    try {
+      await navigator.clipboard.writeText(msg.content);
+      setCopiedId(msg.id);
+      setTimeout(() => setCopiedId((id) => (id === msg.id ? null : id)), 1800);
+    } catch {
+      // Clipboard permission denied — nothing to recover, just skip silently.
     }
   }
 
@@ -187,7 +242,7 @@ export default function Chat() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div ref={scrollAreaRef} onScroll={handleScroll} className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4">
         <AnimatePresence initial={false}>
         {messages.map((msg) => (
           <motion.div
@@ -196,22 +251,26 @@ export default function Chat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
             className={cn(
-              "flex gap-2.5",
+              "group flex gap-2.5",
               msg.role === "user" ? "flex-row-reverse" : "flex-row"
             )}
           >
             <div
               className={cn(
-                "w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5",
+                "w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5 font-bold",
                 msg.role === "assistant"
-                  ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-sm shadow-indigo-500/30"
-                  : "bg-[var(--muted)] border border-[var(--border)]"
+                  ? msg.isError
+                    ? "bg-red-500/15 border border-red-500/30 text-red-400"
+                    : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-sm shadow-indigo-500/30"
+                  : "bg-gradient-to-br from-indigo-500/80 to-indigo-600/80 text-white"
               )}
             >
               {msg.role === "assistant" ? (
                 <Bot className="w-3.5 h-3.5" />
+              ) : user ? (
+                user.name.charAt(0).toUpperCase()
               ) : (
-                <UserIcon className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
+                <UserIcon className="w-3.5 h-3.5" />
               )}
             </div>
 
@@ -224,17 +283,44 @@ export default function Chat() {
             >
               <div
                 className={cn(
-                  "px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
+                  "px-4 py-3 rounded-2xl text-sm leading-relaxed",
                   msg.role === "assistant"
-                    ? "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
+                    ? msg.isError
+                      ? "bg-red-500/8 border border-red-500/25 text-[var(--foreground)] rounded-tl-sm"
+                      : "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
                     : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-tr-sm shadow-md shadow-indigo-500/25"
                 )}
               >
-                {msg.content}
+                <MessageContent text={msg.content} />
+                {msg.isError && (
+                  <button
+                    onClick={retryLastMessage}
+                    className="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    {t("chat", "retry")}
+                  </button>
+                )}
               </div>
-              <span className="text-[10px] text-[var(--muted-foreground)]/60 px-1">
-                {formatTime(msg.timestamp)}
-              </span>
+
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-[10px] text-[var(--muted-foreground)]/60">
+                  {formatTime(msg.timestamp)}
+                </span>
+                {msg.role === "assistant" && !msg.isError && msg.id !== "welcome" && (
+                  <button
+                    onClick={() => copyMessage(msg)}
+                    className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all"
+                    aria-label="Copy"
+                  >
+                    {copiedId === msg.id ? (
+                      <Check className="w-3 h-3 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
@@ -273,14 +359,30 @@ export default function Chat() {
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
               <Bot className="w-3.5 h-3.5 text-white" />
             </div>
-            <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)]">
-              <div className="flex items-center gap-1.5">
-                <Loader2 className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
-                <span className="text-xs text-[var(--muted-foreground)]">{t("chat", "typing")}</span>
+            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+              <div className="flex items-center gap-1">
+                <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
               </div>
             </div>
           </motion.div>
         )}
+        </AnimatePresence>
+
+        {/* Jump-to-latest — appears once the user scrolls away from the bottom */}
+        <AnimatePresence>
+          {showScrollButton && (
+            <motion.button
+              initial={{ opacity: 0, y: 8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.9 }}
+              onClick={scrollToBottom}
+              className="sticky bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors"
+            >
+              <ChevronDown className="w-3.5 h-3.5" />
+            </motion.button>
+          )}
         </AnimatePresence>
 
         <div ref={messagesEndRef} />

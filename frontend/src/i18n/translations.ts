@@ -117,6 +117,8 @@ export interface TranslationSchema {
     plan_quick: string;
     places: string;
     error: string;
+    waking_up: string;
+    retry: string;
     quick_samarqand_prompt: string;
     quick_hotel_prompt: string;
     quick_transport_prompt: string;
@@ -374,6 +376,8 @@ const UZ: TranslationSchema = {
     places: "joy",
     error:
       "Kechirasiz, hozirda server bilan bog'lanishda muammo bor. Iltimos, bir ozdan so'ng qayta urinib ko'ring. 🙏",
+    waking_up: "Server uyg'onmoqda ⏳ Bir necha soniyadan so'ng qayta yuboring.",
+    retry: "Qayta yuborish",
     quick_samarqand_prompt: "Samarqandga 3 kunlik sayohat rejasi tuzib ber",
     quick_hotel_prompt: "Buxoroda eng yaxshi mehmonxonalarni tavsiya qil",
     quick_transport_prompt: "Toshkentdan Samarqandga qanday borsa bo'ladi?",
@@ -633,6 +637,8 @@ const RU: TranslationSchema = {
     places: "мест",
     error:
       "Извините, в данный момент возникла проблема с подключением к серверу. Пожалуйста, попробуйте ещё раз чуть позже. 🙏",
+    waking_up: "Сервер просыпается ⏳ Повторите отправку через несколько секунд.",
+    retry: "Отправить снова",
     quick_samarqand_prompt: "Составь план поездки в Самарканд на 3 дня",
     quick_hotel_prompt: "Посоветуй лучшие отели в Бухаре",
     quick_transport_prompt: "Как добраться из Ташкента в Самарканд?",
@@ -891,6 +897,8 @@ const EN: TranslationSchema = {
     places: "places",
     error:
       "Sorry, we're having trouble connecting to the server right now. Please try again in a moment. 🙏",
+    waking_up: "The server is waking up ⏳ Please resend in a few seconds.",
+    retry: "Try again",
     quick_samarqand_prompt: "Create a 3-day itinerary for Samarkand",
     quick_hotel_prompt: "Recommend the best hotels in Bukhara",
     quick_transport_prompt: "How do I get from Tashkent to Samarkand?",
@@ -1147,6 +1155,8 @@ const ZH: TranslationSchema = {
     plan_quick: "我的行程",
     places: "个景点",
     error: "抱歉，当前无法连接到服务器，请稍后再试。🙏",
+    waking_up: "服务器正在唤醒 ⏳ 请几秒后重新发送。",
+    retry: "重新发送",
     quick_samarqand_prompt: "为我制定撒马尔罕3天行程",
     quick_hotel_prompt: "推荐布哈拉最好的酒店",
     quick_transport_prompt: "如何从塔什干前往撒马尔罕？",
@@ -1407,6 +1417,8 @@ const DE: TranslationSchema = {
     places: "Orte",
     error:
       "Entschuldigung, es gibt derzeit ein Problem mit der Serververbindung. Bitte versuchen Sie es in Kürze erneut. 🙏",
+    waking_up: "Der Server wacht auf ⏳ Bitte in ein paar Sekunden erneut senden.",
+    retry: "Erneut senden",
     quick_samarqand_prompt: "Erstelle einen 3-Tage-Reiseplan für Samarkand",
     quick_hotel_prompt: "Empfehle die besten Hotels in Buchara",
     quick_transport_prompt: "Wie komme ich von Taschkent nach Samarkand?",
@@ -1667,6 +1679,8 @@ const FR: TranslationSchema = {
     places: "lieux",
     error:
       "Désolé, nous rencontrons un problème de connexion avec le serveur. Veuillez réessayer dans quelques instants. 🙏",
+    waking_up: "Le serveur se réveille ⏳ Veuillez renvoyer dans quelques secondes.",
+    retry: "Réessayer",
     quick_samarqand_prompt: "Crée un itinéraire de 3 jours pour Samarcande",
     quick_hotel_prompt: "Recommande les meilleurs hôtels à Boukhara",
     quick_transport_prompt: "Comment aller de Tachkent à Samarcande ?",

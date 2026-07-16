@@ -389,6 +389,13 @@ button, a, [role="button"], input, select, textarea, label {
   from { clip-path: inset(0 100% 0 0); opacity: 0.4; }
   to   { clip-path: inset(0 0 0 0);    opacity: 1; }
 }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.5; }
+  30%           { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot { animation: typingBounce 1.1s ease-in-out infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
 @property --spin-angle {
   syntax: "<angle>";
   initial-value: 0deg;
