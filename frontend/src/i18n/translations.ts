@@ -247,6 +247,7 @@ export interface TranslationSchema {
     err_password_short: string;
     err_login: string;
     err_register: string;
+    err_waking_up: string;
     err_password_required: string;
   };
 }
@@ -503,6 +504,7 @@ const UZ: TranslationSchema = {
     err_password_short: "Parol kamida 8 ta belgi bo'lishi kerak",
     err_login: "Email yoki parol noto'g'ri",
     err_register: "Ro'yxatdan o'tishda xato yuz berdi",
+    err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring ⏳",
     err_password_required: "Parol kiritilishi shart",
   },
 };
@@ -761,6 +763,7 @@ const RU: TranslationSchema = {
     err_password_short: "Пароль должен содержать не менее 8 символов",
     err_login: "Неверный email или пароль",
     err_register: "Ошибка при регистрации",
+    err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова ⏳",
     err_password_required: "Введите пароль",
   },
 };
@@ -1018,6 +1021,7 @@ const EN: TranslationSchema = {
     err_password_short: "Password must be at least 8 characters",
     err_login: "Incorrect email or password",
     err_register: "Something went wrong during registration",
+    err_waking_up: "Server is waking up — please wait a moment and try again ⏳",
     err_password_required: "Please enter your password",
   },
 };
@@ -1273,6 +1277,7 @@ const ZH: TranslationSchema = {
     err_password_short: "密码至少需要 8 个字符",
     err_login: "邮箱或密码错误",
     err_register: "注册过程中出现错误",
+    err_waking_up: "服务器正在唤醒，请稍等片刻后重试 ⏳",
     err_password_required: "请输入密码",
   },
 };
@@ -1532,6 +1537,7 @@ const DE: TranslationSchema = {
     err_password_short: "Das Passwort muss mindestens 8 Zeichen lang sein",
     err_login: "Falsche E-Mail-Adresse oder falsches Passwort",
     err_register: "Bei der Registrierung ist ein Fehler aufgetreten",
+    err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut ⏳",
     err_password_required: "Bitte geben Sie Ihr Passwort ein",
   },
 };
@@ -1793,6 +1799,7 @@ const FR: TranslationSchema = {
     err_password_short: "Le mot de passe doit comporter au moins 8 caractères",
     err_login: "Adresse e-mail ou mot de passe incorrect",
     err_register: "Une erreur est survenue lors de l'inscription",
+    err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer ⏳",
     err_password_required: "Veuillez saisir votre mot de passe",
   },
 };

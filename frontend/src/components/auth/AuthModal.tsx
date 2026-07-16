@@ -10,6 +10,17 @@ import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { User } from "@/types";
 
+// A timed-out/network-level failure (no response at all — most often a
+// free-tier backend cold-booting) reads very differently to a user than a
+// real validation error, so it gets its own message instead of the generic
+// fallback text.
+function extractAuthError(err: unknown, fallback: string, wakingUp: string): string {
+  const e = err as { code?: string; response?: { data?: { message?: string } } };
+  if (e?.response?.data?.message) return e.response.data.message;
+  if (e?.code === "ECONNABORTED" || !e?.response) return wakingUp;
+  return fallback;
+}
+
 const LANGUAGES: { code: Lang; label: string }[] = [
   { code: "uz", label: "O'zbek"   },
   { code: "ru", label: "Русский"  },
@@ -82,16 +93,17 @@ function LoginTab({ onClose }: { onClose: () => void }) {
     setLoading(true);
     setApiError("");
     try {
+      // Longer timeout: a free-tier host that's spun down from inactivity
+      // needs 30-60s to cold-boot the whole process, not just the DB.
       const res = await apiClient.post<{ user: User; accessToken: string }>(
-        "/auth/login", { email: email.trim().toLowerCase(), password }
+        "/auth/login", { email: email.trim().toLowerCase(), password }, { timeout: 45_000 }
       );
       localStorage.setItem("karvon-token", res.accessToken);
       login(res.user);
       mergePlanOnLogin();
       onClose();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setApiError(msg ?? t("auth", "err_login"));
+      setApiError(extractAuthError(err, t("auth", "err_login"), t("auth", "err_waking_up")));
     } finally {
       setLoading(false);
     }
@@ -156,7 +168,8 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
     try {
       const res = await apiClient.post<{ user: User; accessToken: string }>(
         "/auth/register",
-        { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang }
+        { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang },
+        { timeout: 45_000 }
       );
       localStorage.setItem("karvon-token", res.accessToken);
       setDoneUser(res.user.name);
@@ -164,8 +177,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
       mergePlanOnLogin();
       setStep(3);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setApiError(msg ?? t("auth", "err_register"));
+      setApiError(extractAuthError(err, t("auth", "err_register"), t("auth", "err_waking_up")));
     } finally {
       setLoading(false);
     }
