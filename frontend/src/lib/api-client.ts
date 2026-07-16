@@ -4,7 +4,10 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
 const instance = axios.create({
   baseURL: BASE_URL,
-  timeout: 10_000,
+  // Free-tier hosts (Render, etc.) spin the backend down after a period of
+  // inactivity — the first request after that can take 30-50s to cold-start
+  // before it even reaches route logic. 10s was tripping that every time.
+  timeout: 20_000,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

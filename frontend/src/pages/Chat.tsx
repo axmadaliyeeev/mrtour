@@ -72,12 +72,13 @@ export default function Chat() {
       // keep only the most recent turns so long conversations don't 422.
       const apiMessages = [...history, { role: "user" as const, content: text.trim() }].slice(-10);
 
-      const res = await apiClient.post<{ reply: string }>("/ai/chat", {
-        messages: apiMessages,
-        userContext: {
-          plan: buildPlanContext(),
-        },
-      });
+      // Longer timeout here: a cold-started backend + actual model
+      // generation time can together take well past the default timeout.
+      const res = await apiClient.post<{ reply: string }>(
+        "/ai/chat",
+        { messages: apiMessages, userContext: { plan: buildPlanContext() } },
+        { timeout: 45_000 }
+      );
 
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
