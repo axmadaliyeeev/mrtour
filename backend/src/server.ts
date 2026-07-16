@@ -12,6 +12,12 @@ import { sendError } from "@/utils/response";
 
 const app = express();
 
+// Render (and most PaaS hosts) sit behind a reverse proxy — without this,
+// express-rate-limit refuses to trust the X-Forwarded-For header it needs
+// to identify clients, throwing ERR_ERL_UNEXPECTED_X_FORWARDED_FOR on every
+// request. `1` trusts exactly one hop (the platform's own proxy).
+app.set("trust proxy", 1);
+
 // ── Security headers ─────────────────────────────────
 app.use(helmet());
 
