@@ -16,9 +16,15 @@ const app = express();
 app.use(helmet());
 
 // ── CORS ─────────────────────────────────────────────
+// Browsers compare Origin byte-for-byte — a trailing slash in FRONTEND_URL
+// (e.g. "https://app.vercel.app/" vs the real "https://app.vercel.app")
+// is enough to fail every cross-origin request. Normalize it so a stray
+// slash in the env var can't silently break the whole API.
+const allowedOrigin = env.FRONTEND_URL.replace(/\/+$/, "");
+
 app.use(
   cors({
-    origin: env.FRONTEND_URL,
+    origin: allowedOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
