@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
-    "build": "tsc && npx prisma generate",
+    "build": "tsc && tsc-alias && npx prisma generate",
     "start": "node dist/server.js",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -45,6 +45,7 @@
     "prettier": "^3.4.2",
     "prisma": "^6.1.0",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.9.1",
     "tsconfig-paths": "^3.15.0",
     "typescript": "^5.7.3"
   }
