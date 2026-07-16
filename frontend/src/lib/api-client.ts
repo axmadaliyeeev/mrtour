@@ -1,6 +1,15 @@
 import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
+// Tolerate VITE_API_URL being set without the `/api` suffix or with a
+// trailing slash (e.g. "https://host.onrender.com" or ".../api/") — every
+// backend route lives under /api, so a misconfigured env var would
+// otherwise silently 404 every single request.
+function resolveBaseUrl(): string {
+  const raw = (import.meta.env.VITE_API_URL ?? "http://localhost:5000/api").replace(/\/+$/, "");
+  return raw.endsWith("/api") ? raw : `${raw}/api`;
+}
+
+const BASE_URL = resolveBaseUrl();
 
 const instance = axios.create({
   baseURL: BASE_URL,
