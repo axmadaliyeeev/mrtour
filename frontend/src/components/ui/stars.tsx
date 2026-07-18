@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StarsProps {
@@ -19,6 +20,12 @@ function formatCount(n: number): string {
   return String(n);
 }
 
+/**
+ * Renders with lucide's Star icon (not the "★" glyph) — text glyphs render
+ * inconsistently across OS font stacks (the same class of bug as the flag
+ * emoji issue: what looks like a clean star on one machine can render as a
+ * boxy fallback glyph on another). An SVG icon looks identical everywhere.
+ */
 export function Stars({
   rating,
   size = "md",
@@ -29,43 +36,33 @@ export function Stars({
 }: StarsProps) {
   const px = SIZE_PX[size];
   const clamped = Math.max(0, Math.min(5, rating));
-  const full = Math.floor(clamped);
-  const half = clamped - full >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
 
   return (
     <span
       className={cn("inline-flex items-center gap-1", className)}
       aria-label={`Reyting: ${clamped.toFixed(1)} / 5`}
     >
-      {/* Stars row */}
-      <span
-        className="inline-flex items-center gap-0.5 leading-none"
-        style={{ fontSize: px }}
-      >
-        {Array.from({ length: full }, (_, i) => (
-          <span key={`f${i}`} className="text-amber-400">
-            ★
-          </span>
-        ))}
-
-        {half && (
-          <span className="relative inline-block text-[var(--muted-foreground)]">
-            ★
-            <span
-              className="absolute inset-0 overflow-hidden text-amber-400"
-              style={{ width: "50%" }}
-            >
-              ★
+      <span className="inline-flex items-center gap-0.5">
+        {Array.from({ length: 5 }, (_, i) => {
+          const fillPct = Math.max(0, Math.min(1, clamped - i)) * 100;
+          return (
+            <span key={i} className="relative inline-block shrink-0" style={{ width: px, height: px }}>
+              <Star
+                className="absolute inset-0 text-[var(--muted-foreground)]/40"
+                style={{ width: px, height: px }}
+              />
+              <span
+                className="absolute inset-0 overflow-hidden"
+                style={{ width: `${fillPct}%` }}
+              >
+                <Star
+                  className="text-amber-400 fill-amber-400"
+                  style={{ width: px, height: px }}
+                />
+              </span>
             </span>
-          </span>
-        )}
-
-        {Array.from({ length: empty }, (_, i) => (
-          <span key={`e${i}`} className="text-[var(--muted-foreground)]/50">
-            ★
-          </span>
-        ))}
+          );
+        })}
       </span>
 
       {showNumber && (

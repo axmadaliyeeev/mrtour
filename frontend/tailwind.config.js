@@ -61,8 +61,12 @@ export default {
         display: ["Sora", "system-ui", "sans-serif"],
       },
       spacing: {
+        4.5: "1.125rem",
         18: "4.5rem",
         22: "5.5rem",
+      },
+      scale: {
+        102: "1.02",
       },
       borderRadius: {
         "2xl": "1rem",

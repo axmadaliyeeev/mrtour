@@ -214,7 +214,7 @@ export default function Chat() {
         <div className="flex items-center gap-3">
           <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
             <Bot className="w-4 h-4" />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[var(--background)]" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
           </div>
           <div>
             <p className="text-sm font-bold text-[var(--foreground)]">{t("chat", "title")}</p>

@@ -115,9 +115,13 @@ function SmartReview({
 
       const prompt = `"${locationName}" joyi uchun ${reviews.length} ta sharh bor. Quyida sharhlar:\n\n${reviewText}\n\nBu sharhlarni qisqacha tahlil qil: asosiy ijobiy va salbiy tomonlar, umumiy kayfiyat, va sayohatchilarga maslahat. 3-4 qisqa paragrafda.`;
 
-      const res = await apiClient.post<{ reply: string }>("/ai/chat", {
-        messages: [{ role: "user", content: prompt }],
-      });
+      // Same cold-start-tolerant timeout as the main chat — this hits the
+      // same AI endpoint and was failing on a cold backend just like it was.
+      const res = await apiClient.post<{ reply: string }>(
+        "/ai/chat",
+        { messages: [{ role: "user", content: prompt }] },
+        { timeout: 45_000 }
+      );
       setInsight(res.reply ?? t("detail", "insight_error"));
       setOpen(true);
     } catch {
@@ -376,7 +380,7 @@ export default function LocationDetail() {
             </div>
           </div>
           <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
-            <Bus className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+            <Bus className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)]">{t("detail", "how_to_get")}</p>
               <p className="text-xs text-[var(--muted-foreground)]">{loc.transport}</p>

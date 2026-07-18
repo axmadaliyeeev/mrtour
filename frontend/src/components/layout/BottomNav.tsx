@@ -50,9 +50,9 @@ export function BottomNav() {
                 <div className={cn(
                   "flex items-center justify-center w-12 h-[34px] rounded-2xl transition-all duration-250",
                   "bg-gradient-to-r from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30",
-                  active ? "scale-105 shadow-indigo-500/50" : "hover:scale-102"
+                  active ? "scale-105 shadow-indigo-500/50" : "hover:scale-102 hover:shadow-indigo-500/40"
                 )}>
-                  <Bot className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
+                  <Bot className="w-4.5 h-4.5 text-white" />
                 </div>
                 <span className={cn(
                   "text-[9px] font-bold leading-none transition-colors",
@@ -72,8 +72,7 @@ export function BottomNav() {
               className={cn(
                 "flex flex-col items-center justify-center flex-1 h-full gap-0.5",
                 "transition-all duration-200 active:scale-90",
-                "min-w-[44px]", // touch target
-                active ? "opacity-100" : "opacity-50 hover:opacity-80"
+                "min-w-[44px]" // touch target
               )}
             >
               {/* Active top line — shared sliding indicator */}
@@ -89,7 +88,7 @@ export function BottomNav() {
               <div className="relative flex items-center justify-center w-6 h-6">
                 <Icon className={cn(
                   "transition-all duration-250",
-                  active ? "w-5 h-5 text-indigo-500 scale-110" : "w-5 h-5 text-[var(--foreground)]"
+                  active ? "w-5 h-5 text-indigo-500 scale-110" : "w-5 h-5 text-[var(--muted-foreground)]"
                 )} />
                 {route === "/profile" && planCount > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] px-[3px] rounded-full bg-indigo-500 text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm">
@@ -100,7 +99,7 @@ export function BottomNav() {
 
               <span className={cn(
                 "text-[9px] font-medium leading-none transition-colors",
-                active ? "text-indigo-500 font-semibold" : "text-[var(--foreground)]"
+                active ? "text-indigo-500 font-semibold" : "text-[var(--muted-foreground)]"
               )}>
                 {label}
               </span>

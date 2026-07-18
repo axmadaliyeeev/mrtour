@@ -31,13 +31,13 @@ function ToastItem({
 }) {
   const styles = {
     success: "border-indigo-500/25 shadow-indigo-500/8",
-    info:    "border-blue-500/25 shadow-blue-500/8",
+    info:    "border-gold-500/25 shadow-gold-500/8",
     error:   "border-red-500/25 shadow-red-500/8",
   };
 
   const iconEl =
     toast.type === "error" ? <AlertCircle className="w-4 h-4 text-red-400 shrink-0" /> :
-    toast.type === "info"  ? <Info className="w-4 h-4 text-blue-400 shrink-0" /> :
+    toast.type === "info"  ? <Info className="w-4 h-4 text-gold-500 shrink-0" /> :
                              <CheckCircle className="w-4 h-4 text-indigo-400 shrink-0" />;
 
   return (

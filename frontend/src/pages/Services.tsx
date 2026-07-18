@@ -115,7 +115,7 @@ function HotelsTab({ search }: { search: string }) {
             )}
             <span className={cn(
               "absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm",
-              h.available ? "bg-green-500/80 text-white" : "bg-red-500/80 text-white"
+              h.available ? "bg-indigo-500/85 text-white" : "bg-red-500/80 text-white"
             )}>
               {h.available ? t("services", "available") : t("services", "busy")}
             </span>
@@ -184,11 +184,11 @@ function GuidesTab({ search }: { search: string }) {
                   alt={g.name}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-[var(--border)]"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=14b8a6&color=fff&size=64`;
+                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=0aab98&color=fff&size=64`;
                   }}
                 />
                 {g.available && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-[var(--card)]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-indigo-400 rounded-full border-2 border-[var(--card)]" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -221,7 +221,7 @@ function GuidesTab({ search }: { search: string }) {
             <span className={cn(
               "text-[10px] px-2.5 py-1 rounded-full font-semibold",
               g.available
-                ? "bg-green-500/15 text-green-400 border border-green-500/30"
+                ? "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30"
                 : "bg-red-500/15 text-red-400 border border-red-500/30"
             )}>
               ● {g.available ? t("services", "available") : t("services", "busy")}

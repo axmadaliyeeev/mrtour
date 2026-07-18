@@ -28,7 +28,7 @@ export function Sidebar() {
       {/* ── Logo ───────────────────────────────────────── */}
       <div className="relative flex items-center gap-3 px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <MapPin className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
+          <MapPin className="w-4.5 h-4.5 text-white" />
         </div>
         <div>
           <span className="text-xl font-extrabold tracking-tight leading-none">
