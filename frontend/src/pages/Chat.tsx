@@ -214,33 +214,33 @@ export default function Chat() {
       }}
     >
       {/* Header */}
-      <div className="glass flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
+      <div className="glass flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 z-10">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0">
             <Bot className="w-4 h-4" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
           </div>
-          <div>
-            <p className="text-sm font-bold text-[var(--foreground)]">{t("chat", "title")}</p>
-            <p className="text-[11px] text-indigo-400">{t("chat", "subtitle")}</p>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-[var(--foreground)] truncate">{t("chat", "title")}</p>
+            <p className="text-[11px] text-indigo-400 truncate">{t("chat", "subtitle")}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {plan.length > 0 && (
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30">
+            <div className="hidden xs:flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 shrink-0">
               <MapPin className="w-3 h-3 text-indigo-400" />
-              <span className="text-[11px] font-semibold text-indigo-400">
+              <span className="text-[11px] font-semibold text-indigo-400 whitespace-nowrap">
                 {plan.length} {t("chat", "places")}
               </span>
             </div>
           )}
           <button
             onClick={resetChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:border-indigo-500/40 transition-all"
+            className="flex items-center justify-center gap-1.5 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:border-indigo-500/40 transition-all shrink-0"
             aria-label={t("chat", "reset")}
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            {t("chat", "reset")}
+            <span className="hidden sm:inline">{t("chat", "reset")}</span>
           </button>
         </div>
       </div>
@@ -249,7 +249,7 @@ export default function Chat() {
       <div
         ref={scrollAreaRef}
         onScroll={handleScroll}
-        className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4"
+        className="relative flex-1 overflow-y-auto px-3 sm:px-4 py-4 space-y-4"
         style={{
           maskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
           WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
@@ -288,14 +288,14 @@ export default function Chat() {
 
             <div
               className={cn(
-                "max-w-[80%] space-y-1",
+                "max-w-[88%] xs:max-w-[85%] sm:max-w-[80%] space-y-1",
                 msg.role === "user" ? "items-end" : "items-start",
                 "flex flex-col"
               )}
             >
               <div
                 className={cn(
-                  "px-4 py-3.5 rounded-2xl text-sm leading-relaxed",
+                  "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl text-sm leading-relaxed",
                   msg.role === "assistant"
                     ? msg.isError
                       ? "bg-red-500/8 border border-red-500/25 text-[var(--foreground)] rounded-tl-sm"
@@ -322,7 +322,7 @@ export default function Chat() {
                 {msg.role === "assistant" && !msg.isError && msg.id !== "welcome" && (
                   <button
                     onClick={() => copyMessage(msg)}
-                    className="opacity-0 group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all"
+                    className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all active:scale-90"
                     aria-label="Copy"
                   >
                     {copiedId === msg.id ? (
@@ -404,7 +404,7 @@ export default function Chat() {
 
       {/* Plan banner */}
       {showPlanBanner && (
-        <div className="px-4 pb-3 shrink-0 space-y-3">
+        <div className="px-3 sm:px-4 pb-3 shrink-0 space-y-3">
           {/* Plan-aware tour creation banner */}
           {showPlanBanner && (
             <div className="relative rounded-2xl border border-indigo-500/40 bg-indigo-500/8 p-3.5 overflow-hidden">
@@ -455,7 +455,7 @@ export default function Chat() {
       )}
 
       {/* Input area */}
-      <div className="glass px-4 pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
+      <div className="glass px-3 sm:px-4 pb-3 sm:pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
         <div
           className={cn(
             "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--card)] border transition-all",
