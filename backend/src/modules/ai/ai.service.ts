@@ -38,65 +38,68 @@ shu ma'lumotlardan foydalangin. O'z bilimingdan emas, ma'lumotlar bazasidan javo
 
 ${KNOWLEDGE_BASE}
 
-═══════════════════════════════════════════════════════
-TUR REJA TUZISH — QATTIQ QOIDALAR
-═══════════════════════════════════════════════════════
+## TUR REJA TUZISH — QATTIQ QOIDALAR
+
 Foydalanuvchi tur reja, marshrut yoki sayohat rejasi so'rasa —
 DARHOL reja tuzma! Avval 4 savolni bittadan ber, javob kutib keyingisini ber:
 
-SAVOL 1: 🗓️ Qachon sayohat qilmoqchisiz? (oy yoki mavsum)
-SAVOL 2: ⏱️ Necha kun vaqtingiz bor?
-SAVOL 3: 👥 Nechi kishi borasiz? (yolg'iz / juft / oila / guruh)
-SAVOL 4: 💰 Byudjet: tejamkor (<$30/kun) | o'rtacha ($30–80/kun) | premium ($80+/kun)?
+1. Qachon sayohat qilmoqchisiz? (oy yoki mavsum)
+2. Necha kun vaqtingiz bor?
+3. Nechi kishi borasiz? (yolg'iz / juft / oila / guruh)
+4. Byudjet: tejamkor (<$30/kun) | o'rtacha ($30–80/kun) | premium ($80+/kun)?
 
 Barcha 4 savol javoblangach — MA'LUMOTLAR BAZASIDAGI HAQIQIY narx va vaqtlarni
-ishlatib quyidagi PROFESSIONAL FORMAT bilan tur rejasi tuz:
+ishlatib **markdown formatida** (quyidagi kabi, boshqacha emas) tur rejasi tuz.
+Faqat oddiy, keng tarqalgan emoji ishlat (🗺️🏨🚌⭐💡 kabilarni ishlatma —
+faqat quyida ko'rsatilganlarni ishlat), bayroq-emoji va rasm chizuvchi
+belgilarni (═ ║ ╔ ╚ ━) HECH QACHON ishlatma — ular ko'p qurilmada noto'g'ri
+yoki singan holda ko'rinadi.
 
-╔══════════════════════════════════════╗
-║  🇺🇿 [N]-KUNLIK TUR REJASI          ║
-║  [Shaharlar: Samarqand → Buxoro...] ║
-╚══════════════════════════════════════╝
+**Namuna format:**
 
-📅 1-KUN — [SHAHAR NOMI]
-━━━━━━━━━━━━━━━━━━━━━━━━
-🌅 Ertalab (09:00–13:00)
-   📍 [Joy nomi] — [Qisqa tavsif] — ⏱ [Muddat] — 💵 [Aniq narx so'mda va $da]
-🍽️ Tushlik (13:00–14:30)
-   🍴 [MA'LUMOTLAR BAZASIDAGI restoran] — ~[Aniq taom narxi]
-🏛️ Tushdan keyin (15:00–18:00)
-   📍 [Joy nomi] — [Tavsif] — ⏱ [Muddat] — 💵 [Narx]
-🌆 Kechqurun (19:00–21:00)
-   🚶 [Sayr yoki kechki tadbir — bepul yoki narx]
-🏨 Tunash
-   🛏️ [MA'LUMOTLAR BAZASIDAGI mehmonxona] — [Aniq narx so'mda/$da]
-💰 Kunlik jami: ~[X so'm] (~$[Y])
+## [N]-kunlik tur rejasi — Samarqand → Buxoro
 
-... (har kun uchun bir xil format)
+### 1-kun — Samarqand
 
-╔══════════════════════════════════════╗
-║         📊 UMUMIY XULOSA            ║
-╚══════════════════════════════════════╝
-👥 Kishilar: [N] | 🗓️ Muddat: [N] kun
-💰 JAMI TAXMINIY (kishi boshiga):
-   🎫 Kirish biletlari: ~$[X]
-   🏨 Turar joy ([N] kecha): ~$[X]
-   🍽️ Ovqat ([N] kun): ~$[X]
-   🚌 Transport: ~$[X]
-   📊 JAMI: ~$[X]–$[Y]
+**Ertalab (09:00–13:00)**
+- 📍 Registon — tarixiy me'moriy ansambl — 2–3 soat — 50 000 so'm (~$4)
 
-💡 MASLAHATLAR:
-• [Mavsumga oid maslahat — ma'lumotlar bazasidan]
-• [Kiyim/tayyorgarlik]
-• [Pul/viza]
-• [Tejash usuli]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-═══════════════════════════════════════════════════════
+**Tushlik (13:00–14:30)**
+- 🍴 Samarqand Darvoza — ~35 000 so'm (~$2.7)
+
+**Tushdan keyin (15:00–18:00)**
+- 📍 Guri Amir maqbarasi — 1 soat — 30 000 so'm (~$2)
+
+**Kechqurun (19:00–21:00)**
+- Erkin sayr yoki kechki tadbir
+
+**Tunash:** [MA'LUMOTLAR BAZASIDAGI mehmonxona] — narx/kecha
+
+**Kunlik jami:** ~X so'm (~$Y)
+
+... (har kun uchun shu formatda davom et)
+
+### Umumiy xulosa
+
+- Kishilar: [N] | Muddat: [N] kun
+- Kirish biletlari: ~$[X]
+- Turar joy ([N] kecha): ~$[X]
+- Ovqat ([N] kun): ~$[X]
+- Transport: ~$[X]
+- **Jami: ~$[X]–$[Y]**
+
+### Maslahatlar
+
+- [Mavsumga oid maslahat — ma'lumotlar bazasidan]
+- [Kiyim/tayyorgarlik]
+- [Pul/viza]
+- [Tejash usuli]
 
 BOSHQA QOIDALAR:
 - Saqlangan joylarni ALBATTA rejaga qo'sh (agar bo'lsa), boshqa joylar ham qo'sh
 - FAQAT ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlatgin
 - Savol tiliga mos javob ber (uz/ru/en)
-- Oddiy savollarga qisqa (100–150 so'z), tur reja uchun to'liq format
+- Oddiy savollarga qisqa (100–150 so'z, markdown shart emas), tur reja uchun to'liq format
 - Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 
   const response = await client.chat.completions.create({
@@ -168,16 +171,17 @@ Byudjet: ${tourData.budget}
 Borilishi kerak bo'lgan joylar:
 ${list || "Barcha mashhur joylar (ma'lumotlar bazasidan tanlang)"}
 
-QATTIQ FORMAT — har kun uchun:
-📅 N-KUN — SHAHAR
-🌅 Ertalab (09:00–13:00): joy — vaqt — narx so'mda/$da
-🍽️ Tushlik (13:00–14:30): restoran — taom — narx
-🏛️ Tushdan keyin (15:00–18:00): joy — vaqt — narx
-🌆 Kechqurun (19:00–21:00): faoliyat
-🏨 Tunash: mehmonxona — narx/kecha
-💰 Kunlik jami: ~X so'm (~$Y)
+Markdown formatida yoz (bayroq-emoji va ═ ║ ╔ ╚ ━ kabi chizuvchi belgilarni ishlatma):
 
-Oxirida UMUMIY XULOSA (kirish biletlari / turar joy / ovqat / transport / JAMI) va MASLAHATLAR.`,
+### N-kun — Shahar
+**Ertalab (09:00–13:00):** joy — vaqt — narx so'mda/$da
+**Tushlik (13:00–14:30):** restoran — taom — narx
+**Tushdan keyin (15:00–18:00):** joy — vaqt — narx
+**Kechqurun (19:00–21:00):** faoliyat
+**Tunash:** mehmonxona — narx/kecha
+**Kunlik jami:** ~X so'm (~$Y)
+
+Oxirida "### Umumiy xulosa" (kirish biletlari / turar joy / ovqat / transport / jami) va "### Maslahatlar" bo'limlari.`,
       },
     ],
   });
