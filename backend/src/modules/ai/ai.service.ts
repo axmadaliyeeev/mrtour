@@ -8,6 +8,12 @@ const client = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
+// Groq periodically retires/renames preview models (this one, llama-4-scout,
+// 404'd with "model_not_found" after being live for months) — kept as a
+// single constant instead of four repeated string literals so a future
+// swap is a one-line change instead of a grep-and-replace.
+const MODEL = "llama-3.3-70b-versatile";
+
 export interface ChatMessage  { role: "user" | "assistant"; content: string; }
 export interface UserContext  { name?: string; country?: string; plan?: string; }
 export interface TourData     { days: string; people: string; regions: string[]; budget: string; }
@@ -94,7 +100,7 @@ BOSHQA QOIDALAR:
 - Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 
   const response = await client.chat.completions.create({
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: MODEL,
     max_tokens: 1800,
     messages: [
       { role: "system", content: system },
@@ -107,7 +113,7 @@ BOSHQA QOIDALAR:
 // ── 2. analyzeReview ───────────────────────────────────
 export async function analyzeReview(text: string, stars: number): Promise<AnalysisResult> {
   const response = await client.chat.completions.create({
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: MODEL,
     max_tokens: 200,
     messages: [
       {
@@ -144,7 +150,7 @@ export async function generateTourPlan(tourData: TourData, locations: Location[]
     .join("\n");
 
   const response = await client.chat.completions.create({
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: MODEL,
     max_tokens: 3000,
     messages: [
       {
@@ -191,7 +197,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     .join("\n");
 
   const response = await client.chat.completions.create({
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: MODEL,
     max_tokens: 600,
     messages: [
       {
