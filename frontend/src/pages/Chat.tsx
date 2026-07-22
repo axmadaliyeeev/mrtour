@@ -75,9 +75,13 @@ export default function Chat() {
   function handleScroll() {
     const el = scrollAreaRef.current;
     if (!el) return;
+    const hasOverflow = el.scrollHeight > el.clientHeight + 40;
     const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
     wasNearBottomRef.current = nearBottom;
-    setShowScrollButton(!nearBottom);
+    // Only worth showing the jump-to-latest button when there's actually
+    // somewhere to jump from — a short conversation that doesn't overflow
+    // the viewport has no "away from the bottom" state to speak of.
+    setShowScrollButton(hasOverflow && !nearBottom);
   }
 
   function scrollToBottom() {
@@ -250,10 +254,6 @@ export default function Chat() {
         ref={scrollAreaRef}
         onScroll={handleScroll}
         className="relative flex-1 overflow-y-auto px-3 sm:px-4 py-4 space-y-4"
-        style={{
-          maskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
-        }}
       >
         <AnimatePresence initial={false}>
         {messages.map((msg) => (
@@ -384,7 +384,12 @@ export default function Chat() {
         )}
         </AnimatePresence>
 
-        {/* Jump-to-latest — appears once the user scrolls away from the bottom */}
+        {/* Jump-to-latest — appears once the user scrolls away from the bottom.
+            Absolutely positioned against the scroll container (not `sticky`
+            in-flow) so it always floats at the true visible bottom edge
+            instead of landing wherever it happens to fall in short/
+            non-overflowing conversations (it was overlapping the quick-
+            action cards before). */}
         <AnimatePresence>
           {showScrollButton && (
             <motion.button
@@ -392,7 +397,7 @@ export default function Chat() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.9 }}
               onClick={scrollToBottom}
-              className="sticky bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-10"
             >
               <ChevronDown className="w-3.5 h-3.5" />
             </motion.button>
