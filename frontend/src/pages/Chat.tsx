@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
   MessageCircle, Copy, Check, RefreshCw, ChevronDown,
-  Landmark, Hotel, Bus, Star as StarIcon, Lightbulb,
+  Landmark, Hotel, Bus, Star as StarIcon, Lightbulb, AlertTriangle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -246,7 +246,15 @@ export default function Chat() {
       </div>
 
       {/* Messages area */}
-      <div ref={scrollAreaRef} onScroll={handleScroll} className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div
+        ref={scrollAreaRef}
+        onScroll={handleScroll}
+        className="relative flex-1 overflow-y-auto px-4 py-4 space-y-4"
+        style={{
+          maskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 16px, black calc(100% - 8px), transparent 100%)",
+        }}
+      >
         <AnimatePresence initial={false}>
         {messages.map((msg) => (
           <motion.div
@@ -270,7 +278,7 @@ export default function Chat() {
               )}
             >
               {msg.role === "assistant" ? (
-                <Bot className="w-3.5 h-3.5" />
+                msg.isError ? <AlertTriangle className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />
               ) : user ? (
                 user.name.charAt(0).toUpperCase()
               ) : (
@@ -299,7 +307,7 @@ export default function Chat() {
                 {msg.isError && (
                   <button
                     onClick={retryLastMessage}
-                    className="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors"
+                    className="ripple mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/12 border border-red-500/30 text-xs font-semibold text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all active:scale-[0.96]"
                   >
                     <RefreshCw className="w-3 h-3" />
                     {t("chat", "retry")}
