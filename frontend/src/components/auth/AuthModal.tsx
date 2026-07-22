@@ -100,7 +100,7 @@ function LoginTab({ onClose }: { onClose: () => void }) {
       );
       localStorage.setItem("karvon-token", res.accessToken);
       login(res.user);
-      mergePlanOnLogin();
+      mergePlanOnLogin().catch(() => {});
       onClose();
     } catch (err: unknown) {
       setApiError(extractAuthError(err, t("auth", "err_login"), t("auth", "err_waking_up")));
@@ -174,7 +174,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
       localStorage.setItem("karvon-token", res.accessToken);
       setDoneUser(res.user.name);
       login(res.user);
-      mergePlanOnLogin();
+      mergePlanOnLogin().catch(() => {});
       setStep(3);
     } catch (err: unknown) {
       setApiError(extractAuthError(err, t("auth", "err_register"), t("auth", "err_waking_up")));

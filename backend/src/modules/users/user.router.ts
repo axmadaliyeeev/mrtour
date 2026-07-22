@@ -14,7 +14,10 @@ const updateMeSchema = z.object({
   name:        z.string().min(2).max(50).trim().optional(),
   surname:     z.string().min(2).max(50).trim().optional(),
   country:     z.string().max(60).optional(),
-  lang:        z.enum(["uz", "ru", "en"]).optional(),
+  // Must match frontend's Lang type (i18n/translations.ts) — this was
+  // missing zh/de/fr, so picking any of those three languages while
+  // logged in 400'd silently and the choice was never saved to the account.
+  lang:        z.enum(["uz", "ru", "en", "zh", "de", "fr"]).optional(),
   preferences: z.array(z.string()).max(20).optional(),
 });
 

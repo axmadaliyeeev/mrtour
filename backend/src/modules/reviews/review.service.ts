@@ -60,6 +60,11 @@ export async function getByLocation(locationId: string, page = 1, limit = 10) {
 
 // ── create ─────────────────────────────────────────────
 export async function create(dto: CreateReviewDto): Promise<Review> {
+  // Fail with a clean 404 instead of letting a stale/unknown locationId
+  // hit Prisma's foreign-key constraint and surface as a generic 500.
+  const location = await prisma.location.findUnique({ where: { id: dto.locationId } });
+  if (!location) throw createError("Joy topilmadi", 404);
+
   // Step 1: persist immediately
   const review = await prisma.review.create({
     data: {

@@ -35,7 +35,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const me = await apiClient.get<User>("/auth/me");
       login(me);
-      mergePlanOnLogin();
+      mergePlanOnLogin().catch(() => {});
     } catch (err) {
       // Only drop the session on an actual auth rejection (401) — a
       // transient network error here shouldn't log out a valid session,
