@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
   MessageCircle, Copy, Check, RefreshCw, ChevronDown,
+  Landmark, Hotel, Bus, Star as StarIcon, Lightbulb,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -39,12 +40,15 @@ export default function Chat() {
     return { id: "welcome", role: "assistant", content: t("chat", "welcome"), timestamp: new Date() };
   }
 
+  // lucide icons instead of emoji — some emoji (🗺️, flags, etc.) render as
+  // broken/boxy glyphs on Windows without full color-emoji font support;
+  // an SVG icon looks identical on every platform.
   const QUICK_ACTIONS = [
-    { label: `🗺️ ${t("chat", "quick_samarqand")}`, text: t("chat", "quick_samarqand_prompt") },
-    { label: `🏨 ${t("chat", "quick_hotel")}`,      text: t("chat", "quick_hotel_prompt") },
-    { label: `🚌 ${t("chat", "quick_transport")}`,  text: t("chat", "quick_transport_prompt") },
-    { label: `🌟 ${t("chat", "quick_top")}`,        text: t("chat", "quick_top_prompt") },
-    { label: `💡 ${t("chat", "quick_tips")}`,       text: t("chat", "quick_tips_prompt") },
+    { icon: Landmark,  color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_samarqand"), text: t("chat", "quick_samarqand_prompt") },
+    { icon: Hotel,     color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_hotel"),     text: t("chat", "quick_hotel_prompt") },
+    { icon: Bus,       color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_transport"), text: t("chat", "quick_transport_prompt") },
+    { icon: StarIcon,  color: "text-amber-400",   bg: "bg-amber-500/12",  label: t("chat", "quick_top"),       text: t("chat", "quick_top_prompt") },
+    { icon: Lightbulb, color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_tips"),      text: t("chat", "quick_tips_prompt") },
   ];
 
   const [messages, setMessages] = useState<Message[]>(() => [makeWelcomeMessage()]);
@@ -210,7 +214,7 @@ export default function Chat() {
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--background)] shrink-0">
+      <div className="glass flex items-center justify-between px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 z-10">
         <div className="flex items-center gap-3">
           <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30">
             <Bot className="w-4 h-4" />
@@ -283,11 +287,11 @@ export default function Chat() {
             >
               <div
                 className={cn(
-                  "px-4 py-3 rounded-2xl text-sm leading-relaxed",
+                  "px-4 py-3.5 rounded-2xl text-sm leading-relaxed",
                   msg.role === "assistant"
                     ? msg.isError
                       ? "bg-red-500/8 border border-red-500/25 text-[var(--foreground)] rounded-tl-sm"
-                      : "bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
+                      : "bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
                     : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-tr-sm shadow-md shadow-indigo-500/25"
                 )}
               >
@@ -327,21 +331,23 @@ export default function Chat() {
 
         {/* Suggestion cards fill the empty space on a fresh chat */}
         {showQuickActions && !isLoading && (
-          <div className="max-w-lg pt-4 animate-fade-up delay-200">
-            <p className="text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-widest mb-2.5 flex items-center gap-1.5">
-              <MessageCircle className="w-3 h-3 text-indigo-400" />
+          <div className="max-w-lg pt-2 animate-fade-up delay-200">
+            <p className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/8 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">
+              <MessageCircle className="w-3 h-3" />
               {t("chat", "quick_label")}
             </p>
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
                   key={action.label}
                   onClick={() => sendMessage(action.text)}
-                  className="animate-fade-up group flex items-center gap-2.5 px-3.5 py-3 rounded-xl bg-[var(--card)] border border-[var(--border)] text-left text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/45 hover:bg-indigo-500/5 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all active:scale-[0.97]"
+                  className="tilt-hover animate-fade-up group flex items-center gap-3 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-left text-xs font-semibold text-[var(--foreground)] shadow-[var(--shadow-card)] hover:border-indigo-500/40 hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.97]"
                   style={{ animationDelay: `${250 + i * 60}ms` }}
                 >
-                  <span className="text-base">{action.label.slice(0, 2)}</span>
-                  <span className="flex-1">{action.label.slice(2).trim()}</span>
+                  <span className={cn("flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform group-hover:scale-105", action.bg)}>
+                    <action.icon className={cn("w-4 h-4", action.color)} />
+                  </span>
+                  <span className="flex-1 leading-snug">{action.label}</span>
                   <Send className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                 </button>
               ))}
@@ -441,7 +447,7 @@ export default function Chat() {
       )}
 
       {/* Input area */}
-      <div className="px-4 pb-4 pt-2 border-t border-[var(--border)] bg-[var(--background)] shrink-0">
+      <div className="glass px-4 pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
         <div
           className={cn(
             "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--card)] border transition-all",
