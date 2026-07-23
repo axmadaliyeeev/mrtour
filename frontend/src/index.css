@@ -4,32 +4,34 @@
 
 /* ── Design Tokens ───────────────────────────────────── */
 :root {
-  /* Mint Whisper as a bare wash across the ENTIRE canvas read as an
-     oversaturated green film over everything — professional dark/light
-     systems reserve the brand hue for accents, not as the page paint.
-     Background here is a barely-there mint-white; the full Mint Whisper
-     tone (#D1F2EB) is kept for --muted, i.e. the smaller "high contrast
-     point" surfaces the spec actually intended it for. */
-  --background:        #f4faf8;
-  --foreground:        #0b4f4a;
+  /* Round two on the light palette: the previous "barely-there mint"
+     background still carried enough green cast that every surface
+     (bg, cards, borders, icon chips) read as the same hazy tint with no
+     separation — flat and "foggy" rather than layered. Fix: the page
+     canvas goes fully neutral-warm (no green in it at all), cards are
+     true white lifted off it with a warm (not green-tinted) shadow, and
+     the mint/emerald tint is reserved strictly for icon chips, active
+     states and accents — never the page paint or generic borders. */
+  --background:        #faf9f5; /* warm off-white, zero green cast */
+  --foreground:        #29271f; /* warm near-black, not green-tinted */
   --card:              #ffffff;
-  --card-hover:        #f7fcfa;
-  --border:            #e0f0ea;
+  --card-hover:        #fdfcf9;
+  --border:            #ddd7c9; /* warm taupe-gray, visible without hover */
   --border-focus:      #50c878;
-  --muted:             #d1f2eb;
-  --muted-foreground:  #5c7d74;
+  --muted:             #d1f2eb; /* reserved for icon chips / accents only */
+  --muted-foreground:  #6b675c; /* warm gray, not cool green-gray */
   --primary:           #50c878; /* Emerald Green — sole interactive accent */
   --primary-hover:     #38a860;
   --ring:              #50c878;
-  --gold:              #218f76; /* mint-teal contrast point (rating/premium) */
-  --gold-soft:         rgba(33,143,118,0.12);
+  --gold:              #1c7a64; /* mid-tone emerald-teal contrast point (rating/premium), deepened for legibility */
+  --gold-soft:         rgba(28,122,100,0.12);
   --sidebar-bg:        #ffffff;
-  --sidebar-border:    #e0f0ea;
-  --header-bg:         rgba(244,250,248,0.85);
+  --sidebar-border:    #ddd7c9;
+  --header-bg:         rgba(250,249,245,0.85);
   --nav-bg:            rgba(255,255,255,0.97);
-  --shadow-card:       0 1px 3px 0 rgb(11 79 74 / 0.06), 0 1px 2px -1px rgb(11 79 74 / 0.05);
-  --shadow-card-hover: 0 12px 32px -8px rgb(80 200 120 / 0.24), 0 4px 12px -4px rgb(11 79 74 / 0.07);
-  --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-card:       0 1px 3px 0 rgb(50 40 25 / 0.08), 0 1px 2px -1px rgb(50 40 25 / 0.06);
+  --shadow-card-hover: 0 14px 34px -8px rgb(50 40 25 / 0.14), 0 4px 12px -4px rgb(80 200 120 / 0.18);
+  --shadow-sm:         0 1px 2px 0 rgb(50 40 25 / 0.06);
   --font-body:         "Manrope", system-ui, -apple-system, sans-serif;
   --font-display:      "Sora", "Manrope", system-ui, sans-serif;
 }

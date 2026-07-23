@@ -143,7 +143,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
               {location.city}
             </span>
             <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
-              <Star className="w-3 h-3 text-indigo-400 fill-indigo-400" />
+              <Star className="w-3 h-3 text-indigo-600 fill-indigo-600" />
               <span className="text-white text-xs font-bold">{location.rating}</span>
             </div>
           </div>
@@ -247,7 +247,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
             {location.city}
           </span>
           <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-full bg-indigo-400/10 border border-indigo-400/20">
-            <Star className="w-3 h-3 text-indigo-400 fill-indigo-400" />
+            <Star className="w-3 h-3 text-indigo-600 fill-indigo-600" />
             <span className="text-[11px] font-bold text-[var(--foreground)] tabular-nums">{location.rating}</span>
             <span className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
               ({location.reviewCount >= 1000

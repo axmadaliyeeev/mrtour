@@ -53,11 +53,14 @@ export default function Home() {
 
   // Brand-cohesive stat tiles — every tile stays within the emerald/gold
   // palette (varied by shade+opacity) instead of unrelated rainbow pastels.
+  // Icon colors deepened a step (600/700 instead of 500/600) — on a pale
+  // mint chip, the brighter mid-tones read as barely-there; the darker
+  // shades keep the same hue family but hold real contrast.
   const STATS = [
-    { icon: Compass, value: "200+", label: t("home", "stats_places"),    color: "text-indigo-500", bg: "bg-indigo-500/10 border-indigo-500/25", glow: "shadow-indigo-500/20" },
-    { icon: Star,    value: "4.8",  label: t("home", "stats_rating"),    color: "text-gold-500",   bg: "bg-gold-500/10 border-gold-500/25",     glow: "shadow-gold-500/20" },
-    { icon: Users,   value: "50K+", label: t("home", "stats_travelers"), color: "text-indigo-600", bg: "bg-indigo-600/10 border-indigo-600/25", glow: "shadow-indigo-600/20" },
-    { icon: Globe,   value: "6",    label: t("home", "stats_langs"),     color: "text-gold-600",   bg: "bg-gold-600/10 border-gold-600/25",     glow: "shadow-gold-600/20" },
+    { icon: Compass, value: "200+", label: t("home", "stats_places"),    color: "text-indigo-700", bg: "bg-indigo-500/10 border-indigo-500/25", glow: "shadow-indigo-500/20" },
+    { icon: Star,    value: "4.8",  label: t("home", "stats_rating"),    color: "text-gold-600",   bg: "bg-gold-500/10 border-gold-500/25",     glow: "shadow-gold-500/20" },
+    { icon: Users,   value: "50K+", label: t("home", "stats_travelers"), color: "text-indigo-700", bg: "bg-indigo-600/10 border-indigo-600/25", glow: "shadow-indigo-600/20" },
+    { icon: Globe,   value: "6",    label: t("home", "stats_langs"),     color: "text-gold-700",   bg: "bg-gold-600/10 border-gold-600/25",     glow: "shadow-gold-600/20" },
   ];
 
   return (
@@ -76,6 +79,10 @@ export default function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/90 to-[var(--background)]/35" />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)]/60 via-transparent to-transparent" />
+          {/* A second, warmer scrim hugging just the bottom edge (where the
+              CTA row and trust indicators sit) — keeps that text legible
+              without darkening/flattening the rest of the photo. */}
+          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#1c140a]/25 via-[#1c140a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
           <div className="aurora-overlay absolute inset-0 opacity-40 pointer-events-none" />
 
           <div className="relative px-5 sm:px-8 pt-10 pb-10 max-w-3xl">
@@ -113,7 +120,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => navigate("/locations")}
-                className="ripple flex items-center gap-2 px-4 py-2.5 rounded-xl bg-transparent border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-semibold transition-all active:scale-[0.97]"
+                className="ripple flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--card)]/80 backdrop-blur-md border border-[var(--border)] hover:border-indigo-500/40 hover:bg-[var(--card)] text-[var(--foreground)] text-xs font-semibold shadow-sm transition-all active:scale-[0.97]"
               >
                 {t("home", "explore_btn")}
               </button>
@@ -146,11 +153,11 @@ export default function Home() {
           card and the stats row — the same S-curve motif as the logo and
           sidebar indicator, threaded through the page instead of a hard
           rule. */}
-      <div className="px-4 -mt-2 mb-2 flex justify-center pointer-events-none" aria-hidden="true">
-        <svg width="120" height="10" viewBox="0 0 120 10" fill="none">
+      <div className="px-4 mt-4 mb-4 flex justify-center pointer-events-none" aria-hidden="true">
+        <svg width="120" height="12" viewBox="0 0 120 12" fill="none">
           <path
-            d="M2 5C22 5 22 1 42 1C62 1 62 9 82 9C97 9 97 5 118 5"
-            stroke="var(--primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.35"
+            d="M2 6C22 6 22 2 42 2C62 2 62 10 82 10C97 10 97 6 118 6"
+            stroke="var(--gold)" strokeWidth="2.5" strokeLinecap="round" opacity="0.85"
           />
         </svg>
       </div>

@@ -123,7 +123,7 @@ function HotelsTab({ search }: { search: string }) {
               <h3 className="font-bold text-sm text-white drop-shadow-md">{h.name}</h3>
               <div className="flex mt-0.5">
                 {Array.from({ length: h.stars }, (_, i) => (
-                  <Star key={i} className="w-3 h-3 text-indigo-400 fill-indigo-400" />
+                  <Star key={i} className="w-3 h-3 text-indigo-600 fill-indigo-600" />
                 ))}
               </div>
             </div>
