@@ -2,7 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
-  MessageCircle, Copy, Check, RefreshCw, ChevronDown,
+  Copy, Check, RefreshCw, ChevronDown, ThumbsUp, ThumbsDown,
   Landmark, Hotel, Bus, Star as StarIcon, Lightbulb, AlertTriangle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MessageContent } from "@/components/chat/MessageContent";
+import { LOCATIONS } from "@/data";
 
 interface Message {
   id: string;
@@ -19,6 +20,14 @@ interface Message {
   content: string;
   timestamp: Date;
   isError?: boolean;
+  reaction?: "up" | "down" | null;
+}
+
+// Lightweight heuristic: if the assistant mentions a place we actually
+// have in the catalog by name, surface it as a real, clickable card
+// instead of leaving it as unlinked plain text.
+function findMentionedLocations(text: string) {
+  return LOCATIONS.filter((l) => text.includes(l.name)).slice(0, 3);
 }
 
 // A timed-out/network failure (most often a free-tier backend cold-booting)
@@ -31,7 +40,7 @@ function extractChatError(err: unknown, fallback: string, wakingUp: string): str
 }
 
 export default function Chat() {
-  const { plan, user } = useAppStore();
+  const { plan, user, showToast } = useAppStore();
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const { isDesktop } = useBreakpoint();
@@ -164,6 +173,13 @@ export default function Chat() {
     }
   }
 
+  function setMessageReaction(id: string, reaction: "up" | "down") {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m))
+    );
+    showToast(t("chat", "reaction_thanks"), reaction === "up" ? "👍" : "👎", "info");
+  }
+
   function sendPlanTourRequest() {
     if (!plan.length) return;
     const locationNames = plan.map((loc) => `${loc.name} (${loc.city})`).join(", ");
@@ -263,8 +279,25 @@ export default function Chat() {
         onScroll={handleScroll}
         className="relative flex-1 overflow-y-auto px-3 sm:px-4 py-4 space-y-4"
       >
+        {/* Empty-state hero — soft pulsing orb + centered heading instead
+            of just another chat bubble, so the first screen reads as "an
+            assistant is here" rather than a blank inbox. */}
+        {showQuickActions && !isLoading && (
+          <div className="flex flex-col items-center text-center pt-4 pb-2 animate-fade-up">
+            <div className="relative w-16 h-16 mb-4">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 opacity-30 blur-xl animate-breathe" />
+              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <Bot className="w-7 h-7 text-white" />
+              </div>
+            </div>
+            <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
+              {t("chat", "empty_heading")}
+            </h2>
+          </div>
+        )}
+
         <AnimatePresence initial={false}>
-        {messages.map((msg) => (
+        {messages.filter((m) => m.id !== "welcome" || !showQuickActions).map((msg) => (
           <motion.div
             key={msg.id}
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -303,12 +336,17 @@ export default function Chat() {
             >
               <div
                 className={cn(
-                  "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl text-sm leading-relaxed",
+                  "text-sm leading-relaxed",
                   msg.role === "assistant"
                     ? msg.isError
-                      ? "bg-red-500/8 border border-red-500/25 text-[var(--foreground)] rounded-tl-sm"
-                      : "bg-gradient-to-br from-[var(--card)] to-[var(--card-hover)] border border-[var(--border)] text-[var(--foreground)] rounded-tl-sm shadow-[var(--shadow-card)]"
-                    : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-tr-sm shadow-md shadow-indigo-500/25"
+                      ? "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm bg-red-500/8 border border-red-500/25 text-[var(--foreground)]"
+                      // Bubble-less: the assistant is a guide speaking to
+                      // you, not a second chat participant in an identical
+                      // box — plain text (just the avatar + copy) reads
+                      // less like "two people messaging" and more like a
+                      // single running conversation with a guide.
+                      : "text-[var(--foreground)] px-0.5"
+                    : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25"
                 )}
               >
                 <MessageContent text={msg.content} />
@@ -325,42 +363,93 @@ export default function Chat() {
                 )}
               </div>
 
+              {/* Inline mini-cards for any catalog location the reply
+                  actually mentions by name — turns a place-drop in plain
+                  text into something clickable that ties back to the
+                  location catalog instead of just being a proper noun. */}
+              {msg.role === "assistant" && !msg.isError && (() => {
+                const mentioned = findMentionedLocations(msg.content);
+                if (!mentioned.length) return null;
+                return (
+                  <div className="flex flex-col gap-1.5 w-full pt-1">
+                    {mentioned.map((loc) => (
+                      <button
+                        key={loc.id}
+                        onClick={() => navigate(`/locations/${loc.id}`)}
+                        className="flex items-center gap-2.5 p-2 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/40 hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.98] text-left"
+                      >
+                        <img src={loc.img} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-xs font-semibold text-[var(--foreground)] truncate">{loc.name}</span>
+                          <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
+                            <MapPin className="w-2.5 h-2.5 text-indigo-500" />{loc.city}
+                          </span>
+                        </span>
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-gold-500 shrink-0">
+                          <StarIcon className="w-3 h-3 fill-gold-500" />{loc.rating}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
+
               <div className="flex items-center gap-2 px-1">
                 <span className="text-[10px] text-[var(--muted-foreground)]/60">
                   {formatTime(msg.timestamp)}
                 </span>
                 {msg.role === "assistant" && !msg.isError && msg.id !== "welcome" && (
-                  <button
-                    onClick={() => copyMessage(msg)}
-                    className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all active:scale-90"
-                    aria-label="Copy"
-                  >
-                    <AnimatePresence mode="wait" initial={false}>
-                      {copiedId === msg.id ? (
-                        <motion.span key="check" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                        </motion.span>
-                      ) : (
-                        <motion.span key="copy" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                          <Copy className="w-3 h-3" />
-                        </motion.span>
+                  <>
+                    <button
+                      onClick={() => copyMessage(msg)}
+                      className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all active:scale-90"
+                      aria-label="Copy"
+                    >
+                      <AnimatePresence mode="wait" initial={false}>
+                        {copiedId === msg.id ? (
+                          <motion.span key="check" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
+                            <Check className="w-3 h-3 text-emerald-500" />
+                          </motion.span>
+                        ) : (
+                          <motion.span key="copy" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
+                            <Copy className="w-3 h-3" />
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </button>
+                    <button
+                      onClick={() => setMessageReaction(msg.id, "up")}
+                      className={cn(
+                        "opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-all active:scale-90",
+                        msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] hover:text-indigo-400"
                       )}
-                    </AnimatePresence>
-                  </button>
+                      aria-label="Good reply"
+                    >
+                      <ThumbsUp className={cn("w-3 h-3", msg.reaction === "up" && "fill-indigo-500")} />
+                    </button>
+                    <button
+                      onClick={() => setMessageReaction(msg.id, "down")}
+                      className={cn(
+                        "opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-all active:scale-90",
+                        msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] hover:text-red-400"
+                      )}
+                      aria-label="Bad reply"
+                    >
+                      <ThumbsDown className={cn("w-3 h-3", msg.reaction === "down" && "fill-red-400")} />
+                    </button>
+                  </>
                 )}
               </div>
             </div>
           </motion.div>
         ))}
 
-        {/* Suggestion cards fill the empty space on a fresh chat */}
+        {/* Scenario cards + two suggestion chips — replaces the old
+            labelled list with the "here's what I can do" pattern from the
+            spec's chat-screen reference. */}
         {showQuickActions && !isLoading && (
-          <div className="max-w-lg pt-2 animate-fade-up delay-200">
-            <p className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/8 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">
-              <MessageCircle className="w-3 h-3" />
-              {t("chat", "quick_label")}
-            </p>
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5">
+          <div className="max-w-lg mx-auto w-full pt-2 animate-fade-up delay-200">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 mb-3">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
                   key={action.label}
@@ -373,6 +462,21 @@ export default function Chat() {
                   </span>
                   <span className="flex-1 leading-snug">{action.label}</span>
                   <Send className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                </button>
+              ))}
+            </div>
+
+            {/* Two short example questions, styled as plain pill chips —
+                lower-commitment than the scenario cards above. */}
+            <div className="flex flex-wrap justify-center gap-2">
+              {[t("chat", "quick_samarqand_prompt"), t("chat", "quick_top_prompt")].map((chip, i) => (
+                <button
+                  key={chip}
+                  onClick={() => sendMessage(chip)}
+                  className="animate-fade-up px-3 py-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-indigo-500/30 transition-all active:scale-[0.96]"
+                  style={{ animationDelay: `${450 + i * 60}ms` }}
+                >
+                  {chip}
                 </button>
               ))}
             </div>
@@ -537,6 +641,9 @@ export default function Chat() {
         </div>
         <p className="hidden sm:block text-[10px] text-[var(--muted-foreground)]/60 text-center mt-2">
           {t("chat", "hint")}
+        </p>
+        <p className="text-[10px] text-[var(--muted-foreground)]/50 text-center mt-1.5 px-4">
+          {t("chat", "disclaimer")}
         </p>
       </div>
     </div>

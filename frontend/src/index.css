@@ -4,50 +4,61 @@
 
 /* ── Design Tokens ───────────────────────────────────── */
 :root {
-  --background:        #d1f2eb; /* Mint Whisper — light-mode app background */
+  /* Mint Whisper as a bare wash across the ENTIRE canvas read as an
+     oversaturated green film over everything — professional dark/light
+     systems reserve the brand hue for accents, not as the page paint.
+     Background here is a barely-there mint-white; the full Mint Whisper
+     tone (#D1F2EB) is kept for --muted, i.e. the smaller "high contrast
+     point" surfaces the spec actually intended it for. */
+  --background:        #f4faf8;
   --foreground:        #0b4f4a;
   --card:              #ffffff;
-  --card-hover:        #f2fbf8;
-  --border:            #b9e5d8;
+  --card-hover:        #f7fcfa;
+  --border:            #e0f0ea;
   --border-focus:      #50c878;
-  --muted:             #e8fbf6;
-  --muted-foreground:  #4c6b63;
+  --muted:             #d1f2eb;
+  --muted-foreground:  #5c7d74;
   --primary:           #50c878; /* Emerald Green — sole interactive accent */
   --primary-hover:     #38a860;
   --ring:              #50c878;
-  --gold:              #2fa98a; /* mint-teal contrast point (rating/premium) */
-  --gold-soft:         rgba(47,169,138,0.14);
+  --gold:              #218f76; /* mint-teal contrast point (rating/premium) */
+  --gold-soft:         rgba(33,143,118,0.12);
   --sidebar-bg:        #ffffff;
-  --sidebar-border:    #b9e5d8;
-  --header-bg:         rgba(209,242,235,0.85);
+  --sidebar-border:    #e0f0ea;
+  --header-bg:         rgba(244,250,248,0.85);
   --nav-bg:            rgba(255,255,255,0.97);
-  --shadow-card:       0 1px 3px 0 rgb(11 79 74 / 0.07), 0 1px 2px -1px rgb(11 79 74 / 0.06);
-  --shadow-card-hover: 0 12px 32px -8px rgb(80 200 120 / 0.3), 0 4px 12px -4px rgb(11 79 74 / 0.08);
+  --shadow-card:       0 1px 3px 0 rgb(11 79 74 / 0.06), 0 1px 2px -1px rgb(11 79 74 / 0.05);
+  --shadow-card-hover: 0 12px 32px -8px rgb(80 200 120 / 0.24), 0 4px 12px -4px rgb(11 79 74 / 0.07);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.04);
   --font-body:         "Manrope", system-ui, -apple-system, sans-serif;
   --font-display:      "Sora", "Manrope", system-ui, sans-serif;
 }
 
 .dark {
-  --background:        #013220; /* Dark Evergreen — never pure black */
-  --foreground:        #f0f5f2;
-  --card:              #0b6e4f; /* elevated surface: cards, sidebar */
-  --card-hover:        #0f7d59;
-  --border:            #0f5741;
+  /* Same correction on dark: a card surface painted in solid saturated
+     Emerald (#0B6E4F) on every panel read as a gaudy green block instead
+     of a refined dark UI. Cards go back to a near-black, barely-green
+     neutral so the Emerald accent actually stands out against something,
+     instead of everything being the same loud hue. */
+  --background:        #04120e; /* Dark Evergreen, deepened */
+  --foreground:        #eef5f2;
+  --card:              #0b241c;
+  --card-hover:        #102e24;
+  --border:            #163a2e;
   --border-focus:      #50c878;
-  --muted:             #092a1f;
-  --muted-foreground:  #8fb0a5;
+  --muted:             #0a2019;
+  --muted-foreground:  #7fa599;
   --primary:           #50c878; /* same accent as light mode, by design */
   --primary-hover:     #6ddba3;
   --ring:              #50c878;
   --gold:              #d1f2eb; /* Mint Whisper — brightest point of contrast on dark */
-  --gold-soft:         rgba(209,242,235,0.12);
-  --sidebar-bg:        #0b6e4f;
-  --sidebar-border:    #0f5741;
-  --header-bg:         rgba(1,50,32,0.9);
-  --nav-bg:            rgba(1,50,32,0.97);
+  --gold-soft:         rgba(209,242,235,0.1);
+  --sidebar-bg:        #061a14;
+  --sidebar-border:    #123128;
+  --header-bg:         rgba(4,18,14,0.9);
+  --nav-bg:            rgba(4,18,14,0.97);
   --shadow-card:       0 1px 4px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.35);
-  --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.35), 0 0 0 1px rgb(80 200 120 / 0.1);
+  --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.3), 0 0 0 1px rgb(80 200 120 / 0.08);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);
 }
 
@@ -140,7 +151,7 @@ button, a, [role="button"], input, select, textarea, label {
 
 /* Gradient headline — emerald → gold, the brand's premium signature */
 .text-gradient {
-  background: linear-gradient(100deg, var(--foreground) 12%, #50c878 42%, #2fa98a 72%, var(--foreground) 105%);
+  background: linear-gradient(100deg, var(--foreground) 12%, #50c878 42%, #218f76 72%, var(--foreground) 105%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
