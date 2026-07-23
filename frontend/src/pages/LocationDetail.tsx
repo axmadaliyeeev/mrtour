@@ -413,7 +413,7 @@ export default function LocationDetail() {
           </h2>
           <div className="flex flex-wrap gap-2">
             {loc.tags.map((tag) => (
-              <span key={tag} className="px-3 py-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-xs text-[var(--foreground)]">
+              <span key={tag} className="px-2.5 py-1 rounded-full bg-[var(--muted)] text-[11px] font-medium text-[var(--muted-foreground)]">
                 {tag}
               </span>
             ))}

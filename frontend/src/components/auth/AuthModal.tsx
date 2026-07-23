@@ -345,10 +345,11 @@ export function AuthModal() {
                   Desktop keeps the centered card. */}
               <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center outline-none">
                 <motion.div
+                  // Calm tween in/out (no elastic/spring overshoot) — faster
+                  // out than in, per the "modal entrance" motion spec.
                   initial={{ opacity: 0, y: 60 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 60 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  animate={{ opacity: 1, y: 0, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+                  exit={{ opacity: 0, y: 40, transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}
                   // Level 2: a neutral surface off the green ramp entirely,
                   // so the modal never reads as "the page, just blurred".
                   className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl border border-[var(--modal-border)] bg-[var(--modal)] shadow-[var(--shadow-modal)] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:p-5 sm:m-4 max-h-[90vh] overflow-y-auto"
@@ -374,15 +375,23 @@ export function AuthModal() {
                   </div>
 
                   <div className="flex rounded-xl bg-[var(--muted)] p-1 mb-5 gap-1">
-                    {(["login", "register"] as const).map((tab) => (
-                      <button key={tab} onClick={() => setActiveTab(tab)}
-                        className={cn("flex-1 py-2 rounded-lg text-sm font-semibold transition-all",
-                          activeTab === tab
-                            ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
-                            : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]")}>
-                        {tab === "login" ? t("auth", "login") : t("auth", "register")}
-                      </button>
-                    ))}
+                    {(["login", "register"] as const).map((tab) => {
+                      const active = activeTab === tab;
+                      return (
+                        <button key={tab} onClick={() => setActiveTab(tab)}
+                          className={cn("relative flex-1 py-2 rounded-lg text-sm font-semibold transition-colors",
+                            active ? "text-white" : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]")}>
+                          {active && (
+                            <motion.span
+                              layoutId="auth-tab-pill"
+                              transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                              className="absolute inset-0 rounded-lg bg-indigo-500 shadow-sm shadow-indigo-500/25"
+                            />
+                          )}
+                          <span className="relative">{tab === "login" ? t("auth", "login") : t("auth", "register")}</span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {activeTab === "login" ? <LoginTab onClose={handleClose} /> : <RegisterTab onClose={handleClose} />}

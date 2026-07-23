@@ -16,6 +16,8 @@ import {
   Sparkles,
   Phone,
   Lock,
+  ClipboardList,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -136,11 +138,14 @@ export default function Profile() {
         <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-6 text-center shadow-[var(--shadow-card)]">
           <div className="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
           <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/8 rounded-full blur-2xl pointer-events-none" />
-          {/* Solid fill (not a pale 15-20% tint) so the icon actually
-              separates from its own chip — matches the filled treatment
-              used for the logged-in avatar below. */}
-          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30 flex items-center justify-center animate-pop-in">
-            <UserIcon className="w-9 h-9 text-white" />
+          {/* A gradient ring (emerald → mint) around a dark center reads
+              as a deliberate placeholder treatment rather than a flat
+              filled circle; the thinner stroke keeps it feeling refined
+              instead of a generic bold person glyph. */}
+          <div className="relative w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-indigo-500 to-[#7fe0ae] shadow-lg shadow-indigo-500/25 animate-pop-in">
+            <div className="w-full h-full rounded-full bg-[var(--card)] flex items-center justify-center">
+              <UserIcon className="w-8 h-8 text-indigo-400" strokeWidth={1.5} />
+            </div>
           </div>
           <div>
             <h2 className="text-base font-bold text-[var(--foreground)] mb-1">
@@ -171,7 +176,7 @@ export default function Profile() {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
-                📋 {t("profile", "plan_title")}
+                <ClipboardList className="w-4 h-4 text-indigo-400" /> {t("profile", "plan_title")}
                 <span className="ml-1 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
                   {plan.length}
                 </span>
@@ -240,8 +245,8 @@ export default function Profile() {
 
         {/* Language selector for guest */}
         <div className="mb-6">
-          <p className="text-sm font-bold text-[var(--foreground)] mb-3 px-1">
-            🌐 {t("profile", "lang_title")}
+          <p className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3 px-1">
+            <Globe className="w-4 h-4 text-indigo-400" /> {t("profile", "lang_title")}
           </p>
           <div className="grid grid-cols-3 gap-2">
             {LANGUAGES.map((l) => (
@@ -363,7 +368,7 @@ export default function Profile() {
       <section className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
-            📋 {t("profile", "plan_title")}
+            <ClipboardList className="w-4 h-4 text-indigo-400" /> {t("profile", "plan_title")}
             <span className="ml-1 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
               {plan.length}
             </span>
@@ -380,7 +385,7 @@ export default function Profile() {
 
         {plan.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-8 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-center">
-            <div className="text-4xl">🗺️</div>
+            <Map className="w-9 h-9 text-indigo-400/60" strokeWidth={1.5} />
             <p className="text-sm font-semibold text-[var(--foreground)]">
               {t("profile", "plan_empty_title")}
             </p>
@@ -449,8 +454,8 @@ export default function Profile() {
 
       {/* Language selector */}
       <section className="px-4 mb-5">
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
-          🌐 {t("profile", "lang_title")}
+        <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
+          <Globe className="w-4 h-4 text-indigo-400" /> {t("profile", "lang_title")}
         </h3>
         <div className="grid grid-cols-3 gap-2">
           {LANGUAGES.map((l) => (
@@ -472,8 +477,8 @@ export default function Profile() {
 
       {/* Theme toggle */}
       <section className="px-4 mb-5">
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3">
-          ⚙️ {t("profile", "settings_title")}
+        <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
+          <Settings className="w-4 h-4 text-indigo-400" /> {t("profile", "settings_title")}
         </h3>
         <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
           <div className="flex items-center justify-between">

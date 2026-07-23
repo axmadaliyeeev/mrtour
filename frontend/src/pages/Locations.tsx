@@ -155,23 +155,35 @@ export default function Locations() {
         </div>
       </div>
 
-      {/* Category pills */}
+      {/* Category pills — the active background slides between pills via
+          a shared layoutId instead of instantly swapping classes, so
+          switching filters reads as one element moving, not a hard cut. */}
       <div className="flex gap-2 overflow-x-auto px-4 pb-1 mb-2 scrollbar-hide">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.key}
-            onClick={() => setActiveCategory(cat.key)}
-            className={cn(
-              "flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-full border text-xs font-medium shrink-0 transition-all",
-              activeCategory === cat.key
-                ? "bg-indigo-500 border-indigo-500 text-white"
-                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
-            )}
-          >
-            <cat.Icon className="w-3.5 h-3.5" strokeWidth={2} />
-            {cat.label}
-          </button>
-        ))}
+        {CATEGORIES.map((cat) => {
+          const active = activeCategory === cat.key;
+          return (
+            <button
+              key={cat.key}
+              onClick={() => setActiveCategory(cat.key)}
+              className={cn(
+                "relative flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-full border text-xs font-medium shrink-0 transition-colors",
+                active
+                  ? "border-indigo-500 text-white"
+                  : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
+              )}
+            >
+              {active && (
+                <motion.span
+                  layoutId="locations-category-pill"
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  className="absolute inset-0 rounded-full bg-indigo-500"
+                />
+              )}
+              <cat.Icon className="relative w-3.5 h-3.5" strokeWidth={2} />
+              <span className="relative">{cat.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Expanded filters */}

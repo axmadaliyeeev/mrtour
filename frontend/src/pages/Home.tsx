@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   MapPin, Star, Users, Globe, Bot, ChevronRight,
   Compass, Sparkles, TrendingUp, Clock,
@@ -155,9 +156,15 @@ export default function Home() {
           rule. */}
       <div className="px-4 mt-4 mb-4 flex justify-center pointer-events-none" aria-hidden="true">
         <svg width="120" height="12" viewBox="0 0 120 12" fill="none">
-          <path
+          {/* Draws in once on first mount (framer-motion's pathLength
+              handles the stroke-dashoffset math) — it doesn't replay on
+              every re-render, only the initial page load. */}
+          <motion.path
             d="M2 6C22 6 22 2 42 2C62 2 62 10 82 10C97 10 97 6 118 6"
-            stroke="var(--gold)" strokeWidth="2.5" strokeLinecap="round" opacity="0.85"
+            stroke="var(--gold)" strokeWidth="2.5" strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 0.85 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           />
         </svg>
       </div>

@@ -157,10 +157,9 @@ export function CommandPalette() {
           onMouseDown={close}
         >
           <motion.div
-            initial={{ opacity: 0, y: -12, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
+            exit={{ opacity: 0, y: -8, scale: 0.96, transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}
             className="w-full max-w-lg rounded-2xl bg-[var(--modal)] border border-[var(--modal-border)] shadow-[var(--shadow-modal)] overflow-hidden"
             onMouseDown={(e) => e.stopPropagation()}
           >

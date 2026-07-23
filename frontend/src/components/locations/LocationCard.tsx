@@ -66,7 +66,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
         whileTap={{ scale: 0.97 }}
         className={cn(
           "spotlight-card tilt-hover relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
-          "shadow-md hover:shadow-xl hover:shadow-black/30 transition-all duration-300 hover:-translate-y-1",
+          "shadow-md hover:shadow-xl hover:shadow-black/30",
           className
         )}
       >
@@ -77,7 +77,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           src={location.img}
           alt={location.name}
           className={cn(
-            "w-full h-full object-cover group-hover:scale-110 transition-transform duration-700",
+            "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out",
             imgLoaded ? "opacity-100" : "opacity-0"
           )}
           loading="lazy"
@@ -161,8 +161,8 @@ export function LocationCard({ location, variant = "default", className }: Locat
       whileTap={{ scale: 0.98 }}
       className={cn(
         "spotlight-card tilt-hover rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
-        "hover:border-indigo-500/50 hover:shadow-lg hover:ring-1 hover:ring-indigo-500/25",
-        "transition-all duration-300 group",
+        "hover:border-indigo-500/40",
+        "transition-all duration-200 group",
         "shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]",
         className
       )}
@@ -176,7 +176,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           src={location.img}
           alt={location.name}
           className={cn(
-            "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
+            "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out",
             imgLoaded ? "opacity-100" : "opacity-0"
           )}
           loading="lazy"
@@ -234,8 +234,10 @@ export function LocationCard({ location, variant = "default", className }: Locat
         </motion.button>
       </div>
 
-      {/* Body */}
-      <div className="p-3.5 space-y-2.5">
+      {/* Body — the name is the one high-contrast/bold element on the
+          card; rating and city are plain metadata, not a second pill
+          competing for attention. */}
+      <div className="p-4 space-y-2.5">
         <h3 className="route-underline font-bold text-sm text-[var(--foreground)] leading-snug line-clamp-1">
           {location.name}
         </h3>
@@ -246,15 +248,13 @@ export function LocationCard({ location, variant = "default", className }: Locat
             <MapPin className="w-3 h-3 shrink-0 text-indigo-500" />
             {location.city}
           </span>
-          <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-full bg-indigo-400/10 border border-indigo-400/20">
-            <Star className="w-3 h-3 text-indigo-600 fill-indigo-600" />
-            <span className="text-[11px] font-bold text-[var(--foreground)] tabular-nums">{location.rating}</span>
-            <span className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
-              ({location.reviewCount >= 1000
-                ? `${(location.reviewCount / 1000).toFixed(1)}k`
-                : location.reviewCount})
-            </span>
-          </div>
+          <span className="flex items-center gap-1 shrink-0 text-[11px] text-[var(--muted-foreground)] tabular-nums">
+            <Star className="w-3 h-3 text-indigo-500 fill-indigo-500" />
+            <span className="font-semibold text-[var(--foreground)]">{location.rating}</span>
+            ({location.reviewCount >= 1000
+              ? `${(location.reviewCount / 1000).toFixed(1)}k`
+              : location.reviewCount})
+          </span>
         </div>
 
         {/* Short description */}

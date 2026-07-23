@@ -16,7 +16,7 @@
   --foreground:        #29271f; /* warm near-black, not green-tinted */
   --card:              #ffffff;
   --card-hover:        #fdfcf9;
-  --border:            #ddd7c9; /* warm taupe-gray, visible without hover */
+  --border:            #e6e1d4; /* softened toward hairline — shadow does most of the separation work now */
   --border-focus:      #50c878;
   /* --muted was full Mint Whisper (#d1f2eb) — since it's the generic
      "quiet surface" token (input fields, chips, badges, tag pills) used
@@ -35,8 +35,11 @@
   --sidebar-border:    #ddd7c9;
   --header-bg:         rgba(250,249,245,0.85);
   --nav-bg:            rgba(255,255,255,0.97);
-  --shadow-card:       0 1px 3px 0 rgb(50 40 25 / 0.08), 0 1px 2px -1px rgb(50 40 25 / 0.06);
-  --shadow-card-hover: 0 14px 34px -8px rgb(50 40 25 / 0.14), 0 4px 12px -4px rgb(80 200 120 / 0.18);
+  /* Multi-layer: a tight, low-opacity contact shadow (reads as "resting on
+     the surface") plus a broader, softer diffuse one (reads as "lifted
+     off it") — a single flat shadow does only one of those jobs at once. */
+  --shadow-card:       0 1px 2px 0 rgb(50 40 25 / 0.05), 0 6px 16px -6px rgb(50 40 25 / 0.08);
+  --shadow-card-hover: 0 2px 6px 0 rgb(50 40 25 / 0.06), 0 18px 40px -10px rgb(50 40 25 / 0.16), 0 4px 12px -4px rgb(80 200 120 / 0.16);
   --shadow-sm:         0 1px 2px 0 rgb(50 40 25 / 0.06);
   --font-body:         "Manrope", system-ui, -apple-system, sans-serif;
   --font-display:      "Sora", "Manrope", system-ui, sans-serif;
@@ -59,7 +62,7 @@
   --foreground:        #f0f2f1; /* near-white, not green-tinted */
   --card:              #141b18;
   --card-hover:        #19221e;
-  --border:            #232c27; /* low-opacity neutral gray-green line */
+  --border:            #1d2622; /* hairline — softened, shadow carries most of the separation */
   --border-focus:      #50c878;
   --muted:             #101512; /* recessed neutral inset (inputs, chips) */
   --muted-foreground:  #93a39c;
@@ -74,8 +77,10 @@
   --sidebar-border:    #232c27;
   --header-bg:         rgba(10,15,13,0.9);
   --nav-bg:            rgba(10,15,13,0.97);
-  --shadow-card:       0 1px 4px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.35);
-  --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.3), 0 0 0 1px rgb(80 200 120 / 0.08);
+  /* Same tight-contact + broad-diffuse pairing as light mode, tuned for a
+     dark canvas: a warm near-black contact shadow plus a wider black falloff. */
+  --shadow-card:       0 1px 2px 0 rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.4);
+  --shadow-card-hover: 0 2px 6px 0 rgb(0 0 0 / 0.35), 0 20px 44px -10px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(80 200 120 / 0.08);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-modal:      0 24px 60px -12px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(0 0 0 / 0.3);
 }
@@ -309,13 +314,15 @@ button, a, [role="button"], input, select, textarea, label {
   animation: glintSweep 1s ease-in-out;
 }
 
-/* 7. Tilt on hover — subtle 3D perspective lean for premium cards */
+/* 7. Card hover lift — a flat, purposeful translateY (not a 3D tilt,
+   which read as a flashy effect rather than calm minimalism); pair with
+   --shadow-card-hover via the hover:shadow-[var(--shadow-card-hover)]
+   utility on the element for the "shadow deepens" half of the motion. */
 .tilt-hover {
-  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
 }
 .tilt-hover:hover {
-  transform: perspective(800px) rotateX(2deg) rotateY(-3deg) translateY(-3px) scale(1.01);
+  transform: translateY(-4px);
 }
 
 /* 8. Ripple — soft radial pulse from the center on press */
