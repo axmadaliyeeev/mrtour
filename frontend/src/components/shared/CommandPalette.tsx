@@ -153,7 +153,7 @@ export function CommandPalette() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[100] bg-black/55 backdrop-blur-sm flex items-start justify-center px-4 pt-[12vh]"
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xl flex items-start justify-center px-4 pt-[12vh]"
           onMouseDown={close}
         >
           <motion.div
@@ -161,7 +161,7 @@ export function CommandPalette() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="w-full max-w-lg rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-2xl shadow-black/40 overflow-hidden"
+            className="w-full max-w-lg rounded-2xl bg-[var(--modal)] border border-[var(--modal-border)] shadow-[var(--shadow-modal)] overflow-hidden"
             onMouseDown={(e) => e.stopPropagation()}
           >
             {/* Input */}

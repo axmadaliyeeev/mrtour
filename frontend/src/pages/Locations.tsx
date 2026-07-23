@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, Map as MapIcon, Landmark, Leaf, Palette, Church, Pickaxe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
@@ -30,13 +30,15 @@ export default function Locations() {
 
   const debouncedSearch = useDebounce(search, 300);
 
-  const CATEGORIES: { key: CategoryFilter; label: string; emoji: string }[] = [
-    { key: "all",         label: t("locations", "filter_all"),     emoji: "🗺️" },
-    { key: "tarix",       label: t("home", "cat_tarix"),           emoji: "🏛️" },
-    { key: "tabiat",      label: t("home", "cat_tabiat"),          emoji: "🌿" },
-    { key: "madaniyat",   label: t("home", "cat_madaniyat"),       emoji: "🎭" },
-    { key: "din",         label: t("home", "cat_din"),             emoji: "🕌" },
-    { key: "arxeologiya", label: t("home", "cat_arxeologiya"),     emoji: "⛏️" },
+  // Same monoline icon family as Home/LocationCard's category badges — one
+  // consistent set app-wide instead of per-screen emoji.
+  const CATEGORIES: { key: CategoryFilter; label: string; Icon: typeof MapIcon }[] = [
+    { key: "all",         label: t("locations", "filter_all"),     Icon: MapIcon  },
+    { key: "tarix",       label: t("home", "cat_tarix"),           Icon: Landmark },
+    { key: "tabiat",      label: t("home", "cat_tabiat"),          Icon: Leaf     },
+    { key: "madaniyat",   label: t("home", "cat_madaniyat"),       Icon: Palette  },
+    { key: "din",         label: t("home", "cat_din"),             Icon: Church   },
+    { key: "arxeologiya", label: t("home", "cat_arxeologiya"),     Icon: Pickaxe  },
   ];
 
   const SORT_OPTIONS = [
@@ -166,7 +168,7 @@ export default function Locations() {
                 : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
             )}
           >
-            <span>{cat.emoji}</span>
+            <cat.Icon className="w-3.5 h-3.5" strokeWidth={2} />
             {cat.label}
           </button>
         ))}

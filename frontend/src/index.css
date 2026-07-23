@@ -37,22 +37,30 @@
 }
 
 .dark {
-  /* Exact mono-green spec: Dark Evergreen canvas, Emerald surfaces one
-     step up, Emerald accent for every interactive element, Mint Whisper
-     reserved for the brightest contrast text/highlights. */
-  --background:        #013220; /* Dark Evergreen */
+  /* Strict 4-level elevation system — every surface in the app maps to
+     exactly one of these, no ad-hoc greens invented per-screen:
+       L0 --background : page canvas (darkest)
+       L1 --card       : cards/panels/info-blocks, one clear step up from L0
+       L2 --modal      : modals/popovers/overlays — a NEUTRAL near-black,
+                          deliberately NOT on the green ramp at all, so a
+                          modal never reads as "the same green as the page
+                          behind it, just blurred"
+       L3 --primary    : interactive accent only (buttons/active states) */
+  --background:        #013220; /* L0 — Dark Evergreen */
   --foreground:        #eef5f2;
-  --card:              #0b6e4f; /* Emerald surface */
+  --card:              #0b6e4f; /* L1 — Emerald surface, visibly lighter than L0 */
   --card-hover:        #0f7d59;
   --border:            #0f4a34;
   --border-focus:      #50c878;
   --muted:             #022919;
   --muted-foreground:  #9fd6c0;
-  --primary:           #50c878; /* same accent as light mode, by design */
+  --primary:           #50c878; /* L3 — same accent as light mode, by design */
   --primary-hover:     #6ddba3;
   --ring:              #50c878;
   --gold:              #d1f2eb; /* Mint Whisper — brightest point of contrast on dark */
   --gold-soft:         rgba(209,242,235,0.1);
+  --modal:             #0d1f1a; /* L2 — neutral warm near-black, off the green ramp */
+  --modal-border:      #1c2f29;
   --sidebar-bg:        #013220;
   --sidebar-border:    #0f4a34;
   --header-bg:         rgba(1,50,32,0.9);
@@ -60,6 +68,15 @@
   --shadow-card:       0 1px 4px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.35);
   --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.3), 0 0 0 1px rgb(80 200 120 / 0.08);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-modal:      0 24px 60px -12px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(0 0 0 / 0.3);
+}
+
+/* Light mode needs the same L2 concept: a modal surface distinct from
+   both the warm off-white page and the pure-white cards. */
+:root {
+  --modal:             #ffffff;
+  --modal-border:      #ddd7c9;
+  --shadow-modal:      0 24px 60px -12px rgb(50 40 25 / 0.28), 0 0 0 1px rgb(50 40 25 / 0.04);
 }
 
 /* ── Base reset ─────────────────────────────────────── */

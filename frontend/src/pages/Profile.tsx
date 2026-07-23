@@ -2,10 +2,13 @@
 import {
   LogOut,
   MapPin,
+  Map,
   Globe,
   Moon,
   Sun,
   Star,
+  Save,
+  Bot,
   BookmarkX,
   ChevronRight,
   User as UserIcon,
@@ -105,11 +108,14 @@ export default function Profile() {
     }
   }
 
+  // Monoline lucide set instead of multicolor emoji (map/robot/star icons
+  // rendered in whatever colors the OS emoji font picked) — single emerald
+  // color family, matching the icon system everywhere else in the app.
   const GUEST_BENEFITS = [
-    { icon: "🗺️", title: t("profile", "benefit1_title"), desc: t("profile", "benefit1_desc") },
-    { icon: "🤖", title: t("profile", "benefit2_title"), desc: t("profile", "benefit2_desc") },
-    { icon: "⭐", title: t("profile", "benefit3_title"), desc: t("profile", "benefit3_desc") },
-    { icon: "💾", title: t("profile", "benefit4_title"), desc: t("profile", "benefit4_desc") },
+    { Icon: Map, title: t("profile", "benefit1_title"), desc: t("profile", "benefit1_desc") },
+    { Icon: Bot, title: t("profile", "benefit2_title"), desc: t("profile", "benefit2_desc") },
+    { Icon: Star, title: t("profile", "benefit3_title"), desc: t("profile", "benefit3_desc") },
+    { Icon: Save, title: t("profile", "benefit4_title"), desc: t("profile", "benefit4_desc") },
   ];
 
   /* ── Guest view ───────────────────────────────────────────── */
@@ -130,8 +136,11 @@ export default function Profile() {
         <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-6 text-center shadow-[var(--shadow-card)]">
           <div className="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
           <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/8 rounded-full blur-2xl pointer-events-none" />
-          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/15 border-2 border-indigo-500/25 flex items-center justify-center animate-pop-in">
-            <UserIcon className="w-9 h-9 text-indigo-400" />
+          {/* Solid fill (not a pale 15-20% tint) so the icon actually
+              separates from its own chip — matches the filled treatment
+              used for the logged-in avatar below. */}
+          <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30 flex items-center justify-center animate-pop-in">
+            <UserIcon className="w-9 h-9 text-white" />
           </div>
           <div>
             <h2 className="text-base font-bold text-[var(--foreground)] mb-1">
@@ -242,7 +251,7 @@ export default function Profile() {
                 className={cn(
                   "flex flex-col items-center gap-1 p-2.5 rounded-xl border text-xs font-medium transition-all",
                   lang === l.code
-                    ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400"
+                    ? "bg-indigo-500 border-indigo-500 text-white shadow-sm shadow-indigo-500/25"
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
                 )}
               >
@@ -263,7 +272,9 @@ export default function Profile() {
               className="animate-fade-up flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/35 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all"
               style={{ animationDelay: `${i * 70}ms` }}
             >
-              <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl">{b.icon}</span>
+              <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                <b.Icon className="w-5 h-5 text-indigo-400" strokeWidth={2} />
+              </span>
               <div>
                 <p className="text-sm font-semibold text-[var(--foreground)]">{b.title}</p>
                 <p className="text-xs text-[var(--muted-foreground)]">{b.desc}</p>

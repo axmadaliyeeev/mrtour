@@ -282,14 +282,18 @@ export function LocationCard({ location, variant = "default", className }: Locat
           </div>
         </div>
 
-        {/* Add to plan button */}
+        {/* Add to plan button — the un-added state is the actual call to
+            action, so it gets the Level-3 filled accent treatment; a
+            muted outline here (same tone family as the Level-1 card)
+            made it blend into its own card instead of reading as a
+            button. "Already added" flips to the quieter confirmed state. */}
         <button
           onClick={bookmark}
           className={cn(
             "ripple w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer",
             inPlan
-              ? "bg-gradient-to-r from-indigo-500/15 to-indigo-500/8 border border-indigo-500/35 text-indigo-500 hover:bg-indigo-500/20"
-              : "bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] hover:border-indigo-500/40 hover:text-indigo-500 hover:bg-indigo-500/6"
+              ? "bg-[var(--muted)] border border-indigo-500/35 text-indigo-400 hover:bg-indigo-500/10"
+              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm shadow-indigo-500/25"
           )}
         >
           {inPlan ? (

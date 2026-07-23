@@ -283,7 +283,13 @@ export default function LocationDetail() {
   }
 
   return (
-    <div className="pb-8">
+    // The sticky "Add to Plan" bar is `fixed`, so it doesn't push page
+    // content on its own — pb-8 left a gap shorter than the bar's own
+    // height, so on shorter location pages it could sit on top of
+    // whatever content happened to be at the bottom of the scroll
+    // (Practical Info's "Best Time to Visit" card). pb-28 reserves real
+    // room so the fixed bar only ever occupies empty space.
+    <div className="pb-28">
       {/* ── Hero image ──────────────────────────────────────────── */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
@@ -340,20 +346,23 @@ export default function LocationDetail() {
       </div>
 
       {/* ── Info cards ──────────────────────────────────────────── */}
+      {/* Explicit Level-1 treatment: card fill + border + shadow together
+          (not border alone) so these read as distinct lifted panels
+          against the page, not a same-toned rectangle. */}
       <div className="px-4 mt-4 grid grid-cols-3 gap-2 mb-5">
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
           <DollarSign className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.priceUSD === 0 ? t("detail", "free") : loc.price}
           </span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "price_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
           <Clock className="w-4 h-4 text-purple-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">{loc.duration}</span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "duration_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
           <Calendar className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.bestSeason.split(",")[0] ?? loc.bestSeason}

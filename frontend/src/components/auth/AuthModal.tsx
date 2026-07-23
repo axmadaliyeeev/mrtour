@@ -331,17 +331,23 @@ export function AuthModal() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.18 }}
-                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                // Darker scrim + a real blur radius (not backdrop-blur-sm's
+                // 4px) — the page header behind was faintly legible through
+                // the old weak blur, which read as "doubled/overlapping
+                // text" once the modal's own header sat near the same spot.
+                className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-xl"
               />
             </Dialog.Overlay>
             <Dialog.Content asChild forceMount>
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 outline-none">
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 outline-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.94, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.94, y: 8 }}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-2xl p-5 max-h-[90vh] overflow-y-auto"
+                  // Level 2: a neutral surface off the green ramp entirely,
+                  // so the modal never reads as "the page, just blurred".
+                  className="w-full max-w-sm rounded-2xl border border-[var(--modal-border)] bg-[var(--modal)] shadow-[var(--shadow-modal)] p-5 max-h-[90vh] overflow-y-auto"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
@@ -362,9 +368,9 @@ export function AuthModal() {
                   <div className="flex rounded-xl bg-[var(--muted)] p-1 mb-5 gap-1">
                     {(["login", "register"] as const).map((tab) => (
                       <button key={tab} onClick={() => setActiveTab(tab)}
-                        className={cn("flex-1 py-2 rounded-lg text-sm font-medium transition-all",
+                        className={cn("flex-1 py-2 rounded-lg text-sm font-semibold transition-all",
                           activeTab === tab
-                            ? "bg-[var(--card)] text-[var(--foreground)] shadow-sm"
+                            ? "bg-indigo-500 text-white shadow-sm shadow-indigo-500/25"
                             : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]")}>
                         {tab === "login" ? t("auth", "login") : t("auth", "register")}
                       </button>

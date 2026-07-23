@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Search, MapPin, Clock, Phone, CheckCircle, Star,
   Wifi, Car, Coffee, Dumbbell, Utensils, Hotel, Compass,
-  Train, Bus, Zap, TrendingUp, Globe2,
+  Train, Bus, Zap, TrendingUp, Globe2, CircleDot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES } from "@/data";
@@ -13,11 +13,20 @@ import { useTranslation } from "@/i18n";
 type Tab = "restoranlar" | "hotellar" | "gidlar" | "transport" | "valyuta";
 
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
-  "Wi-Fi":      <Wifi className="w-3 h-3" />,
+  "Wi-Fi":        <Wifi className="w-3 h-3" />,
   "Avtoturargoh": <Car className="w-3 h-3" />,
-  "Nonushta":   <Coffee className="w-3 h-3" />,
-  "Fitnes":     <Dumbbell className="w-3 h-3" />,
+  "Parking":      <Car className="w-3 h-3" />,
+  "Nonushta":     <Coffee className="w-3 h-3" />,
+  "Fitnes":       <Dumbbell className="w-3 h-3" />,
 };
+
+// A single-letter text badge for unmapped amenities was the "broken WW
+// badge" bug — any amenity outside the map now falls back to a plain
+// monoline dot instead of raw text, so it never renders as a stray
+// letter glyph.
+function amenityIcon(name: string) {
+  return AMENITY_ICONS[name] ?? <CircleDot className="w-3 h-3" />;
+}
 
 // ── Restaurants ───────────────────────────────────────────
 function RestaurantsTab({ search }: { search: string }) {
@@ -142,8 +151,8 @@ function HotelsTab({ search }: { search: string }) {
               </p>
               <div className="flex gap-1">
                 {h.amenities.slice(0, 3).map((a) => (
-                  <span key={a} title={a} className="w-6 h-6 rounded-lg bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-[var(--muted-foreground)]">
-                    {AMENITY_ICONS[a] ?? <span className="text-[9px] font-bold">{a[0]}</span>}
+                  <span key={a} title={a} className="w-6 h-6 rounded-lg bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-indigo-400">
+                    {amenityIcon(a)}
                   </span>
                 ))}
               </div>
