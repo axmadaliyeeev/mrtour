@@ -1,19 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Star, Bot, Shuffle, Sun, Moon, CornerDownLeft } from "lucide-react";
+import { Search, MapPin, Star, Bot, Shuffle, Sun, Moon, CornerDownLeft, Zap, Landmark, Leaf, Palette, Church, Pickaxe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
-const CAT_EMOJI: Record<Location["category"], string> = {
-  tarix: "🏛️",
-  tabiat: "🌿",
-  madaniyat: "🎭",
-  din: "🕌",
-  arxeologiya: "⛏️",
+// Same monoline icon family used everywhere else in the app — this map
+// still had colorful category emoji rendered on a dark chip, which read
+// as mismatched glyphs on a black square rather than part of the icon
+// system.
+const CAT_ICON: Record<Location["category"], typeof Landmark> = {
+  tarix: Landmark,
+  tabiat: Leaf,
+  madaniyat: Palette,
+  din: Church,
+  arxeologiya: Pickaxe,
 };
 
 interface Action {
@@ -82,7 +86,7 @@ export function CommandPalette() {
       },
       {
         id: "random",
-        icon: <Shuffle className="w-4 h-4 text-purple-400" />,
+        icon: <Shuffle className="w-4 h-4 text-indigo-400" />,
         label: t("home", "explore_btn") + " 🎲",
         run: () => {
           const loc = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
@@ -201,8 +205,11 @@ export function CommandPalette() {
                     active === i ? "bg-indigo-500/12" : "hover:bg-[var(--muted)]"
                   )}
                 >
-                  <span className="w-9 h-9 rounded-lg bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-base shrink-0">
-                    {CAT_EMOJI[loc.category]}
+                  <span className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                    {(() => {
+                      const CatIcon = CAT_ICON[loc.category];
+                      return <CatIcon className="w-4 h-4 text-indigo-500" strokeWidth={2} />;
+                    })()}
                   </span>
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-semibold text-[var(--foreground)] truncate">
@@ -221,9 +228,11 @@ export function CommandPalette() {
                 </button>
               ))}
 
-              {/* Quick actions */}
-              <p className="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
-                ⚡
+              {/* Quick actions — a real label, not a bare floating icon
+                  with nothing to anchor it to. */}
+              <p className="flex items-center gap-1.5 px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-[var(--muted-foreground)]">
+                <Zap className="w-3 h-3" />
+                Tezkor amallar
               </p>
               {actions.map((a, j) => {
                 const idx = results.length + j;
@@ -252,11 +261,11 @@ export function CommandPalette() {
 
             {/* Footer */}
             <div className="flex items-center gap-3 px-4 py-2 border-t border-[var(--border)] text-[10px] text-[var(--muted-foreground)]">
-              <span className="flex items-center gap-1">
-                <kbd className="bg-[var(--muted)] border border-[var(--border)] rounded px-1">↑↓</kbd>
+              <span className="flex items-center gap-1.5">
+                <kbd className="min-w-[20px] text-center bg-[var(--muted)] border border-[var(--border)] rounded-md px-1.5 py-0.5 text-[var(--foreground)]">↑↓</kbd>
               </span>
-              <span className="flex items-center gap-1">
-                <kbd className="bg-[var(--muted)] border border-[var(--border)] rounded px-1">↵</kbd>
+              <span className="flex items-center gap-1.5">
+                <kbd className="min-w-[20px] text-center bg-[var(--muted)] border border-[var(--border)] rounded-md px-1.5 py-0.5 text-[var(--foreground)]">↵</kbd>
               </span>
               <span className="ml-auto font-bold tracking-wider text-indigo-500/60">trova</span>
             </div>

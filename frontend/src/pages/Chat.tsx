@@ -106,8 +106,12 @@ export default function Chat() {
     wasNearBottomRef.current = nearBottom;
     // Only worth showing the jump-to-latest button when there's actually
     // somewhere to jump from — a short conversation that doesn't overflow
-    // the viewport has no "away from the bottom" state to speak of.
-    setShowScrollButton(hasOverflow && !nearBottom);
+    // the viewport has no "away from the bottom" state to speak of. Also
+    // never show it over the empty-state scenario cards (messages.length
+    // <= 1) — it was floating on top of the "Transport" suggestion card
+    // there, since that content alone can overflow a short phone screen
+    // with nothing real to "jump to" yet.
+    setShowScrollButton(hasOverflow && !nearBottom && messages.length > 1);
   }
 
   function scrollToBottom() {
@@ -250,8 +254,10 @@ export default function Chat() {
           : "calc(100dvh - 3.5rem - 72px - env(safe-area-inset-bottom, 0px))",
       }}
     >
-      {/* Header */}
-      <div className="glass flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 z-10">
+      {/* Header — --header-bg is now a fully opaque color (see index.css);
+          a translucent sticky header let fast-scrolled content bleed/clip
+          through it at the boundary. */}
+      <div className="glass flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 relative z-20">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div
             className={cn(
@@ -294,7 +300,7 @@ export default function Chat() {
       <div
         ref={scrollAreaRef}
         onScroll={handleScroll}
-        className="relative flex-1 overflow-y-auto px-3 sm:px-4 py-4 space-y-4"
+        className="relative flex-1 overflow-y-auto px-3 sm:px-4 pt-5 pb-4 space-y-4"
       >
         {/* Empty-state hero — soft pulsing orb + centered heading instead
             of just another chat bubble, so the first screen reads as "an

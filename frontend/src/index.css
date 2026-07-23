@@ -33,7 +33,11 @@
   --gold-soft:         rgba(28,122,100,0.12);
   --sidebar-bg:        #ffffff;
   --sidebar-border:    #ddd7c9;
-  --header-bg:         rgba(250,249,245,0.85);
+  /* Fully opaque, not translucent — a sticky header with any transparency
+     let fast-scrolled content bleed/clip through it at the boundary
+     (worst on the dense Chat message list). The blur (.glass) stays for
+     texture, but it's backed by a solid color now. */
+  --header-bg:         #faf9f5;
   --nav-bg:            rgba(255,255,255,0.97);
   /* Multi-layer: a tight, low-opacity contact shadow (reads as "resting on
      the surface") plus a broader, softer diffuse one (reads as "lifted
@@ -75,7 +79,7 @@
   --modal-border:      #2b3631;
   --sidebar-bg:        #0a0f0d;
   --sidebar-border:    #232c27;
-  --header-bg:         rgba(10,15,13,0.9);
+  --header-bg:         #0a0f0d; /* fully opaque — see light-mode note above */
   --nav-bg:            rgba(10,15,13,0.97);
   /* Same tight-contact + broad-diffuse pairing as light mode, tuned for a
      dark canvas: a warm near-black contact shadow plus a wider black falloff. */

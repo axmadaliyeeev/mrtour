@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { TopHeader } from "./TopHeader";
 import { Toaster } from "@/components/ui/Toaster";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -28,7 +29,9 @@ function PageTransition({ children }: { children: React.ReactNode }) {
         exit="exit"
         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
       >
-        {children}
+        {/* Keyed by pathname so navigating away from a crashed page
+            resets the boundary instead of it staying stuck. */}
+        <ErrorBoundary key={pathname}>{children}</ErrorBoundary>
       </motion.div>
     </AnimatePresence>
   );

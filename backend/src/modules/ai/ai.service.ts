@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { env } from "@/config/env";
 import type { Location } from "@prisma/client";
 import { KNOWLEDGE_BASE } from "@/data/knowledge-base";
+import { createError } from "@/middleware/error-handler";
 
 const client = new OpenAI({
   apiKey: env.GROQ_API_KEY,
@@ -22,6 +23,21 @@ export interface AnalysisResult   { trustScore: number; aiTags: string[]; verifi
 
 function getText(response: OpenAI.Chat.Completions.ChatCompletion): string {
   return response.choices[0]?.message?.content ?? "";
+}
+
+// A failed upstream call (invalid/expired GROQ_API_KEY, rate limit, network
+// blip) was propagating as an unhandled exception — the error handler had
+// no case for it, so it fell through to a bare 500 "Internal server error"
+// with no diagnostic trail and nothing actionable for the user. Log the
+// real cause here (visible in server logs regardless of NODE_ENV) and
+// surface a clean, operational error instead.
+async function callGroq<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    console.error("[ai.service] Groq API call failed:", err);
+    throw createError("Trova AI vaqtincha ishlamayapti. Birozdan keyin qayta urinib ko'ring.", 503);
+  }
 }
 
 // ── 1. chat ────────────────────────────────────────────
@@ -102,20 +118,20 @@ BOSHQA QOIDALAR:
 - Oddiy savollarga qisqa (100–150 so'z, markdown shart emas), tur reja uchun to'liq format
 - Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 
-  const response = await client.chat.completions.create({
+  const response = await callGroq(() => client.chat.completions.create({
     model: MODEL,
     max_tokens: 1800,
     messages: [
       { role: "system", content: system },
       ...messages.slice(-14),
     ],
-  });
+  }));
   return getText(response);
 }
 
 // ── 2. analyzeReview ───────────────────────────────────
 export async function analyzeReview(text: string, stars: number): Promise<AnalysisResult> {
-  const response = await client.chat.completions.create({
+  const response = await callGroq(() => client.chat.completions.create({
     model: MODEL,
     max_tokens: 200,
     messages: [
@@ -128,7 +144,7 @@ aiTags: 2-4 uzbek topic keywords`,
       },
       { role: "user", content: `Review (${stars} stars): "${text}"` },
     ],
-  });
+  }));
 
   const raw = getText(response).trim();
   try {
@@ -152,7 +168,7 @@ export async function generateTourPlan(tourData: TourData, locations: Location[]
     .map((l) => `• ${l.name} (${l.city}): ${l.shortDesc ?? ""} — ~$${l.priceUSD}`)
     .join("\n");
 
-  const response = await client.chat.completions.create({
+  const response = await callGroq(() => client.chat.completions.create({
     model: MODEL,
     max_tokens: 3000,
     messages: [
@@ -184,7 +200,7 @@ Markdown formatida yoz (bayroq-emoji va ═ ║ ╔ ╚ ━ kabi chizuvchi belgi
 Oxirida "### Umumiy xulosa" (kirish biletlari / turar joy / ovqat / transport / jami) va "### Maslahatlar" bo'limlari.`,
       },
     ],
-  });
+  }));
   return getText(response);
 }
 
@@ -200,7 +216,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     .map((r) => `[${r.stars}★, ishonch:${r.trustScore}%] "${r.text.slice(0, 120)}"`)
     .join("\n");
 
-  const response = await client.chat.completions.create({
+  const response = await callGroq(() => client.chat.completions.create({
     model: MODEL,
     max_tokens: 600,
     messages: [
@@ -209,6 +225,6 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
         content: `"${locationName}" joyi haqida ${reviews.length} ta sharh (o'rtacha: ${avg}★) asosida 4-5 ta insight yozing. Har birini 📌 bilan boshlang:\n\n${summary}`,
       },
     ],
-  });
+  }));
   return getText(response);
 }
