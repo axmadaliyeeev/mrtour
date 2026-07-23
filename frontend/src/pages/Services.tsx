@@ -184,7 +184,7 @@ function GuidesTab({ search }: { search: string }) {
                   alt={g.name}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-[var(--border)]"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=0aab98&color=fff&size=64`;
+                    (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(g.name)}&background=50c878&color=fff&size=64`;
                   }}
                 />
                 {g.available && (

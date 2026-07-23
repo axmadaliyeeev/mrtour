@@ -112,7 +112,7 @@ export default function Home() {
             {/* Trust indicators */}
             <div className="animate-fade-up delay-300 flex items-center gap-4 mt-6">
               <div className="flex -space-x-1.5">
-                {["#0aab98","#25c8b3","#d4901f","#f3da8f","#07897b"].map((c, i) => (
+                {["#50c878","#7fe0ae","#c9a24b","#e9d29d","#38a860"].map((c, i) => (
                   <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--background)]" style={{ backgroundColor: c }} />
                 ))}
               </div>
