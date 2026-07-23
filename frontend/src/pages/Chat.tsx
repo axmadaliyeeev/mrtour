@@ -1,7 +1,7 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Send, Bot, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
+  Send, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
   Copy, Check, RefreshCw, ChevronDown, ThumbsUp, ThumbsDown,
   Landmark, Hotel, Bus, Star as StarIcon, Lightbulb, AlertTriangle,
 } from "lucide-react";
@@ -28,6 +28,23 @@ interface Message {
 // instead of leaving it as unlinked plain text.
 function findMentionedLocations(text: string) {
   return LOCATIONS.filter((l) => text.includes(l.name)).slice(0, 3);
+}
+
+// The Trova AI "face" — an S-curve echoing the wordmark, not a generic
+// bot/robot glyph. Same route-motif as the sidebar indicator and the
+// hero divider, so the assistant reads as an extension of the brand
+// mark rather than a stock chat-app icon.
+function RouteOrb({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M5 18C5 18 5 11 12 11C19 11 19 6 19 6"
+        stroke="white" strokeWidth="2.2" strokeLinecap="round"
+      />
+      <circle cx="5" cy="18" r="1.6" fill="white" />
+      <circle cx="19" cy="6" r="1.6" fill="white" />
+    </svg>
+  );
 }
 
 // A timed-out/network failure (most often a free-tier backend cold-booting)
@@ -245,7 +262,7 @@ export default function Chat() {
               isLoading && "border-glow-spin"
             )}
           >
-            <Bot className="w-4 h-4" />
+            <RouteOrb className="w-4.5 h-4.5" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
           </div>
           <div className="min-w-0">
@@ -287,7 +304,7 @@ export default function Chat() {
             <div className="relative w-16 h-16 mb-4">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 opacity-30 blur-xl animate-breathe" />
               <div className="relative w-full h-full rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <Bot className="w-7 h-7 text-white" />
+                <RouteOrb className="w-8 h-8" />
               </div>
             </div>
             <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
@@ -319,7 +336,7 @@ export default function Chat() {
               )}
             >
               {msg.role === "assistant" ? (
-                msg.isError ? <AlertTriangle className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />
+                msg.isError ? <AlertTriangle className="w-3.5 h-3.5" /> : <RouteOrb className="w-4 h-4" />
               ) : user ? (
                 user.name.charAt(0).toUpperCase()
               ) : (
@@ -340,12 +357,12 @@ export default function Chat() {
                   msg.role === "assistant"
                     ? msg.isError
                       ? "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm bg-red-500/8 border border-red-500/25 text-[var(--foreground)]"
-                      // Bubble-less: the assistant is a guide speaking to
-                      // you, not a second chat participant in an identical
-                      // box — plain text (just the avatar + copy) reads
-                      // less like "two people messaging" and more like a
-                      // single running conversation with a guide.
-                      : "text-[var(--foreground)] px-0.5"
+                      // Bubble-less, but not borderless: a faint tinted
+                      // panel (much lighter than the solid --card surface
+                      // used for real cards) gives the reply a readable
+                      // edge against a busy background without turning it
+                      // into a second identical chat bubble.
+                      : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl bg-[var(--card)]/25 border border-[var(--border)]/60 text-[var(--foreground)]"
                     : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25"
                 )}
               >
@@ -371,22 +388,25 @@ export default function Chat() {
                 const mentioned = findMentionedLocations(msg.content);
                 if (!mentioned.length) return null;
                 return (
-                  <div className="flex flex-col gap-1.5 w-full pt-1">
+                  // Compact and self-sized, not a full-width solid-fill bar —
+                  // a proper mini-card (photo + name + trust score) that sits
+                  // lightly under the reply instead of dominating it.
+                  <div className="flex flex-col items-start gap-1.5 pt-1">
                     {mentioned.map((loc) => (
                       <button
                         key={loc.id}
                         onClick={() => navigate(`/locations/${loc.id}`)}
-                        className="flex items-center gap-2.5 p-2 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/40 hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.98] text-left"
+                        className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl bg-[var(--card)]/70 border border-[var(--border)] hover:border-indigo-500/40 hover:bg-[var(--card)] hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.98] text-left w-full max-w-[240px]"
                       >
-                        <img src={loc.img} alt="" className="w-9 h-9 rounded-lg object-cover shrink-0" />
+                        <img src={loc.img} alt="" className="w-11 h-11 rounded-lg object-cover shrink-0" />
                         <span className="min-w-0 flex-1">
                           <span className="block text-xs font-semibold text-[var(--foreground)] truncate">{loc.name}</span>
                           <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
                             <MapPin className="w-2.5 h-2.5 text-indigo-500" />{loc.city}
                           </span>
                         </span>
-                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-gold-500 shrink-0">
-                          <StarIcon className="w-3 h-3 fill-gold-500" />{loc.rating}
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-indigo-400 shrink-0">
+                          <StarIcon className="w-3 h-3 fill-indigo-400" />{loc.rating}
                         </span>
                       </button>
                     ))}
@@ -402,17 +422,17 @@ export default function Chat() {
                   <>
                     <button
                       onClick={() => copyMessage(msg)}
-                      className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all active:scale-90"
+                      className="flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 text-[var(--muted-foreground)] hover:text-indigo-400 hover:bg-[var(--muted)] transition-all active:scale-90"
                       aria-label="Copy"
                     >
                       <AnimatePresence mode="wait" initial={false}>
                         {copiedId === msg.id ? (
                           <motion.span key="check" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                            <Check className="w-3 h-3 text-emerald-500" />
+                            <Check className="w-3.5 h-3.5 text-indigo-400" />
                           </motion.span>
                         ) : (
                           <motion.span key="copy" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                            <Copy className="w-3 h-3" />
+                            <Copy className="w-3.5 h-3.5" />
                           </motion.span>
                         )}
                       </AnimatePresence>
@@ -420,22 +440,22 @@ export default function Chat() {
                     <button
                       onClick={() => setMessageReaction(msg.id, "up")}
                       className={cn(
-                        "opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-all active:scale-90",
+                        "flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
                         msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] hover:text-indigo-400"
                       )}
                       aria-label="Good reply"
                     >
-                      <ThumbsUp className={cn("w-3 h-3", msg.reaction === "up" && "fill-indigo-500")} />
+                      <ThumbsUp className={cn("w-3.5 h-3.5", msg.reaction === "up" && "fill-indigo-500")} />
                     </button>
                     <button
                       onClick={() => setMessageReaction(msg.id, "down")}
                       className={cn(
-                        "opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-all active:scale-90",
+                        "flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
                         msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] hover:text-red-400"
                       )}
                       aria-label="Bad reply"
                     >
-                      <ThumbsDown className={cn("w-3 h-3", msg.reaction === "down" && "fill-red-400")} />
+                      <ThumbsDown className={cn("w-3.5 h-3.5", msg.reaction === "down" && "fill-red-400")} />
                     </button>
                   </>
                 )}
@@ -491,7 +511,7 @@ export default function Chat() {
             className="flex gap-2.5"
           >
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
-              <Bot className="w-3.5 h-3.5 text-white" />
+              <RouteOrb className="w-4 h-4" />
             </div>
             <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-1">
@@ -583,7 +603,11 @@ export default function Chat() {
       <div className="glass px-3 sm:px-4 pb-3 sm:pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
         <div
           className={cn(
-            "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--card)] border transition-all",
+            // A neutral, recessed surface (not the same --card tone as
+            // message/recommendation cards) so the input reads as "where
+            // you type" and the send button stays the one bright accent —
+            // not another green card competing for attention.
+            "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--muted)] border transition-all",
             input.trim()
               ? "border-indigo-500/50 shadow-md shadow-indigo-500/10"
               : "border-[var(--border)] shadow-[var(--shadow-card)]"
