@@ -23,7 +23,7 @@ export function BottomNav() {
   const TABS = [
     { route: "/home",      Icon: Home,       label: t("nav", "home")      },
     { route: "/locations", Icon: MapPin,     label: t("nav", "locations") },
-    { route: "/chat",      Icon: Bot,        label: "Trova AI",  isAI: true  },
+    { route: "/chat",      Icon: Bot,        label: "Trova AI"            },
     { route: "/services",  Icon: LayoutGrid, label: t("nav", "services")  },
     { route: "/profile",   Icon: User,       label: t("nav", "profile")   },
   ] as const;
@@ -34,46 +34,24 @@ export function BottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
     >
       <div className="flex items-center h-[58px]">
-        {TABS.map(({ route, Icon, label, ...rest }) => {
-          const ai = "isAI" in rest && rest.isAI;
+        {/* One rule for every tab, including AI: active = filled emerald
+            chip + white icon + emerald label; inactive = no chip, plain
+            gray icon + gray label. The AI tab used to always show its
+            filled pill regardless of route, which made it read as a
+            different component bolted onto the nav rather than a normal
+            tab that happens to be active sometimes. */}
+        {TABS.map(({ route, Icon, label }) => {
           const active = isActive(route);
-
-          if (ai) {
-            /* ── AI: inline, pill-styled, slightly elevated look ── */
-            return (
-              <button
-                key={route}
-                onClick={() => navigate(route)}
-                className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all active:scale-90"
-                aria-label="Trova AI"
-              >
-                <div className={cn(
-                  "flex items-center justify-center w-12 h-[34px] rounded-2xl transition-all duration-250",
-                  "bg-gradient-to-r from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30",
-                  active ? "scale-105 shadow-indigo-500/50" : "hover:scale-102 hover:shadow-indigo-500/40"
-                )}>
-                  <Bot className="w-4.5 h-4.5 text-white" />
-                </div>
-                <span className={cn(
-                  "text-[9px] font-bold leading-none transition-colors",
-                  active ? "text-indigo-500" : "text-[var(--muted-foreground)]"
-                )}>
-                  Trova AI
-                </span>
-              </button>
-            );
-          }
-
-          /* ── Regular tab ── */
           return (
             <button
               key={route}
               onClick={() => navigate(route)}
               className={cn(
-                "flex flex-col items-center justify-center flex-1 h-full gap-0.5",
+                "relative flex flex-col items-center justify-center flex-1 h-full gap-0.5",
                 "transition-all duration-200 active:scale-90",
                 "min-w-[44px]" // touch target
               )}
+              aria-label={label}
             >
               {/* Active top line — shared sliding indicator */}
               {active && (
@@ -84,22 +62,26 @@ export function BottomNav() {
                 />
               )}
 
-              {/* Icon + badge */}
-              <div className="relative flex items-center justify-center w-6 h-6">
+              {/* Icon chip + badge */}
+              <div className="relative flex items-center justify-center w-9 h-9">
+                <div className={cn(
+                  "absolute inset-0 rounded-xl transition-all duration-250",
+                  active ? "bg-indigo-500 shadow-md shadow-indigo-500/30 scale-100" : "scale-90 opacity-0"
+                )} />
                 <Icon className={cn(
-                  "transition-all duration-250",
-                  active ? "w-5 h-5 text-indigo-500 scale-110" : "w-5 h-5 text-[var(--muted-foreground)]"
+                  "relative transition-all duration-250 w-5 h-5",
+                  active ? "text-white scale-105" : "text-[var(--muted-foreground)]"
                 )} />
                 {route === "/profile" && planCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] px-[3px] rounded-full bg-indigo-500 text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm">
+                  <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-[3px] rounded-full bg-indigo-500 text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm ring-2 ring-[var(--nav-bg)]">
                     {planCount > 9 ? "9+" : planCount}
                   </span>
                 )}
               </div>
 
               <span className={cn(
-                "text-[9px] font-medium leading-none transition-colors",
-                active ? "text-indigo-500 font-semibold" : "text-[var(--muted-foreground)]"
+                "text-[9px] leading-none transition-colors",
+                active ? "text-indigo-500 font-semibold" : "text-[var(--muted-foreground)] font-medium"
               )}>
                 {label}
               </span>

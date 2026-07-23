@@ -211,9 +211,9 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-2">
             {LANGUAGES.map((l) => (
               <button key={l.code} type="button" onClick={() => setSelectedLang(l.code)}
-                className={cn("flex items-center justify-center px-3 py-3 rounded-xl border text-sm font-medium transition-all",
+                className={cn("flex items-center justify-center px-3 py-3 rounded-xl border text-sm font-medium transition-all min-h-[44px]",
                   selectedLang === l.code
-                    ? "bg-indigo-500/15 border-indigo-500/50 text-indigo-400 font-semibold"
+                    ? "bg-indigo-500 border-indigo-500 text-white font-semibold shadow-sm shadow-indigo-500/25"
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/20")}>
                 {l.label}
               </button>
@@ -339,16 +339,24 @@ export function AuthModal() {
               />
             </Dialog.Overlay>
             <Dialog.Content asChild forceMount>
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 outline-none">
+              {/* Mobile: full-width bottom sheet anchored to the screen
+                  edge (rounded top corners only) instead of a small
+                  centered card with large dark margins either side.
+                  Desktop keeps the centered card. */}
+              <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center outline-none">
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.94, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.94, y: 8 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  initial={{ opacity: 0, y: 60 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 60 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   // Level 2: a neutral surface off the green ramp entirely,
                   // so the modal never reads as "the page, just blurred".
-                  className="w-full max-w-sm rounded-2xl border border-[var(--modal-border)] bg-[var(--modal)] shadow-[var(--shadow-modal)] p-5 max-h-[90vh] overflow-y-auto"
+                  className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl border border-[var(--modal-border)] bg-[var(--modal)] shadow-[var(--shadow-modal)] p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:p-5 sm:m-4 max-h-[90vh] overflow-y-auto"
                 >
+                  {/* Grab handle — sheet-only affordance, hidden on the
+                      desktop centered-card layout. */}
+                  <div className="sm:hidden w-9 h-1 rounded-full bg-[var(--border)] mx-auto mb-4" />
+
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">

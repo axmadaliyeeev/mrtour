@@ -186,7 +186,11 @@ export default function Home() {
                 <div className={cn(
                   "rounded-2xl flex items-center justify-center shadow-md",
                   isRating ? "w-[3.25rem] h-[3.25rem]" : "w-11 h-11",
-                  "bg-gradient-to-br from-[var(--muted)] to-[var(--card)] border border-[var(--border)]"
+                  // --muted is now a neutral inset tone (not mint) so
+                  // generic surfaces stop washing green — this specific
+                  // chip still wants its accent tint, so it asks for one
+                  // explicitly instead of inheriting it from --muted.
+                  "bg-gradient-to-br from-indigo-500/10 to-[var(--card)] border border-[var(--border)]"
                 )}>
                   <Icon className={cn(isRating ? "w-6 h-6" : "w-5 h-5", color)} />
                 </div>
@@ -220,7 +224,7 @@ export default function Home() {
                 key={cat.key}
                 onClick={() => navigate("/locations")}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
+                  "relative flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
                   "hover:-translate-y-0.5 hover:shadow-md",
                   cat.key === "all"
                     ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/25"

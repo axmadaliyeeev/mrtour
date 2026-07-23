@@ -357,12 +357,13 @@ export default function Chat() {
                   msg.role === "assistant"
                     ? msg.isError
                       ? "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm bg-red-500/8 border border-red-500/25 text-[var(--foreground)]"
-                      // Bubble-less, but not borderless: a faint tinted
-                      // panel (much lighter than the solid --card surface
-                      // used for real cards) gives the reply a readable
-                      // edge against a busy background without turning it
-                      // into a second identical chat bubble.
-                      : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl bg-[var(--card)]/25 border border-[var(--border)]/60 text-[var(--foreground)]"
+                      // Now that --card is a neutral graphite (not a
+                      // saturated green fill), a fully opaque card reads
+                      // as a calm contained surface rather than a second
+                      // loud bubble — important for structured replies
+                      // (numbered lists, bold labels) to have a clear
+                      // boundary instead of floating on the page.
+                      : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
                     : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25"
                 )}
               >
@@ -493,7 +494,7 @@ export default function Chat() {
                 <button
                   key={chip}
                   onClick={() => sendMessage(chip)}
-                  className="animate-fade-up px-3 py-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-indigo-500/30 transition-all active:scale-[0.96]"
+                  className="animate-fade-up px-3.5 min-h-[40px] rounded-full bg-[var(--muted)] border border-[var(--border)] text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-indigo-500/30 transition-all active:scale-[0.96]"
                   style={{ animationDelay: `${450 + i * 60}ms` }}
                 >
                   {chip}

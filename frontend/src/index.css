@@ -18,7 +18,13 @@
   --card-hover:        #fdfcf9;
   --border:            #ddd7c9; /* warm taupe-gray, visible without hover */
   --border-focus:      #50c878;
-  --muted:             #d1f2eb; /* reserved for icon chips / accents only */
+  /* --muted was full Mint Whisper (#d1f2eb) — since it's the generic
+     "quiet surface" token (input fields, chips, badges, tag pills) used
+     dozens of places, that meant mint became a de facto base wash again.
+     It's now a neutral warm-gray inset; anywhere that specifically wants
+     an emerald-tinted icon chip uses an explicit indigo-500/10 tint
+     instead, so mint stays an accent, never the default fill. */
+  --muted:             #f0ede4;
   --muted-foreground:  #6b675c; /* warm gray, not cool green-gray */
   --primary:           #50c878; /* Emerald Green — sole interactive accent */
   --primary-hover:     #38a860;
@@ -37,34 +43,37 @@
 }
 
 .dark {
-  /* Strict 4-level elevation system — every surface in the app maps to
-     exactly one of these, no ad-hoc greens invented per-screen:
-       L0 --background : page canvas (darkest)
-       L1 --card       : cards/panels/info-blocks, one clear step up from L0
-       L2 --modal      : modals/popovers/overlays — a NEUTRAL near-black,
-                          deliberately NOT on the green ramp at all, so a
-                          modal never reads as "the same green as the page
-                          behind it, just blurred"
-       L3 --primary    : interactive accent only (buttons/active states) */
-  --background:        #013220; /* L0 — Dark Evergreen */
-  --foreground:        #eef5f2;
-  --card:              #0b6e4f; /* L1 — Emerald surface, visibly lighter than L0 */
-  --card-hover:        #0f7d59;
-  --border:            #0f4a34;
+  /* Round three on dark mode: L1 (--card) was a real saturated emerald
+     (#0b6e4f) used as the fill for nearly every surface in the app —
+     bubbles, inputs, badges, panels — so the whole product read as "a
+     green app" rather than "a dark app with green accents." Desaturate
+     the entire elevation ramp to neutral graphite/charcoal (only a
+     whisper of green undertone, per spec) and push emerald back to
+     being ONLY what --primary/--ring/border-focus/hover-glow touch:
+       L0 --background : #0a0f0d — near-black neutral canvas
+       L1 --card       : #141b18 — one clear, visible step up from L0
+       L2 --modal      : #1c2622 — a further distinct neutral, so a modal
+                          never reads as "the page, just blurred"
+       L3 --primary    : #50c878 — accent only (buttons/active/icons/links) */
+  --background:        #0a0f0d;
+  --foreground:        #f0f2f1; /* near-white, not green-tinted */
+  --card:              #141b18;
+  --card-hover:        #19221e;
+  --border:            #232c27; /* low-opacity neutral gray-green line */
   --border-focus:      #50c878;
-  --muted:             #022919;
-  --muted-foreground:  #9fd6c0;
+  --muted:             #101512; /* recessed neutral inset (inputs, chips) */
+  --muted-foreground:  #93a39c;
   --primary:           #50c878; /* L3 — same accent as light mode, by design */
   --primary-hover:     #6ddba3;
   --ring:              #50c878;
-  --gold:              #d1f2eb; /* Mint Whisper — brightest point of contrast on dark */
+  --gold:              #d1f2eb; /* Mint Whisper — reserved, brightest accent point */
   --gold-soft:         rgba(209,242,235,0.1);
-  --modal:             #0d1f1a; /* L2 — neutral warm near-black, off the green ramp */
-  --modal-border:      #1c2f29;
-  --sidebar-bg:        #013220;
-  --sidebar-border:    #0f4a34;
-  --header-bg:         rgba(1,50,32,0.9);
-  --nav-bg:            rgba(1,50,32,0.97);
+  --modal:             #1c2622; /* L2 — distinct from both L0 and L1 */
+  --modal-border:      #2b3631;
+  --sidebar-bg:        #0a0f0d;
+  --sidebar-border:    #232c27;
+  --header-bg:         rgba(10,15,13,0.9);
+  --nav-bg:            rgba(10,15,13,0.97);
   --shadow-card:       0 1px 4px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.35);
   --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.3), 0 0 0 1px rgb(80 200 120 / 0.08);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);
