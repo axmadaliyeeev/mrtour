@@ -220,7 +220,15 @@ export default function Chat() {
       {/* Header */}
       <div className="glass flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 z-10">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div className="border-glow-spin relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0">
+          <div
+            className={cn(
+              "relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0 transition-shadow",
+              // The spinning ring is meaningful, not decorative — it only
+              // runs while AI Bek is actually composing a reply, so an
+              // always-on animation isn't idling for no reason at rest.
+              isLoading && "border-glow-spin"
+            )}
+          >
             <Bot className="w-4 h-4" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
           </div>
@@ -259,9 +267,9 @@ export default function Chat() {
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
-            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+            transition={{ type: "spring", stiffness: 400, damping: 38 }}
             className={cn(
               "group flex gap-2.5",
               msg.role === "user" ? "flex-row-reverse" : "flex-row"
@@ -307,9 +315,11 @@ export default function Chat() {
                 {msg.isError && (
                   <button
                     onClick={retryLastMessage}
-                    className="ripple mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/12 border border-red-500/30 text-xs font-semibold text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all active:scale-[0.96]"
+                    className="ripple mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/12 border border-red-500/30 text-xs font-semibold text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors active:scale-[0.96]"
                   >
-                    <RefreshCw className="w-3 h-3" />
+                    <motion.span whileTap={{ rotate: 180 }} transition={{ duration: 0.3 }}>
+                      <RefreshCw className="w-3 h-3" />
+                    </motion.span>
                     {t("chat", "retry")}
                   </button>
                 )}
@@ -325,11 +335,17 @@ export default function Chat() {
                     className="opacity-60 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-[10px] text-[var(--muted-foreground)] hover:text-indigo-400 transition-all active:scale-90"
                     aria-label="Copy"
                   >
-                    {copiedId === msg.id ? (
-                      <Check className="w-3 h-3 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-3 h-3" />
-                    )}
+                    <AnimatePresence mode="wait" initial={false}>
+                      {copiedId === msg.id ? (
+                        <motion.span key="check" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
+                          <Check className="w-3 h-3 text-emerald-500" />
+                        </motion.span>
+                      ) : (
+                        <motion.span key="copy" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
+                          <Copy className="w-3 h-3" />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </button>
                 )}
               </div>
@@ -493,18 +509,30 @@ export default function Chat() {
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             className={cn(
-              "ripple flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-95 shrink-0",
+              "ripple flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-95 shrink-0 overflow-hidden",
               input.trim() && !isLoading
-                ? "btn-aura bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-md shadow-indigo-500/30"
+                ? "bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/40"
                 : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
             )}
             aria-label={t("chat", "input_placeholder")}
           >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              {isLoading ? (
+                <motion.span key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="send"
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 14, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Send className="w-4 h-4" />
+                </motion.span>
+              )}
+            </AnimatePresence>
           </button>
         </div>
         <p className="hidden sm:block text-[10px] text-[var(--muted-foreground)]/60 text-center mt-2">
