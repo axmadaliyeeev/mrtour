@@ -1,13 +1,11 @@
 /**
- * Karvon.uz AI Knowledge Base
+ * trova AI Knowledge Base
  * Injected into the AI system prompt so the assistant gives accurate,
  * specific answers about locations, prices, hours, services, etc.
  */
 
 export const KNOWLEDGE_BASE = `
-════════════════════════════════════════════════════════
-📚  KARVON.UZ — TO'LIQ MA'LUMOTLAR BAZASI
-════════════════════════════════════════════════════════
+## trova — TO'LIQ MA'LUMOTLAR BAZASI
 Eslatma: Bu ma'lumotlar haqiqiy va dolzarb. Savollarda aniq narx,
 vaqt va joylarni so'rashsa, shu ma'lumotlardan foydalangin.
 

@@ -1,11 +1,30 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, MapPin, Bot, LayoutGrid, User, Sun, Moon, ChevronRight, LogIn } from "lucide-react";
+import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 
 const SPRING = { type: "spring" as const, stiffness: 420, damping: 34 };
+
+// A soft S-curve instead of a flat rectangle — echoes the route-motif from
+// the wordmark so "you are here" reads as a point on a path, not just a
+// highlighted menu row.
+function RouteIndicator({ layoutId }: { layoutId: string }) {
+  return (
+    <motion.svg
+      layoutId={layoutId}
+      transition={SPRING}
+      className="absolute left-0 top-1/2 -translate-y-1/2"
+      width="4" height="26" viewBox="0 0 4 26" fill="none"
+    >
+      <path
+        d="M3.5 1C3.5 6 0.5 8 0.5 13C0.5 18 3.5 20 3.5 25"
+        stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round"
+      />
+    </motion.svg>
+  );
+}
 
 const NAV_TABS = [
   { route: "/home",      Icon: Home,       key: "home"      },
@@ -16,7 +35,7 @@ const NAV_TABS = [
 export function Sidebar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user, plan, theme, toggleTheme, openAuthModal } = useAppStore();
+  const { user, plan, openAuthModal } = useAppStore();
   const { t } = useTranslation();
 
   return (
@@ -32,8 +51,8 @@ export function Sidebar() {
         </div>
         <div>
           <span className="text-xl font-extrabold tracking-tight leading-none">
-            <span className="text-[var(--foreground)]">KAR</span>
-            <span className="text-indigo-500">VON</span>
+            <span className="text-[var(--foreground)]">tro</span>
+            <span className="text-indigo-500">va</span>
           </span>
           <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5">
             Travel Guide
@@ -58,13 +77,7 @@ export function Sidebar() {
               )}
             >
               {/* Left active bar — shared sliding indicator */}
-              {active && (
-                <motion.span
-                  layoutId="sidebar-indicator"
-                  transition={SPRING}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-indigo-500"
-                />
-              )}
+              {active && <RouteIndicator layoutId="sidebar-indicator" />}
 
               <div className={cn(
                 "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
@@ -95,7 +108,7 @@ export function Sidebar() {
           );
         })}
 
-        {/* ── Divider + AI Bek ───────────────────────── */}
+        {/* ── Divider + Trova AI ───────────────────────── */}
         <div className="mt-2 pt-3 border-t border-[var(--sidebar-border)]">
           {(() => {
             const route = "/chat";
@@ -110,13 +123,7 @@ export function Sidebar() {
                     : "hover:bg-indigo-500/6"
                 )}
               >
-                {active && (
-                  <motion.span
-                    layoutId="sidebar-indicator"
-                    transition={SPRING}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-indigo-500 rounded-r-full"
-                  />
-                )}
+                {active && <RouteIndicator layoutId="sidebar-indicator" />}
                 <div className={cn(
                   "border-glow-spin w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md transition-all",
                   active ? "shadow-indigo-500/50 scale-105" : "shadow-indigo-500/25 hover:scale-105"
@@ -128,7 +135,7 @@ export function Sidebar() {
                     "text-sm font-semibold leading-tight transition-colors",
                     active ? "text-indigo-500" : "text-indigo-400"
                   )}>
-                    AI Bek
+                    Trova AI
                   </p>
                   <p className="text-[10px] text-[var(--muted-foreground)] font-medium">
                     Sayohat yordamchisi
@@ -157,13 +164,7 @@ export function Sidebar() {
                     : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
                 )}
               >
-                {active && (
-                  <motion.span
-                    layoutId="sidebar-indicator"
-                    transition={SPRING}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-r-full bg-indigo-500"
-                  />
-                )}
+                {active && <RouteIndicator layoutId="sidebar-indicator" />}
                 <div className={cn(
                   "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
                   active
@@ -192,35 +193,10 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* ── Bottom: theme + user card ──────────────────── */}
+      {/* ── Bottom: user card ─────────────────────────────
+          (theme toggle lives in the header now — it read as a
+          stranded debug switch tucked at the bottom of the sidebar) */}
       <div className="shrink-0 border-t border-[var(--sidebar-border)]">
-
-        {/* Theme toggle */}
-        <div className="px-4 py-3 flex items-center justify-between border-b border-[var(--sidebar-border)]/60">
-          <span className="text-[11px] font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">
-            {t("profile", "theme_label")}
-          </span>
-          <button
-            onClick={toggleTheme}
-            className={cn(
-              "relative w-11 h-6 rounded-full transition-colors duration-300 active:scale-95",
-              theme === "dark"
-                ? "bg-indigo-500 shadow-md shadow-indigo-500/30"
-                : "bg-[var(--muted)] border border-[var(--border)]"
-            )}
-            aria-label={theme === "dark" ? t("profile", "theme_light") : t("profile", "theme_dark")}
-          >
-            <span className={cn(
-              "absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300",
-              theme === "dark" ? "left-5" : "left-0.5"
-            )}>
-              {theme === "dark"
-                ? <Moon className="w-2.5 h-2.5 text-indigo-500" />
-                : <Sun className="w-2.5 h-2.5 text-amber-400" />
-              }
-            </span>
-          </button>
-        </div>
 
         {/* User / guest card */}
         <div className="p-3">
@@ -255,7 +231,7 @@ export function Sidebar() {
                 onClick={openAuthModal}
                 className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-colors active:scale-[0.97]"
               >
-                <LogIn className="w-3.5 h-3.5" />
+                <LogIn className="w-3.5 h-3.5 text-gold-200" />
                 {t("auth", "login")}
               </button>
             </div>

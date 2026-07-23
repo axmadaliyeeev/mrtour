@@ -98,7 +98,7 @@ function LoginTab({ onClose }: { onClose: () => void }) {
       const res = await apiClient.post<{ user: User; accessToken: string }>(
         "/auth/login", { email: email.trim().toLowerCase(), password }, { timeout: 45_000 }
       );
-      localStorage.setItem("karvon-token", res.accessToken);
+      localStorage.setItem("trova-token", res.accessToken);
       login(res.user);
       mergePlanOnLogin().catch(() => {});
       onClose();
@@ -171,7 +171,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
         { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang },
         { timeout: 45_000 }
       );
-      localStorage.setItem("karvon-token", res.accessToken);
+      localStorage.setItem("trova-token", res.accessToken);
       setDoneUser(res.user.name);
       login(res.user);
       mergePlanOnLogin().catch(() => {});
@@ -348,7 +348,7 @@ export function AuthModal() {
                       <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
                         <MapPin className="w-3 h-3 text-white" />
                       </div>
-                      <span className="font-bold text-[var(--foreground)]">KAR<span className="text-indigo-500">VON</span></span>
+                      <span className="font-bold text-[var(--foreground)]">tro<span className="text-indigo-500">va</span></span>
                     </div>
                     <Dialog.Close asChild>
                       <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">

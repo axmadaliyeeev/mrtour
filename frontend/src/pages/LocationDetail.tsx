@@ -248,7 +248,7 @@ export default function LocationDetail() {
 
   async function shareLocation() {
     const url = window.location.href;
-    const data = { title: `${loc.name} — KARVON`, text: loc.shortDesc ?? loc.name, url };
+    const data = { title: `${loc.name} — trova`, text: loc.shortDesc ?? loc.name, url };
     try {
       if (navigator.share) {
         await navigator.share(data);

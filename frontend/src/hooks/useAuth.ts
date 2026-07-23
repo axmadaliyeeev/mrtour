@@ -30,7 +30,7 @@ export function useAuth(): UseAuthReturn {
   } = useAppStore();
 
   const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem("karvon-token");
+    const token = localStorage.getItem("trova-token");
     if (!token) return;
     try {
       const me = await apiClient.get<User>("/auth/me");
@@ -42,7 +42,7 @@ export function useAuth(): UseAuthReturn {
       // it would otherwise wipe the user's plan/profile on a flaky connection.
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 401) {
-        localStorage.removeItem("karvon-token");
+        localStorage.removeItem("trova-token");
         logout();
       }
     }

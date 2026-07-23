@@ -90,7 +90,7 @@ export default function Profile() {
     // httpOnly refresh cookie + DB refreshToken) so a stray 401 elsewhere
     // can't silently mint a fresh access token after "logging out".
     apiClient.delete("/auth/logout").catch(() => {});
-    localStorage.removeItem("karvon-token");
+    localStorage.removeItem("trova-token");
     logout();
   }
 

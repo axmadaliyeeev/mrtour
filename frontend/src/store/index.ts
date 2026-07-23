@@ -143,7 +143,7 @@ export const useAppStore = create<AppStore>()(
         }),
     }),
     {
-      name: "karvon-v1",
+      name: "trova-v1",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,

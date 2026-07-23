@@ -13,10 +13,15 @@ export default {
     },
     extend: {
       colors: {
-        // Brand palette v2 — "Karvon Emerald": vivid Emerald Green (#50C878)
-        // as the live accent on both themes, antique gold (#C9A24B) as the
-        // point-accent for ratings/favorites/premium. Overrides Tailwind's
-        // indigo/purple so every existing class re-skins app-wide.
+        // Brand palette v3 — "trova": mono-green system, no gold anywhere in
+        // the UI (gold is reserved for the logo only, per spec). Emerald
+        // Green (#50C878) is the sole interactive/accent color on both
+        // themes; the second scale ("gold"/"purple" keys kept for minimal
+        // diff — every existing bg-gold-*/text-gold-* class re-skins to
+        // this mint tone) is a Mint-Whisper-derived contrast tone used for
+        // ratings/favorites/premium points, distinct from but harmonious
+        // with the emerald accent. Overrides Tailwind's indigo/purple so
+        // every existing class re-skins app-wide.
         indigo: {
           50:  "#effcf6",
           100: "#d7f7e7",
@@ -31,30 +36,30 @@ export default {
           950: "#0b2718",
         },
         gold: {
-          50:  "#fbf6ec",
-          100: "#f4e8ce",
-          200: "#e9d29d",
-          300: "#ddbc72",
-          400: "#d3ac5a",
-          500: "#c9a24b", // antique gold — exact brand accent
-          600: "#a9813a",
-          700: "#86642e",
-          800: "#6b5025",
-          900: "#57411f",
-          950: "#332510",
+          50:  "#eafbf6",
+          100: "#cdf4e9",
+          200: "#9be8d2",
+          300: "#69d9b8",
+          400: "#45c7a0",
+          500: "#2fa98a", // mint-teal contrast tone (was gold pre-v3)
+          600: "#228872",
+          700: "#1a6b5a",
+          800: "#145446",
+          900: "#103f35",
+          950: "#08211c",
         },
         purple: {
-          50:  "#fbf6ec",
-          100: "#f4e8ce",
-          200: "#e9d29d",
-          300: "#ddbc72",
-          400: "#d3ac5a",
-          500: "#c9a24b",
-          600: "#a9813a",
-          700: "#86642e",
-          800: "#6b5025",
-          900: "#57411f",
-          950: "#332510",
+          50:  "#eafbf6",
+          100: "#cdf4e9",
+          200: "#9be8d2",
+          300: "#69d9b8",
+          400: "#45c7a0",
+          500: "#2fa98a",
+          600: "#228872",
+          700: "#1a6b5a",
+          800: "#145446",
+          900: "#103f35",
+          950: "#08211c",
         },
       },
       fontFamily: {

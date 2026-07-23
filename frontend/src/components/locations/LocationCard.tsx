@@ -131,7 +131,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
 
         {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="font-bold text-white text-base leading-tight mb-1.5 drop-shadow-lg">
+          <h3 className="route-underline font-bold text-white text-base leading-tight mb-1.5 drop-shadow-lg">
             {location.name}
           </h3>
           <div className="flex items-center justify-between">
@@ -233,7 +233,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
 
       {/* Body */}
       <div className="p-3.5 space-y-2.5">
-        <h3 className="font-bold text-sm text-[var(--foreground)] leading-snug line-clamp-1">
+        <h3 className="route-underline font-bold text-sm text-[var(--foreground)] leading-snug line-clamp-1">
           {location.name}
         </h3>
 

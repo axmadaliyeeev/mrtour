@@ -1,6 +1,6 @@
-# KARVON — Loyiha haqida qisqacha
+# trova — Loyiha haqida qisqacha
 
-O'zbekiston bo'ylab sayohat qilishni rejalashtirish uchun AI-quvvatlangan full-stack veb-ilova. Foydalanuvchilar diqqatga sazovor joylarni ko'rib chiqadi, ularni shaxsiy rejaga saqlaydi, sharh qoldiradi va **AI Bek** — sun'iy intellekt sayohat yordamchisi bilan suhbatlashib tur reja tuzdiradi.
+O'zbekiston bo'ylab sayohat qilishni rejalashtirish uchun AI-quvvatlangan full-stack veb-ilova. Foydalanuvchilar diqqatga sazovor joylarni ko'rib chiqadi, ularni shaxsiy rejaga saqlaydi, sharh qoldiradi va **Trova AI** — sun'iy intellekt sayohat yordamchisi bilan suhbatlashib tur reja tuzdiradi.
 
 ## Texnologik stek
 
@@ -16,7 +16,7 @@ O'zbekiston bo'ylab sayohat qilishni rejalashtirish uchun AI-quvvatlangan full-s
 ## Asosiy funksionallik
 
 - **Joylar katalogi** — 12 ta lokatsiya (Samarqand, Buxoro, Xiva, Toshkent va h.k.), kategoriya/shahar/narx bo'yicha filtr va qidiruv
-- **AI Bek** — ko'p tilli suhbat, savol-javob, tezkor mavzular, tur reja tuzish (4 bosqichli so'rov: sana → muddat → kishilar → byudjet), javoblar Markdown formatida chiroyli render qilinadi
+- **Trova AI** — ko'p tilli suhbat, savol-javob, tezkor mavzular, tur reja tuzish (4 bosqichli so'rov: sana → muddat → kishilar → byudjet), javoblar Markdown formatida chiroyli render qilinadi
 - **SmartReview** — har bir sharh AI orqali ishonchlilik balli (trustScore) va mavzu teglari bilan tahlil qilinadi; joy bo'yicha AI-xulosalar generatsiyasi
 - **Shaxsiy reja** — joylarni saqlash, mehmon va tizimga kirgan foydalanuvchi uchun ishlaydi, login qilinganda qurilmalar orasida avtomatik sinxronlanadi
 - **6 tillilik** — o'zbek, rus, ingliz, xitoy, nemis, fransuz (barcha matn va AI javoblari)
@@ -26,14 +26,14 @@ O'zbekiston bo'ylab sayohat qilishni rejalashtirish uchun AI-quvvatlangan full-s
 ## Loyiha tuzilmasi
 
 ```
-karvon/
+trova/
 ├── frontend/   React SPA — sahifalar, komponentlar, i18n, Zustand store
 └── backend/    Express API — auth, joylar, sharhlar, AI, foydalanuvchilar
 ```
 
 ## Dizayn tili
 
-"Karvon" firma uslubi — chuqur zumrad-teal va antik oltin rang birikmasi, minimal va maqsadli animatsiyalar (dekorativ emas, holatga bog'liq — masalan, AI javob yozayotgandagina aylanuvchi indikator ishlaydi).
+"trova" firma uslubi — yagona Emerald Green (#50C878) aksent rangi, Dark Evergreen (#013220) fon va Mint Whisper (#D1F2EB) kontrast nuqtalaridan iborat monosabz palitra; logotipdagi marshrut (route) chizig'i sidebar, kartalar hover holati va tur-reja progressida takrorlanuvchi vizual motiv sifatida ishlatiladi. Animatsiyalar faqat holatga bog'liq (masalan, Trova AI javob yozayotgandagina aylanuvchi indikator ishlaydi), dekorativ emas.
 
 ## Ishonchlilik va barqarorlik
 

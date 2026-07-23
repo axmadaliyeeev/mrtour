@@ -16,7 +16,7 @@ export function TopHeader() {
   const ROUTE_LABELS: Record<string, string> = {
     "/home":      t("nav", "home"),
     "/locations": t("nav", "locations"),
-    "/chat":      "AI Bek",
+    "/chat":      "Trova AI",
     "/services":  t("nav", "services"),
     "/profile":   t("nav", "profile"),
   };
@@ -32,7 +32,7 @@ export function TopHeader() {
       {isDesktop ? (
         <div className="flex items-center gap-1.5 text-sm flex-1 min-w-0">
           <span className="text-[var(--muted-foreground)] text-xs font-semibold tracking-wider uppercase">
-            KARVON
+            trova
           </span>
           {label && (
             <>
@@ -52,8 +52,8 @@ export function TopHeader() {
             <MapPin className="w-3.5 h-3.5 text-white" />
           </div>
           <span className="text-lg font-extrabold tracking-tight whitespace-nowrap">
-            <span className="text-[var(--foreground)]">KAR</span>
-            <span className="text-indigo-500">VON</span>
+            <span className="text-[var(--foreground)]">tro</span>
+            <span className="text-indigo-500">va</span>
           </span>
         </button>
       )}

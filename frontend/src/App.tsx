@@ -16,7 +16,7 @@ function ThemeApplier() {
   useEffect(() => {
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(theme);
-    localStorage.setItem("karvon-theme", theme);
+    localStorage.setItem("trova-theme", theme);
   }, [theme]);
   useEffect(() => {
     document.documentElement.lang = lang;

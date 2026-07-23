@@ -77,8 +77,9 @@ export default function Home() {
 
           <div className="relative px-5 sm:px-8 pt-10 pb-10 max-w-3xl">
             {/* Badge */}
-            <div className="glint animate-fade-up inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-500 dark:text-indigo-400 text-xs font-semibold mb-4 backdrop-blur-sm">
-              <Compass className="w-3.5 h-3.5" /> {t("home", "badge")}
+            <div className="glint animate-fade-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-500 dark:text-indigo-400 text-xs font-semibold mb-4 backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold-500 shrink-0" />
+              {t("home", "badge")}
             </div>
 
             {/* Headline */}
@@ -91,28 +92,29 @@ export default function Home() {
               {t("home", "hero_subtitle")}
             </p>
 
-            {/* CTAs */}
+            {/* CTAs — Trova AI is the product's core, so it's the filled
+                primary action; browsing the catalog is secondary (outline). */}
             <div className="animate-fade-up delay-200 flex flex-wrap gap-3">
               <button
-                onClick={() => navigate("/locations")}
+                onClick={() => navigate("/chat")}
                 className="btn-shine btn-aura ripple group flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-all active:scale-[0.97] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
               >
-                {t("home", "explore_btn")}
+                <Bot className="w-4 h-4" />
+                {t("home", "ai_btn")}
                 <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
-                onClick={() => navigate("/chat")}
+                onClick={() => navigate("/locations")}
                 className="ripple flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--card)]/90 backdrop-blur-sm border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--foreground)] text-sm font-semibold transition-all active:scale-[0.97] shadow-sm"
               >
-                <Bot className="w-4 h-4 text-indigo-400" />
-                {t("home", "ai_btn")}
+                {t("home", "explore_btn")}
               </button>
             </div>
 
             {/* Trust indicators */}
             <div className="animate-fade-up delay-300 flex items-center gap-4 mt-6">
               <div className="flex -space-x-1.5">
-                {["#50c878","#7fe0ae","#c9a24b","#e9d29d","#38a860"].map((c, i) => (
+                {["#50c878","#7fe0ae","#2fa98a","#9be8d2","#38a860"].map((c, i) => (
                   <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--background)]" style={{ backgroundColor: c }} />
                 ))}
               </div>
@@ -134,30 +136,43 @@ export default function Home() {
       {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-4 mb-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {STATS.map(({ icon: Icon, value, label, color, glow }, i) => (
-            <div
-              key={label}
-              className={cn(
-                "tilt-hover animate-fade-up flex flex-col items-center gap-2.5 p-4 rounded-2xl border border-[var(--border)]",
-                "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-lg transition-all duration-300 cursor-default",
-                `hover:${glow}`
-              )}
-              style={{ animationDelay: `${i * 80 + 100}ms` }}
-            >
-              <div className={cn(
-                "w-11 h-11 rounded-2xl flex items-center justify-center shadow-md",
-                "bg-gradient-to-br from-[var(--muted)] to-[var(--card)] border border-[var(--border)]"
-              )}>
-                <Icon className={cn("w-5 h-5", color)} />
+          {STATS.map(({ icon: Icon, value, label, color, glow }, i) => {
+            // The rating is the single most persuasive trust signal on the
+            // page — it gets a visibly larger card and a mint outline
+            // instead of being just another equal-weight tile in the row.
+            const isRating = label === t("home", "stats_rating");
+            return (
+              <div
+                key={label}
+                className={cn(
+                  "tilt-hover animate-fade-up flex flex-col items-center gap-2.5 rounded-2xl border transition-all duration-300 cursor-default",
+                  "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-lg",
+                  isRating
+                    ? "p-5 border-gold-500/40 ring-1 ring-gold-500/20"
+                    : "p-4 border-[var(--border)]",
+                  `hover:${glow}`
+                )}
+                style={{ animationDelay: `${i * 80 + 100}ms` }}
+              >
+                <div className={cn(
+                  "rounded-2xl flex items-center justify-center shadow-md",
+                  isRating ? "w-[3.25rem] h-[3.25rem]" : "w-11 h-11",
+                  "bg-gradient-to-br from-[var(--muted)] to-[var(--card)] border border-[var(--border)]"
+                )}>
+                  <Icon className={cn(isRating ? "w-6 h-6" : "w-5 h-5", color)} />
+                </div>
+                <span className={cn(
+                  "font-extrabold text-[var(--foreground)] tabular-nums",
+                  isRating ? "text-2xl" : "text-xl"
+                )}>
+                  {value}
+                </span>
+                <span className="text-[10px] sm:text-[11px] text-[var(--muted-foreground)] text-center leading-tight font-medium">
+                  {label}
+                </span>
               </div>
-              <span className="text-xl font-extrabold text-[var(--foreground)] tabular-nums">
-                {value}
-              </span>
-              <span className="text-[10px] sm:text-[11px] text-[var(--muted-foreground)] text-center leading-tight font-medium">
-                {label}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

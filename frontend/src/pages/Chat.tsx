@@ -224,7 +224,7 @@ export default function Chat() {
             className={cn(
               "relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0 transition-shadow",
               // The spinning ring is meaningful, not decorative — it only
-              // runs while AI Bek is actually composing a reply, so an
+              // runs while Trova AI is actually composing a reply, so an
               // always-on animation isn't idling for no reason at rest.
               isLoading && "border-glow-spin"
             )}

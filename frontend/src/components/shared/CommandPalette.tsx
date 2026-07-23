@@ -74,7 +74,7 @@ export function CommandPalette() {
       {
         id: "ai",
         icon: <Bot className="w-4 h-4 text-indigo-400" />,
-        label: "AI Bek",
+        label: "Trova AI",
         run: () => {
           close();
           navigate("/chat");
@@ -259,7 +259,7 @@ export function CommandPalette() {
               <span className="flex items-center gap-1">
                 <kbd className="bg-[var(--muted)] border border-[var(--border)] rounded px-1">↵</kbd>
               </span>
-              <span className="ml-auto font-bold tracking-wider text-indigo-500/60">KARVON</span>
+              <span className="ml-auto font-bold tracking-wider text-indigo-500/60">trova</span>
             </div>
           </motion.div>
         </motion.div>

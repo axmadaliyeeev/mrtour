@@ -1,4 +1,4 @@
-# KARVON.UZ
+# trova
 
 [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://typescriptlang.org)
@@ -8,14 +8,14 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql)](https://neon.tech)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-O'zbekiston turizmi uchun AI-powered full-stack veb-ilova. Groq AI (Llama 3.3 70B) bilan shaxsiy tur rejalash, real vaqt sharh tahlili va interaktiv sayohat yordamchisi **AI Bek**.
+O'zbekiston turizmi uchun AI-powered full-stack veb-ilova. Groq AI (Llama 3.3 70B) bilan shaxsiy tur rejalash, real vaqt sharh tahlili va interaktiv sayohat yordamchisi **Trova AI**.
 
 ---
 
 ## Loyiha tuzilmasi
 
 ```
-karvon/
+trova/
 ├── frontend/                    # React 19 + Vite + Tailwind CSS
 │   └── src/
 │       ├── components/
@@ -39,7 +39,7 @@ karvon/
 │       │   ├── Home.tsx         # Hero, featured, stats, AI banner
 │       │   ├── Locations.tsx    # Grid, filtr (kategoriya + shahar + saralash)
 │       │   ├── LocationDetail.tsx # Hero, ma'lumotlar, sharhlar, SmartReview AI
-│       │   ├── Chat.tsx         # AI Bek suhbat sahifasi
+│       │   ├── Chat.tsx         # Trova AI suhbat sahifasi
 │       │   ├── Services.tsx     # Restoranlar, hotellar, gidlar, transport, valyuta
 │       │   └── Profile.tsx      # Reja boshqaruv, til, mavzu, favqulodda raqamlar
 │       ├── store/
@@ -91,7 +91,7 @@ karvon/
 
 ## AI funksiyalar
 
-### 1. AI Bek — sayohat yordamchisi
+### 1. Trova AI — sayohat yordamchisi
 `llama-3.3-70b-versatile` modeli bilan ishlaydi. O'zbekiston turizmi bo'yicha professional chatbot.
 
 - Savolga javob beradi: narxlar, vaqt, transport, mavsumlar
@@ -143,10 +143,10 @@ Auth:     Login talab qilinmaydi
 
 | Bo'lim | Tavsif |
 |--------|--------|
-| 🏠 **Asosiy** | Featured joylar, statistika, AI Bek banneri, havolalar |
+| 🏠 **Asosiy** | Featured joylar, statistika, Trova AI banneri, havolalar |
 | 📍 **Joylar** | 8 lokatsiya, kategoriya/shahar/saralash filtri, skeleton loading |
 | 🗺️ **Joy tafsiloti** | Hero rasm, ma'lumotlar, SmartReview AI, sharhlar, rejaga qo'shish |
-| 🤖 **AI Bek** | Suhbat sahifasi, tezkor savollar, tur rejasi banneri |
+| 🤖 **Trova AI** | Suhbat sahifasi, tezkor savollar, tur rejasi banneri |
 | ⚙️ **Xizmatlar** | Restoranlar, hotellar, gidlar, transport marshrutlari, valyuta konvertori |
 | 👤 **Profil** | Reja ro'yxati (mehmon + foydalanuvchi), til tanlash, mavzu, favqulodda raqamlar |
 
@@ -169,7 +169,7 @@ GET    /api/reviews/:locationId  Joy sharhlari (saralangan: yangi birinchi)
 POST   /api/reviews              Yangi sharh (AI tahlil bilan)
 DELETE /api/reviews/:id          Sharhni o'chirish (faqat muallif)
 
-POST   /api/ai/chat              AI Bek suhbati (messages array + userContext)
+POST   /api/ai/chat              Trova AI suhbati (messages array + userContext)
 POST   /api/ai/analyze-review    Sharh tahlili → trustScore + aiTags
 POST   /api/ai/analyze-reviews   Joy insayti generatsiyasi
 POST   /api/ai/tour-plan         Tur rejasi (days, people, regions, budget)
@@ -206,8 +206,8 @@ VITE_API_URL=http://localhost:5000/api
 
 ```bash
 # 1. Reponi clone qilish
-git clone https://github.com/axmadaliyeeev/karvon.git
-cd karvon
+git clone https://github.com/axmadaliyeeev/trova.git
+cd trova
 
 # 2. Backend
 cd backend
@@ -281,7 +281,7 @@ npm run start    # Production (node dist/server.js)
 
 ## Litsenziya
 
-[MIT](LICENSE) © 2026 KARVON.UZ
+[MIT](LICENSE) © 2026 trova
 
 ---
 

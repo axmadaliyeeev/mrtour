@@ -1,5 +1,5 @@
 {
-  "name": "karvon-monorepo",
+  "name": "trova-monorepo",
   "version": "0.1.0",
   "private": true,
   "workspaces": [

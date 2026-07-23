@@ -23,7 +23,7 @@ export function BottomNav() {
   const TABS = [
     { route: "/home",      Icon: Home,       label: t("nav", "home")      },
     { route: "/locations", Icon: MapPin,     label: t("nav", "locations") },
-    { route: "/chat",      Icon: Bot,        label: "AI Bek",  isAI: true  },
+    { route: "/chat",      Icon: Bot,        label: "Trova AI",  isAI: true  },
     { route: "/services",  Icon: LayoutGrid, label: t("nav", "services")  },
     { route: "/profile",   Icon: User,       label: t("nav", "profile")   },
   ] as const;
@@ -45,7 +45,7 @@ export function BottomNav() {
                 key={route}
                 onClick={() => navigate(route)}
                 className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all active:scale-90"
-                aria-label="AI Bek"
+                aria-label="Trova AI"
               >
                 <div className={cn(
                   "flex items-center justify-center w-12 h-[34px] rounded-2xl transition-all duration-250",
@@ -58,7 +58,7 @@ export function BottomNav() {
                   "text-[9px] font-bold leading-none transition-colors",
                   active ? "text-indigo-500" : "text-[var(--muted-foreground)]"
                 )}>
-                  AI Bek
+                  Trova AI
                 </span>
               </button>
             );
