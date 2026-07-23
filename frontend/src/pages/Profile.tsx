@@ -212,8 +212,8 @@ export default function Profile() {
               ))}
 
               {/* Save prompt */}
-              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/8 border border-amber-500/25">
-                <Lock className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2.5 p-3 rounded-xl bg-gold-500/8 border border-gold-500/25">
+                <Lock className="w-4 h-4 text-gold-500 shrink-0" />
                 <p className="text-xs text-[var(--muted-foreground)]">
                   {t("profile", "guest_plan_save_hint")}
                   {" "}
@@ -279,7 +279,7 @@ export default function Profile() {
               {theme === "dark" ? (
                 <Moon className="w-4 h-4 text-[var(--muted-foreground)]" />
               ) : (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-indigo-400" />
               )}
               <span className="text-sm font-medium text-[var(--foreground)]">
                 {theme === "dark" ? t("profile", "theme_dark") : t("profile", "theme_light")}
@@ -470,7 +470,7 @@ export default function Profile() {
               {theme === "dark" ? (
                 <Moon className="w-4 h-4 text-[var(--muted-foreground)]" />
               ) : (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-indigo-400" />
               )}
               <span className="text-sm font-medium text-[var(--foreground)]">
                 {theme === "dark" ? t("profile", "theme_dark") : t("profile", "theme_light")}

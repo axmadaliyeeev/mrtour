@@ -51,7 +51,7 @@ export function TopHeader() {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/30">
             <MapPin className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-lg font-extrabold tracking-tight whitespace-nowrap">
+          <span className="font-display text-lg font-extrabold tracking-tight whitespace-nowrap">
             <span className="text-[var(--foreground)]">tro</span>
             <span className="text-indigo-500">va</span>
           </span>
@@ -91,7 +91,7 @@ export function TopHeader() {
           aria-label={theme === "dark" ? t("profile", "theme_light") : t("profile", "theme_dark")}
         >
           {theme === "dark" ? (
-            <Sun className="w-3.5 h-3.5 text-amber-400" />
+            <Sun className="w-3.5 h-3.5 text-indigo-400" />
           ) : (
             <Moon className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
           )}

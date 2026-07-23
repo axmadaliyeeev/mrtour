@@ -56,7 +56,7 @@ export default function Chat() {
     { icon: Landmark,  color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_samarqand"), text: t("chat", "quick_samarqand_prompt") },
     { icon: Hotel,     color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_hotel"),     text: t("chat", "quick_hotel_prompt") },
     { icon: Bus,       color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_transport"), text: t("chat", "quick_transport_prompt") },
-    { icon: StarIcon,  color: "text-amber-400",   bg: "bg-amber-500/12",  label: t("chat", "quick_top"),       text: t("chat", "quick_top_prompt") },
+    { icon: StarIcon,  color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_top"),       text: t("chat", "quick_top_prompt") },
     { icon: Lightbulb, color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_tips"),      text: t("chat", "quick_tips_prompt") },
   ];
 

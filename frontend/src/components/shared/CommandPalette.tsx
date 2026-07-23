@@ -95,7 +95,7 @@ export function CommandPalette() {
         id: "theme",
         icon:
           theme === "dark" ? (
-            <Sun className="w-4 h-4 text-amber-400" />
+            <Sun className="w-4 h-4 text-indigo-400" />
           ) : (
             <Moon className="w-4 h-4 text-indigo-400" />
           ),
@@ -212,7 +212,7 @@ export function CommandPalette() {
                     <span className="flex items-center gap-1 text-[11px] text-[var(--muted-foreground)]">
                       <MapPin className="w-3 h-3 text-indigo-500/70" />
                       {loc.city}
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400 ml-1.5" />
+                      <Star className="w-3 h-3 text-indigo-400 fill-indigo-400 ml-1.5" />
                       {loc.rating}
                     </span>
                   </span>

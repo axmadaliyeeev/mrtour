@@ -35,28 +35,26 @@
 }
 
 .dark {
-  /* Same correction on dark: a card surface painted in solid saturated
-     Emerald (#0B6E4F) on every panel read as a gaudy green block instead
-     of a refined dark UI. Cards go back to a near-black, barely-green
-     neutral so the Emerald accent actually stands out against something,
-     instead of everything being the same loud hue. */
-  --background:        #04120e; /* Dark Evergreen, deepened */
+  /* Exact mono-green spec: Dark Evergreen canvas, Emerald surfaces one
+     step up, Emerald accent for every interactive element, Mint Whisper
+     reserved for the brightest contrast text/highlights. */
+  --background:        #013220; /* Dark Evergreen */
   --foreground:        #eef5f2;
-  --card:              #0b241c;
-  --card-hover:        #102e24;
-  --border:            #163a2e;
+  --card:              #0b6e4f; /* Emerald surface */
+  --card-hover:        #0f7d59;
+  --border:            #0f4a34;
   --border-focus:      #50c878;
-  --muted:             #0a2019;
-  --muted-foreground:  #7fa599;
+  --muted:             #022919;
+  --muted-foreground:  #9fd6c0;
   --primary:           #50c878; /* same accent as light mode, by design */
   --primary-hover:     #6ddba3;
   --ring:              #50c878;
   --gold:              #d1f2eb; /* Mint Whisper — brightest point of contrast on dark */
   --gold-soft:         rgba(209,242,235,0.1);
-  --sidebar-bg:        #061a14;
-  --sidebar-border:    #123128;
-  --header-bg:         rgba(4,18,14,0.9);
-  --nav-bg:            rgba(4,18,14,0.97);
+  --sidebar-bg:        #013220;
+  --sidebar-border:    #0f4a34;
+  --header-bg:         rgba(1,50,32,0.9);
+  --nav-bg:            rgba(1,50,32,0.97);
   --shadow-card:       0 1px 4px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.35);
   --shadow-card-hover: 0 10px 34px -8px rgb(80 200 120 / 0.3), 0 0 0 1px rgb(80 200 120 / 0.08);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);

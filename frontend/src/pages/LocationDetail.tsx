@@ -33,7 +33,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
             className={cn(
               "w-7 h-7 transition-colors",
               star <= (hovered || value)
-                ? "fill-amber-400 text-amber-400"
+                ? "fill-indigo-500 text-indigo-500"
                 : "fill-transparent text-[var(--border)]"
             )}
           />
@@ -354,7 +354,7 @@ export default function LocationDetail() {
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "duration_label")}</span>
         </div>
         <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
-          <Calendar className="w-4 h-4 text-amber-400" />
+          <Calendar className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.bestSeason.split(",")[0] ?? loc.bestSeason}
           </span>
@@ -387,7 +387,7 @@ export default function LocationDetail() {
             </div>
           </div>
           <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
-            <Calendar className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+            <Calendar className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)]">{t("detail", "best_season")}</p>
               <p className="text-xs text-[var(--muted-foreground)]">{loc.bestSeason}</p>

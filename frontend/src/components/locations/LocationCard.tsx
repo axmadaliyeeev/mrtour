@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation } from "lucide-react";
+import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation, Landmark, Leaf, Palette, Church, Pickaxe } from "lucide-react";
 import { cn, truncate } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { syncAddToPlan, syncRemoveFromPlan } from "@/lib/plan-sync";
@@ -9,15 +9,18 @@ import { useSpotlight } from "@/hooks/useSpotlight";
 import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
+// Single monoline icon set (constant 2px stroke, no filled illustrative
+// icons) — every category reads as one geometric family, on-brand emerald,
+// instead of a mix of flat-color emoji and unrelated hues.
 const CAT_STYLE: Record<
   Location["category"],
-  { color: string; bg: string; emoji: string; tKey: "cat_tarix" | "cat_tabiat" | "cat_madaniyat" | "cat_din" | "cat_arxeologiya" }
+  { Icon: typeof Landmark; color: string; bg: string; tKey: "cat_tarix" | "cat_tabiat" | "cat_madaniyat" | "cat_din" | "cat_arxeologiya" }
 > = {
-  tarix:       { color: "text-amber-500",   bg: "bg-amber-500/20 border-amber-500/30",    emoji: "🏛️", tKey: "cat_tarix" },
-  tabiat:      { color: "text-emerald-500", bg: "bg-emerald-500/20 border-emerald-500/30", emoji: "🌿", tKey: "cat_tabiat" },
-  madaniyat:   { color: "text-purple-500",  bg: "bg-purple-500/20 border-purple-500/30",  emoji: "🎭", tKey: "cat_madaniyat" },
-  din:         { color: "text-indigo-500",  bg: "bg-indigo-500/20 border-indigo-500/30",  emoji: "🕌", tKey: "cat_din" },
-  arxeologiya: { color: "text-orange-500",  bg: "bg-orange-500/20 border-orange-500/30",  emoji: "⛏️", tKey: "cat_arxeologiya" },
+  tarix:       { Icon: Landmark, color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_tarix" },
+  tabiat:      { Icon: Leaf,     color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_tabiat" },
+  madaniyat:   { Icon: Palette,  color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_madaniyat" },
+  din:         { Icon: Church,   color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_din" },
+  arxeologiya: { Icon: Pickaxe,  color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_arxeologiya" },
 };
 
 interface LocationCardProps {
@@ -92,7 +95,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           "absolute top-3 left-3 flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full border backdrop-blur-md",
           cat.bg, cat.color
         )}>
-          {cat.emoji} {catLabel}
+          <cat.Icon className="w-3 h-3" strokeWidth={2} /> {catLabel}
         </span>
 
         {/* Price badge */}
@@ -140,7 +143,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
               {location.city}
             </span>
             <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
-              <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+              <Star className="w-3 h-3 text-indigo-400 fill-indigo-400" />
               <span className="text-white text-xs font-bold">{location.rating}</span>
             </div>
           </div>
@@ -191,7 +194,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           "absolute top-2.5 left-2.5 flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border backdrop-blur-md",
           cat.bg, cat.color
         )}>
-          {cat.emoji} {catLabel}
+          <cat.Icon className="w-3 h-3" strokeWidth={2} /> {catLabel}
         </span>
 
         {/* Price badge */}
@@ -243,8 +246,8 @@ export function LocationCard({ location, variant = "default", className }: Locat
             <MapPin className="w-3 h-3 shrink-0 text-indigo-500" />
             {location.city}
           </span>
-          <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/20">
-            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+          <div className="flex items-center gap-1 shrink-0 px-1.5 py-0.5 rounded-full bg-indigo-400/10 border border-indigo-400/20">
+            <Star className="w-3 h-3 text-indigo-400 fill-indigo-400" />
             <span className="text-[11px] font-bold text-[var(--foreground)] tabular-nums">{location.rating}</span>
             <span className="text-[10px] text-[var(--muted-foreground)] tabular-nums">
               ({location.reviewCount >= 1000

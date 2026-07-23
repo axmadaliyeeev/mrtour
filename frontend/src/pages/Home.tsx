@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {
   MapPin, Star, Users, Globe, Bot, ChevronRight,
   Compass, Sparkles, TrendingUp, Clock,
+  Map as MapIcon, Landmark, Leaf, Palette, Church, Pickaxe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
@@ -39,13 +40,15 @@ export default function Home() {
   const featured = LOCATIONS.filter((l) => l.featured);
   const all = LOCATIONS;
 
-  const CATEGORIES: { key: Location["category"] | "all"; label: string; emoji: string }[] = [
-    { key: "all",         label: t("home", "cat_all"),         emoji: "🗺️" },
-    { key: "tarix",       label: t("home", "cat_tarix"),       emoji: "🏛️" },
-    { key: "tabiat",      label: t("home", "cat_tabiat"),      emoji: "🌿" },
-    { key: "madaniyat",   label: t("home", "cat_madaniyat"),   emoji: "🎭" },
-    { key: "din",         label: t("home", "cat_din"),         emoji: "🕌" },
-    { key: "arxeologiya", label: t("home", "cat_arxeologiya"), emoji: "⛏️" },
+  // Same monoline icon family as LocationCard's category badges — one
+  // consistent geometric set app-wide instead of mixed emoji/line styles.
+  const CATEGORIES: { key: Location["category"] | "all"; label: string; Icon: typeof MapIcon }[] = [
+    { key: "all",         label: t("home", "cat_all"),         Icon: MapIcon  },
+    { key: "tarix",       label: t("home", "cat_tarix"),       Icon: Landmark },
+    { key: "tabiat",      label: t("home", "cat_tabiat"),      Icon: Leaf     },
+    { key: "madaniyat",   label: t("home", "cat_madaniyat"),   Icon: Palette  },
+    { key: "din",         label: t("home", "cat_din"),         Icon: Church   },
+    { key: "arxeologiya", label: t("home", "cat_arxeologiya"), Icon: Pickaxe  },
   ];
 
   // Brand-cohesive stat tiles — every tile stays within the emerald/gold
@@ -92,20 +95,25 @@ export default function Home() {
               {t("home", "hero_subtitle")}
             </p>
 
-            {/* CTAs — Trova AI is the product's core, so it's the filled
-                primary action; browsing the catalog is secondary (outline). */}
-            <div className="animate-fade-up delay-200 flex flex-wrap gap-3">
+            {/* CTAs — Trova AI is the product's core, so it visibly outweighs
+                the secondary action: bigger, filled, with a pulsing glow
+                behind its icon (the route-curve motif breathing); browsing
+                the catalog stays a plain outline button, clearly secondary. */}
+            <div className="animate-fade-up delay-200 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => navigate("/chat")}
-                className="btn-shine btn-aura ripple group flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold transition-all active:scale-[0.97] shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
+                className="btn-shine btn-aura ripple group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-base font-bold transition-all active:scale-[0.97] shadow-xl shadow-indigo-500/35 hover:shadow-indigo-500/50 hover:-translate-y-0.5"
               >
-                <Bot className="w-4 h-4" />
+                <span className="relative w-6 h-6 shrink-0 flex items-center justify-center">
+                  <span className="absolute inset-0 rounded-full bg-white/25 animate-breathe" />
+                  <Bot className="relative w-5 h-5" />
+                </span>
                 {t("home", "ai_btn")}
                 <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <button
                 onClick={() => navigate("/locations")}
-                className="ripple flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--card)]/90 backdrop-blur-sm border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--foreground)] text-sm font-semibold transition-all active:scale-[0.97] shadow-sm"
+                className="ripple flex items-center gap-2 px-4 py-2.5 rounded-xl bg-transparent border border-[var(--border)] hover:border-indigo-500/40 hover:bg-indigo-500/5 text-[var(--muted-foreground)] hover:text-[var(--foreground)] text-xs font-semibold transition-all active:scale-[0.97]"
               >
                 {t("home", "explore_btn")}
               </button>
@@ -124,7 +132,7 @@ export default function Home() {
               </span>
               <div className="flex items-center gap-1">
                 {[1,2,3,4,5].map((i) => (
-                  <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />
+                  <Star key={i} className="w-3 h-3 text-indigo-500 fill-indigo-500" />
                 ))}
                 <span className="text-xs font-semibold text-[var(--foreground)] ml-0.5">4.8</span>
               </div>
@@ -132,6 +140,20 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Hero → Stats transition ───────────────────────────────
+          A route-curve line instead of a straight seam between the hero
+          card and the stats row — the same S-curve motif as the logo and
+          sidebar indicator, threaded through the page instead of a hard
+          rule. */}
+      <div className="px-4 -mt-2 mb-2 flex justify-center pointer-events-none" aria-hidden="true">
+        <svg width="120" height="10" viewBox="0 0 120 10" fill="none">
+          <path
+            d="M2 5C22 5 22 1 42 1C62 1 62 9 82 9C97 9 97 5 118 5"
+            stroke="var(--primary)" strokeWidth="1.5" strokeLinecap="round" opacity="0.35"
+          />
+        </svg>
+      </div>
 
       {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-4 mb-8">
@@ -191,7 +213,7 @@ export default function Home() {
                 key={cat.key}
                 onClick={() => navigate("/locations")}
                 className={cn(
-                  "flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
+                  "relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
                   "hover:-translate-y-0.5 hover:shadow-md",
                   cat.key === "all"
                     ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/25"
@@ -199,8 +221,18 @@ export default function Home() {
                 )}
                 style={{ animationDelay: `${i * 40}ms` }}
               >
-                <span>{cat.emoji}</span>
+                <cat.Icon className="w-3.5 h-3.5" strokeWidth={2} />
                 {cat.label}
+                {/* Route-curve underline on the active pill instead of a
+                    flat bar — the same S-curve as the sidebar indicator. */}
+                {cat.key === "all" && (
+                  <svg
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2"
+                    width="20" height="6" viewBox="0 0 20 6" fill="none" aria-hidden="true"
+                  >
+                    <path d="M1 1C6 1 6 5 10 5C14 5 14 1 19 1" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                )}
               </button>
             ))}
           </div>

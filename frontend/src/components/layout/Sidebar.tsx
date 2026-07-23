@@ -50,7 +50,7 @@ export function Sidebar() {
           <MapPin className="w-4.5 h-4.5 text-white" />
         </div>
         <div>
-          <span className="text-xl font-extrabold tracking-tight leading-none">
+          <span className="font-display text-xl font-extrabold tracking-tight leading-none">
             <span className="text-[var(--foreground)]">tro</span>
             <span className="text-indigo-500">va</span>
           </span>
