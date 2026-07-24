@@ -48,7 +48,7 @@ export function Sidebar() {
              of a generic MapPin icon standing in for it. ──────────── */}
       <div className="relative flex items-center px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
         <div>
-          <img src="/img/image.png" alt="trova" className="h-7 w-auto" />
+          <img src="/img/logo-s-trova.png" alt="trova" className="h-7 w-auto" />
           <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5 ml-0.5">
             Travel Guide
           </p>

@@ -48,7 +48,7 @@ export function TopHeader() {
           onClick={() => navigate("/home")}
           className="flex items-center flex-1 min-w-0 active:opacity-70 transition-opacity"
         >
-          <img src="/img/image.png" alt="trova" className="h-6 w-auto" />
+          <img src="/img/logo-s-trova.png" alt="trova" className="h-6 w-auto" />
         </button>
       )}
 
