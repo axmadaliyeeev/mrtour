@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bookmark, LogIn, ChevronRight, Sun, Moon, MapPin, Search } from "lucide-react";
+import { Bookmark, LogIn, ChevronRight, Sun, Moon, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAppStore } from "@/store";
@@ -46,15 +46,9 @@ export function TopHeader() {
       ) : (
         <button
           onClick={() => navigate("/home")}
-          className="flex items-center gap-2 flex-1 min-w-0 active:opacity-70 transition-opacity"
+          className="flex items-center flex-1 min-w-0 active:opacity-70 transition-opacity"
         >
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/30">
-            <MapPin className="w-3.5 h-3.5 text-white" />
-          </div>
-          <span className="font-display text-lg font-extrabold tracking-tight whitespace-nowrap">
-            <span className="text-[var(--foreground)]">tro</span>
-            <span className="text-indigo-500">va</span>
-          </span>
+          <img src="/img/image.png" alt="trova" className="h-6 w-auto" />
         </button>
       )}
 

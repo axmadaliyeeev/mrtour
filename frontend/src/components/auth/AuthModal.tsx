@@ -1,7 +1,7 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Eye, EyeOff, ChevronRight, MapPin } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -359,12 +359,7 @@ export function AuthModal() {
                   <div className="sm:hidden w-9 h-1 rounded-full bg-[var(--border)] mx-auto mb-4" />
 
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
-                        <MapPin className="w-3 h-3 text-white" />
-                      </div>
-                      <span className="font-display font-bold text-[var(--foreground)]">tro<span className="text-indigo-500">va</span></span>
-                    </div>
+                    <img src="/img/image.png" alt="trova" className="h-5 w-auto" />
                     <Dialog.Close asChild>
                       <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">
                         <span className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors">

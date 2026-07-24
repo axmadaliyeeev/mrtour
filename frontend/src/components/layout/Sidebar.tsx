@@ -44,17 +44,12 @@ export function Sidebar() {
       {/* ── Subtle top gradient glow ───────────────────── */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/6 to-transparent pointer-events-none" />
 
-      {/* ── Logo ───────────────────────────────────────── */}
-      <div className="relative flex items-center gap-3 px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <MapPin className="w-4.5 h-4.5 text-white" />
-        </div>
+      {/* ── Logo — real brand mark (mark + wordmark in one image) instead
+             of a generic MapPin icon standing in for it. ──────────── */}
+      <div className="relative flex items-center px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
         <div>
-          <span className="font-display text-xl font-extrabold tracking-tight leading-none">
-            <span className="text-[var(--foreground)]">tro</span>
-            <span className="text-indigo-500">va</span>
-          </span>
-          <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5">
+          <img src="/img/image.png" alt="trova" className="h-7 w-auto" />
+          <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5 ml-0.5">
             Travel Guide
           </p>
         </div>
