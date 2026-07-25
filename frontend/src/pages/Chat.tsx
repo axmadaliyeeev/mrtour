@@ -70,11 +70,11 @@ export default function Chat() {
   // broken/boxy glyphs on Windows without full color-emoji font support;
   // an SVG icon looks identical on every platform.
   const QUICK_ACTIONS = [
-    { icon: Landmark,  color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_samarqand"), text: t("chat", "quick_samarqand_prompt") },
-    { icon: Hotel,     color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_hotel"),     text: t("chat", "quick_hotel_prompt") },
-    { icon: Bus,       color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_transport"), text: t("chat", "quick_transport_prompt") },
-    { icon: StarIcon,  color: "text-indigo-400",  bg: "bg-indigo-500/12", label: t("chat", "quick_top"),       text: t("chat", "quick_top_prompt") },
-    { icon: Lightbulb, color: "text-gold-500",    bg: "bg-gold-500/12",   label: t("chat", "quick_tips"),      text: t("chat", "quick_tips_prompt") },
+    { icon: Landmark,  color: "text-indigo-400",  bg: "bg-indigo-500/8", label: t("chat", "quick_samarqand"), text: t("chat", "quick_samarqand_prompt") },
+    { icon: Hotel,     color: "text-gold-500",    bg: "bg-gold-500/8",   label: t("chat", "quick_hotel"),     text: t("chat", "quick_hotel_prompt") },
+    { icon: Bus,       color: "text-indigo-400",  bg: "bg-indigo-500/8", label: t("chat", "quick_transport"), text: t("chat", "quick_transport_prompt") },
+    { icon: StarIcon,  color: "text-indigo-400",  bg: "bg-indigo-500/8", label: t("chat", "quick_top"),       text: t("chat", "quick_top_prompt") },
+    { icon: Lightbulb, color: "text-gold-500",    bg: "bg-gold-500/8",   label: t("chat", "quick_tips"),      text: t("chat", "quick_tips_prompt") },
   ];
 
   const [messages, setMessages] = useState<Message[]>(() => [makeWelcomeMessage()]);
@@ -247,7 +247,7 @@ export default function Chat() {
 
   return (
     <div
-      className="flex flex-col overflow-hidden w-full max-w-3xl mx-auto"
+      className="flex flex-col overflow-hidden w-full max-w-[720px] mx-auto"
       style={{
         height: isDesktop
           ? "calc(100dvh - 3.5rem)"
@@ -261,14 +261,16 @@ export default function Chat() {
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div
             className={cn(
-              "relative w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0 transition-shadow",
+              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0 transition-shadow",
               // The spinning ring is meaningful, not decorative — it only
               // runs while Trova AI is actually composing a reply, so an
               // always-on animation isn't idling for no reason at rest.
-              isLoading && "border-glow-spin"
+              // Idle breathing is the opposite: a very quiet "always ready"
+              // signal, so it's the default state and yields to the spin.
+              isLoading ? "border-glow-spin" : "animate-orb-breathe"
             )}
           >
-            <RouteOrb className="w-4.5 h-4.5" />
+            <RouteOrb className="w-5 h-5" />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
           </div>
           <div className="min-w-0">
@@ -306,11 +308,14 @@ export default function Chat() {
             of just another chat bubble, so the first screen reads as "an
             assistant is here" rather than a blank inbox. */}
         {showQuickActions && !isLoading && (
-          <div className="flex flex-col items-center text-center pt-4 pb-2 animate-fade-up">
-            <div className="relative w-16 h-16 mb-4">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 opacity-30 blur-xl animate-breathe" />
-              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <RouteOrb className="w-8 h-8" />
+          <div className="flex flex-col items-center text-center pt-6 pb-6 animate-fade-up">
+            <div className="relative w-20 h-20 mb-5">
+              {/* A soft, diffused halo — not a hard-edged green glow — sized
+                  well past the orb itself so the falloff reads as ambient
+                  light, not a ring. */}
+              <div className="absolute -inset-4 rounded-full bg-[#50C878] opacity-[0.07] blur-2xl" />
+              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-orb-breathe">
+                <RouteOrb className="w-10 h-10" />
               </div>
             </div>
             <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
@@ -475,17 +480,17 @@ export default function Chat() {
             labelled list with the "here's what I can do" pattern from the
             spec's chat-screen reference. */}
         {showQuickActions && !isLoading && (
-          <div className="max-w-lg mx-auto w-full pt-2 animate-fade-up delay-200">
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 mb-3">
+          <div className="max-w-lg mx-auto w-full pt-3 animate-fade-up delay-200">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-3.5 mb-4">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
                   key={action.label}
                   onClick={() => sendMessage(action.text)}
-                  className="tilt-hover animate-fade-up group flex items-center gap-3 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-left text-xs font-semibold text-[var(--foreground)] shadow-[var(--shadow-card)] hover:border-indigo-500/40 hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.97]"
+                  className="animate-fade-up group flex items-center gap-3 p-3 rounded-2xl bg-[var(--card)] text-left text-xs font-semibold text-[var(--foreground)] shadow-[0_1px_2px_rgba(41,39,31,0.04),0_8px_20px_-6px_rgba(41,39,31,0.10)] hover:shadow-[0_2px_6px_rgba(41,39,31,0.06),0_16px_32px_-8px_rgba(41,39,31,0.16)] transition-all duration-[180ms] ease-out hover:-translate-y-[3px] active:scale-[0.97]"
                   style={{ animationDelay: `${250 + i * 60}ms` }}
                 >
                   <span className={cn("flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform group-hover:scale-105", action.bg)}>
-                    <action.icon className={cn("w-4 h-4", action.color)} />
+                    <action.icon className={cn("w-4 h-4", action.color)} strokeWidth={2} />
                   </span>
                   <span className="flex-1 leading-snug">{action.label}</span>
                   <Send className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
@@ -500,7 +505,7 @@ export default function Chat() {
                 <button
                   key={chip}
                   onClick={() => sendMessage(chip)}
-                  className="animate-fade-up px-3.5 min-h-[40px] rounded-full bg-[var(--muted)] border border-[var(--border)] text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:border-indigo-500/30 transition-all active:scale-[0.96]"
+                  className="animate-fade-up px-3.5 min-h-[40px] rounded-full bg-[var(--muted)] border border-[var(--border)] text-[11px] text-[var(--foreground)]/75 hover:text-[var(--foreground)] hover:border-indigo-500/30 transition-all active:scale-[0.96]"
                   style={{ animationDelay: `${450 + i * 60}ms` }}
                 >
                   {chip}
@@ -613,11 +618,12 @@ export default function Chat() {
             // A neutral, recessed surface (not the same --card tone as
             // message/recommendation cards) so the input reads as "where
             // you type" and the send button stays the one bright accent —
-            // not another green card competing for attention.
-            "flex items-end gap-2 p-1.5 rounded-2xl bg-[var(--muted)] border transition-all",
-            input.trim()
-              ? "border-indigo-500/50 shadow-md shadow-indigo-500/10"
-              : "border-[var(--border)] shadow-[var(--shadow-card)]"
+            // not another green card competing for attention. Fully
+            // rounded (pill), with a real :focus-within state — border and
+            // glow ring respond to the field being focused, not just to
+            // whether it has text in it.
+            "flex items-end gap-2 p-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] shadow-[var(--shadow-card)] transition-all duration-200",
+            "focus-within:border-[#50C878] focus-within:ring-4 focus-within:ring-[#50C878]/15 focus-within:shadow-none"
           )}
         >
           <textarea
@@ -628,7 +634,7 @@ export default function Chat() {
             placeholder={t("chat", "input_placeholder")}
             rows={1}
             className={cn(
-              "flex-1 px-3 py-2.5 rounded-xl resize-none bg-transparent",
+              "flex-1 px-3.5 py-2.5 rounded-full resize-none bg-transparent",
               "text-[var(--foreground)] text-sm placeholder:text-[var(--muted-foreground)]",
               "outline-none max-h-32 overflow-y-auto"
             )}
@@ -644,7 +650,7 @@ export default function Chat() {
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
             className={cn(
-              "ripple flex items-center justify-center w-10 h-10 rounded-xl transition-all active:scale-95 shrink-0 overflow-hidden",
+              "ripple flex items-center justify-center w-10 h-10 rounded-full transition-all active:scale-95 shrink-0 overflow-hidden",
               input.trim() && !isLoading
                 ? "bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/40"
                 : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"

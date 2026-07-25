@@ -12,7 +12,7 @@
      true white lifted off it with a warm (not green-tinted) shadow, and
      the mint/emerald tint is reserved strictly for icon chips, active
      states and accents — never the page paint or generic borders. */
-  --background:        #faf9f5; /* warm off-white, zero green cast */
+  --background:        #fafbf9; /* warm off-white, zero green cast */
   --foreground:        #29271f; /* warm near-black, not green-tinted */
   --card:              #ffffff;
   --card-hover:        #fdfcf9;
@@ -435,6 +435,13 @@ button, a, [role="button"], input, select, textarea, label {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50%       { opacity: 1;   transform: scale(1.06); }
 }
+/* A much quieter breathing cycle for the AI orb itself (not its glow) —
+   just enough scale to read as "alive/ready", never distracting. */
+@keyframes orbBreathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.02); }
+}
+.animate-orb-breathe { animation: orbBreathe 3s ease-in-out infinite; }
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
