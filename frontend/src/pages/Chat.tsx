@@ -36,7 +36,14 @@ function findMentionedLocations(text: string) {
 // mark rather than a stock chat-app icon.
 function RouteOrb({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
+    // The emerald->mint orb gradient goes nearly white at its bottom-right
+    // corner, right where this path's top-right endpoint sits — a plain
+    // white stroke would all but disappear there. A soft drop-shadow keeps
+    // it legible regardless of what's behind it, on any orb background.
+    <svg
+      viewBox="0 0 24 24" fill="none" className={className}
+      style={{ filter: "drop-shadow(0 1px 1.5px rgba(11,40,25,0.35))" }}
+    >
       <path
         d="M5 18C5 18 5 11 12 11C19 11 19 6 19 6"
         stroke="white" strokeWidth="2.2" strokeLinecap="round"
@@ -45,6 +52,14 @@ function RouteOrb({ className }: { className?: string }) {
       <circle cx="19" cy="6" r="1.6" fill="white" />
     </svg>
   );
+}
+
+// Date.now() alone can collide — a fast double-tap on a suggestion card
+// (both click handlers can fire before React commits the isLoading state
+// that would normally block the second one) produced two messages with
+// the same id, which React then rendered as duplicate/conflicting keys.
+function makeId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 // A timed-out/network failure (most often a free-tier backend cold-booting)
@@ -128,7 +143,7 @@ export default function Chat() {
     lastUserTextRef.current = text.trim();
 
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: makeId(),
       role: "user",
       content: text.trim(),
       timestamp: new Date(),
@@ -157,7 +172,7 @@ export default function Chat() {
       );
 
       const assistantMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: makeId(),
         role: "assistant",
         content: res.reply ?? t("chat", "error"),
         timestamp: new Date(),
@@ -165,7 +180,7 @@ export default function Chat() {
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
       const errMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: makeId(),
         role: "assistant",
         content: extractChatError(err, t("chat", "error"), t("chat", "waking_up")),
         timestamp: new Date(),

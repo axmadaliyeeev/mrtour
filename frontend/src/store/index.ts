@@ -114,7 +114,13 @@ export const useAppStore = create<AppStore>()(
       toasts: [],
 
       showToast: (message, icon, type = "success") => {
-        const id = Date.now().toString();
+        // Date.now() alone collides when two toasts fire in the same
+        // millisecond (e.g. two quick "added to plan" taps) — both would
+        // share a key, so dismissing one via its timeout silently killed
+        // both and React warned about duplicate keys. A random suffix
+        // guarantees uniqueness without needing crypto.randomUUID (not
+        // available in non-secure/older WebView contexts).
+        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
         set((state) => ({ toasts: [...state.toasts, { id, message, icon, type }] }));
         setTimeout(() => {
           set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
@@ -131,7 +137,7 @@ export const useAppStore = create<AppStore>()(
         set((state) => {
           const newReview: Review = {
             ...review,
-            id: `usr-${Date.now()}`,
+            id: `usr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
             locationId,
           };
           return {
