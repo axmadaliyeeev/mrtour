@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { LOCATIONS, INIT_REVIEWS } from "@/data";
 import { Stars } from "@/components/ui/stars";
+import { MessageContent } from "@/components/chat/MessageContent";
 import { useAppStore } from "@/store";
 import { syncAddToPlan, syncRemoveFromPlan } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
@@ -178,7 +179,9 @@ function SmartReview({
           >
             <div className="px-4 pb-4 border-t border-indigo-500/15">
               <p className="text-[11px] font-semibold text-indigo-400 mt-3 mb-1.5">{t("detail", "insight_title")}</p>
-              <p className="text-xs text-[var(--foreground)]/80 leading-relaxed whitespace-pre-wrap">{insight}</p>
+              <div className="text-xs text-[var(--foreground)]/80">
+                <MessageContent text={insight} />
+              </div>
             </div>
           </motion.div>
         )}

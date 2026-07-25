@@ -66,10 +66,12 @@ DARHOL reja tuzma! Avval 4 savolni bittadan ber, javob kutib keyingisini ber:
 
 Barcha 4 savol javoblangach — MA'LUMOTLAR BAZASIDAGI HAQIQIY narx va vaqtlarni
 ishlatib **markdown formatida** (quyidagi kabi, boshqacha emas) tur rejasi tuz.
-Faqat oddiy, keng tarqalgan emoji ishlat (🗺️🏨🚌⭐💡 kabilarni ishlatma —
-faqat quyida ko'rsatilganlarni ishlat), bayroq-emoji va rasm chizuvchi
-belgilarni (═ ║ ╔ ╚ ━) HECH QACHON ishlatma — ular ko'p qurilmada noto'g'ri
-yoki singan holda ko'rinadi.
+EMOJI HECH QACHON ishlatma — birortasi ham, hech qanday holatda. Bu jumladan
+xarita, taom, yulduz va boshqa "oddiy" emojilarni ham o'z ichiga oladi.
+Ovoz professional va sokin bo'lishi kerak — faqat toza markdown (**bold**,
+## sarlavhalar, - ro'yxatlar) ishlat. Bayroq-emoji va rasm chizuvchi
+belgilarni (═ ║ ╔ ╚ ━) HAM HECH QACHON ishlatma — ular ko'p qurilmada
+noto'g'ri yoki singan holda ko'rinadi.
 
 **Namuna format:**
 
@@ -78,13 +80,13 @@ yoki singan holda ko'rinadi.
 ### 1-kun — Samarqand
 
 **Ertalab (09:00–13:00)**
-- 📍 Registon — tarixiy me'moriy ansambl — 2–3 soat — 50 000 so'm (~$4)
+- Registon — tarixiy me'moriy ansambl — 2–3 soat — 50 000 so'm (~$4)
 
 **Tushlik (13:00–14:30)**
-- 🍴 Samarqand Darvoza — ~35 000 so'm (~$2.7)
+- Samarqand Darvoza — ~35 000 so'm (~$2.7)
 
 **Tushdan keyin (15:00–18:00)**
-- 📍 Guri Amir maqbarasi — 1 soat — 30 000 so'm (~$2)
+- Guri Amir maqbarasi — 1 soat — 30 000 so'm (~$2)
 
 **Kechqurun (19:00–21:00)**
 - Erkin sayr yoki kechki tadbir
@@ -187,7 +189,9 @@ Byudjet: ${tourData.budget}
 Borilishi kerak bo'lgan joylar:
 ${list || "Barcha mashhur joylar (ma'lumotlar bazasidan tanlang)"}
 
-Markdown formatida yoz (bayroq-emoji va ═ ║ ╔ ╚ ━ kabi chizuvchi belgilarni ishlatma):
+Markdown formatida yoz. EMOJI HECH QACHON ishlatma, bayroq-emoji va
+═ ║ ╔ ╚ ━ kabi chizuvchi belgilarni ham ishlatma — ovoz professional
+va sokin bo'lishi kerak:
 
 ### N-kun — Shahar
 **Ertalab (09:00–13:00):** joy — vaqt — narx so'mda/$da
@@ -207,7 +211,7 @@ Oxirida "### Umumiy xulosa" (kirish biletlari / turar joy / ovqat / transport / 
 // ── 4. generateInsight ─────────────────────────────────
 export async function generateInsight(locationName: string, reviews: ReviewForInsight[]): Promise<string> {
   if (!reviews.length) {
-    return `📌 ${locationName} haqida hali yetarli sharhlar yo'q.\n📌 Birinchi bo'lib sharh qoldiring!`;
+    return `${locationName} haqida hali yetarli sharhlar yo'q.\nBirinchi bo'lib sharh qoldiring!`;
   }
 
   const avg = (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1);
@@ -222,7 +226,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     messages: [
       {
         role: "user",
-        content: `"${locationName}" joyi haqida ${reviews.length} ta sharh (o'rtacha: ${avg}★) asosida 4-5 ta insight yozing. Har birini 📌 bilan boshlang:\n\n${summary}`,
+        content: `"${locationName}" joyi haqida ${reviews.length} ta sharh (o'rtacha: ${avg}★) asosida 4-5 ta insight yozing. Har birini "- " bilan boshlang (markdown ro'yxat), emoji ishlatma:\n\n${summary}`,
       },
     ],
   }));

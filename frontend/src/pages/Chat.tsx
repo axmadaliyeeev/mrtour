@@ -379,7 +379,7 @@ export default function Chat() {
             >
               <div
                 className={cn(
-                  "text-sm leading-relaxed",
+                  "text-sm leading-relaxed w-full",
                   msg.role === "assistant"
                     ? msg.isError
                       ? "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm bg-red-500/8 border border-red-500/25 text-[var(--foreground)]"
@@ -388,8 +388,11 @@ export default function Chat() {
                       // as a calm contained surface rather than a second
                       // loud bubble — important for structured replies
                       // (numbered lists, bold labels) to have a clear
-                      // boundary instead of floating on the page.
-                      : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
+                      // boundary instead of floating on the page. Dark
+                      // mode uses the exact surface color from spec
+                      // (#151C19), one clear step up from the #0A0F0D
+                      // page background.
+                      : "px-6 py-5 rounded-2xl max-w-[720px] bg-[var(--card)] dark:bg-[#151C19] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
                     : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25"
                 )}
               >
@@ -447,19 +450,23 @@ export default function Chat() {
                 </span>
                 {msg.role === "assistant" && !msg.isError && msg.id !== "welcome" && (
                   <>
+                    {/* Bumped to a real 18px icon in a 28px hit target, with
+                        an explicit dark-mode color floor (#8A9490) — these
+                        were reading as near-invisible at 14px/opacity-50
+                        against the dark background. */}
                     <button
                       onClick={() => copyMessage(msg)}
-                      className="flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 text-[var(--muted-foreground)] hover:text-indigo-400 hover:bg-[var(--muted)] transition-all active:scale-90"
+                      className="flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-indigo-400 hover:bg-[var(--muted)] transition-all active:scale-90"
                       aria-label="Copy"
                     >
                       <AnimatePresence mode="wait" initial={false}>
                         {copiedId === msg.id ? (
                           <motion.span key="check" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                            <Check className="w-3.5 h-3.5 text-indigo-400" />
+                            <Check className="w-[18px] h-[18px] text-indigo-400" />
                           </motion.span>
                         ) : (
                           <motion.span key="copy" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ type: "spring", stiffness: 500, damping: 22 }}>
-                            <Copy className="w-3.5 h-3.5" />
+                            <Copy className="w-[18px] h-[18px]" />
                           </motion.span>
                         )}
                       </AnimatePresence>
@@ -467,22 +474,22 @@ export default function Chat() {
                     <button
                       onClick={() => setMessageReaction(msg.id, "up")}
                       className={cn(
-                        "flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
-                        msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] hover:text-indigo-400"
+                        "flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
+                        msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-indigo-400"
                       )}
                       aria-label="Good reply"
                     >
-                      <ThumbsUp className={cn("w-3.5 h-3.5", msg.reaction === "up" && "fill-indigo-500")} />
+                      <ThumbsUp className={cn("w-[18px] h-[18px]", msg.reaction === "up" && "fill-indigo-500")} />
                     </button>
                     <button
                       onClick={() => setMessageReaction(msg.id, "down")}
                       className={cn(
-                        "flex items-center justify-center w-6 h-6 rounded-lg opacity-80 sm:opacity-50 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
-                        msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] hover:text-red-400"
+                        "flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
+                        msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-red-400"
                       )}
                       aria-label="Bad reply"
                     >
-                      <ThumbsDown className={cn("w-3.5 h-3.5", msg.reaction === "down" && "fill-red-400")} />
+                      <ThumbsDown className={cn("w-[18px] h-[18px]", msg.reaction === "down" && "fill-red-400")} />
                     </button>
                   </>
                 )}

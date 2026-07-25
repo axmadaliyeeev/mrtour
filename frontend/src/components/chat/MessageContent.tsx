@@ -43,19 +43,21 @@ function inline(text: string, keyPrefix: string): React.ReactNode[] {
 /**
  * A small, purpose-built markdown renderer for AI replies — not a full
  * CommonMark engine, just the subset the system prompt actually asks the
- * model to use: ##/### headings, **bold**, "- " bullet lists, bare URLs,
- * and blank-line paragraph breaks. Everything else is left as plain text.
+ * model to use: ##/### headings, **bold**, "- " bullet lists, "1. "
+ * numbered lists, bare URLs, and blank-line paragraph breaks. Everything
+ * else is left as plain text.
  */
 export function MessageContent({ text }: { text: string }) {
   const lines = text.split("\n");
   const blocks: React.ReactNode[] = [];
-  let listBuffer: string[] = [];
+  let bulletBuffer: string[] = [];
+  let numberBuffer: { num: string; text: string }[] = [];
 
-  function flushList(key: string) {
-    if (!listBuffer.length) return;
+  function flushBullets(key: string) {
+    if (!bulletBuffer.length) return;
     blocks.push(
       <ul key={key} className="my-1.5 space-y-1 list-none">
-        {listBuffer.map((item, i) => (
+        {bulletBuffer.map((item, i) => (
           <li key={i} className="flex gap-2">
             <span className="text-indigo-400 shrink-0 select-none">•</span>
             <span>{inline(item, `${key}-li-${i}`)}</span>
@@ -63,21 +65,50 @@ export function MessageContent({ text }: { text: string }) {
         ))}
       </ul>
     );
-    listBuffer = [];
+    bulletBuffer = [];
+  }
+
+  function flushNumbers(key: string) {
+    if (!numberBuffer.length) return;
+    blocks.push(
+      // 8px vertical rhythm between items (space-y-2) and a bold, filled
+      // number marker — so a run of clarifying questions reads as a
+      // deliberate list, not paragraph text that happens to start with
+      // a digit.
+      <ol key={key} className="my-1.5 space-y-2 list-none">
+        {numberBuffer.map((item, i) => (
+          <li key={i} className="flex gap-2.5">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/15 text-indigo-400 text-[11px] font-bold shrink-0 leading-none">
+              {item.num}
+            </span>
+            <span className="pt-0.5">{inline(item.text, `${key}-li-${i}`)}</span>
+          </li>
+        ))}
+      </ol>
+    );
+    numberBuffer = [];
   }
 
   lines.forEach((rawLine, i) => {
     const line = rawLine.trimEnd();
     const key = `b${i}`;
     const bullet = /^[•\-*]\s+(.*)/.exec(line);
+    const numbered = /^(\d+)[.)]\s+(.*)/.exec(line);
     const h3 = /^###\s+(.*)/.exec(line);
     const h2 = /^##\s+(.*)/.exec(line);
 
     if (bullet) {
-      listBuffer.push(bullet[1]);
+      flushNumbers(`${key}-nums`);
+      bulletBuffer.push(bullet[1]);
       return;
     }
-    flushList(`${key}-list`);
+    if (numbered) {
+      flushBullets(`${key}-list`);
+      numberBuffer.push({ num: numbered[1], text: numbered[2] });
+      return;
+    }
+    flushBullets(`${key}-list`);
+    flushNumbers(`${key}-nums`);
 
     if (h2 || h3) {
       const content = (h2 ?? h3)![1];
@@ -102,7 +133,8 @@ export function MessageContent({ text }: { text: string }) {
       );
     }
   });
-  flushList("tail-list");
+  flushBullets("tail-list");
+  flushNumbers("tail-nums");
 
   return <>{blocks}</>;
 }
