@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn } from "lucide-react";
+import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
@@ -27,9 +27,10 @@ function RouteIndicator({ layoutId }: { layoutId: string }) {
 }
 
 const NAV_TABS = [
-  { route: "/home",      Icon: Home,       key: "home"      },
-  { route: "/locations", Icon: MapPin,     key: "locations" },
-  { route: "/services",  Icon: LayoutGrid, key: "services"  },
+  { route: "/home",       Icon: Home,       key: "home"      },
+  { route: "/locations",  Icon: MapPin,     key: "locations" },
+  { route: "/uzbekistan", Icon: Globe2,     key: "about"     },
+  { route: "/services",   Icon: LayoutGrid, key: "services"  },
 ] as const;
 
 export function Sidebar() {
@@ -45,10 +46,12 @@ export function Sidebar() {
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/6 to-transparent pointer-events-none" />
 
       {/* ── Logo — real brand mark (mark + wordmark in one image) instead
-             of a generic MapPin icon standing in for it. ──────────── */}
+             of a generic MapPin icon standing in for it. Theme-matched
+             variant (dark text for light bg, light text for dark bg). ── */}
       <div className="relative flex items-center px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
         <div>
-          <img src="/img/logo-s-trova.png" alt="trova" className="h-7 w-auto" />
+          <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />
+          <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
           <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5 ml-0.5">
             Travel Guide
           </p>

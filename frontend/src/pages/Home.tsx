@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   MapPin, Star, Users, Globe, Bot, ChevronRight,
-  Compass, Sparkles, TrendingUp, Clock,
+  Compass, Sparkles, TrendingUp, Clock, Globe2,
   Map as MapIcon, Landmark, Leaf, Palette, Church, Pickaxe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { LocationCard } from "@/components/locations/LocationCard";
 import { useTranslation } from "@/i18n";
 import { useInView } from "@/hooks/useInView";
 import heroImg from "@/data/registan.jpg";
+import ichanQalaImg from "@/data/ichan-qala.jpg";
 import type { Location } from "@/types";
 
 // ── Reusable animated section wrapper ─────────────────
@@ -255,6 +256,39 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </Section>
+
+      {/* ── About Uzbekistan banner ─────────────────────────────
+          Primary discovery path to the new page on mobile, where the
+          bottom nav has no room for a 6th tab (desktop also has it in
+          the sidebar). */}
+      <Section className="px-4 mb-8" delay={0}>
+        <button
+          onClick={() => navigate("/uzbekistan")}
+          className="tilt-hover group relative w-full h-28 sm:h-32 rounded-2xl overflow-hidden text-left shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
+        >
+          <img
+            src={ichanQalaImg}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/15" />
+          <div className="relative h-full flex items-center gap-3 px-5 sm:px-6">
+            <span className="hidden xs:flex w-11 h-11 shrink-0 rounded-xl bg-white/15 border border-white/20 backdrop-blur-sm items-center justify-center">
+              <Globe2 className="w-5 h-5 text-white" />
+            </span>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-display font-bold text-white text-sm sm:text-base leading-tight mb-1">
+                {t("home", "uzb_banner_title")}
+              </h3>
+              <p className="text-white/75 text-xs leading-snug line-clamp-2 max-w-md">
+                {t("home", "uzb_banner_desc")}
+              </p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/80 shrink-0 transition-transform group-hover:translate-x-0.5" />
+          </div>
+        </button>
       </Section>
 
       {/* ── Featured locations ────────────────────────────────── */}

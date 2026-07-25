@@ -7,6 +7,7 @@ export interface TranslationSchema {
     ai: string;
     services: string;
     profile: string;
+    about: string;
   };
   home: {
     badge: string;
@@ -30,6 +31,8 @@ export interface TranslationSchema {
     cat_din: string;
     cat_arxeologiya: string;
     see_all: string;
+    uzb_banner_title: string;
+    uzb_banner_desc: string;
   };
   locations: {
     title: string;
@@ -266,6 +269,7 @@ const UZ: TranslationSchema = {
     ai: "AI",
     services: "Xizmat",
     profile: "Profil",
+    about: "Haqida",
   },
   home: {
     badge: "Rasmiy turizm gidi",
@@ -290,6 +294,8 @@ const UZ: TranslationSchema = {
     cat_din: "Din",
     cat_arxeologiya: "Arxeologiya",
     see_all: "Barchasini ko'rish",
+    uzb_banner_title: "O'zbekiston haqida bilib oling",
+    uzb_banner_desc: "Birinchi sayohatingizmi? Tarix, mintaqalar va amaliy maslahatlar shu yerda.",
   },
   locations: {
     title: "Joylar",
@@ -528,6 +534,7 @@ const RU: TranslationSchema = {
     ai: "ИИ",
     services: "Сервисы",
     profile: "Профиль",
+    about: "О стране",
   },
   home: {
     badge: "Официальный туристический гид",
@@ -553,6 +560,8 @@ const RU: TranslationSchema = {
     cat_din: "Религия",
     cat_arxeologiya: "Археология",
     see_all: "Смотреть все",
+    uzb_banner_title: "Узнайте об Узбекистане",
+    uzb_banner_desc: "Первое путешествие? История, регионы и практические советы здесь.",
   },
   locations: {
     title: "Места",
@@ -792,6 +801,7 @@ const EN: TranslationSchema = {
     ai: "AI",
     services: "Services",
     profile: "Profile",
+    about: "About",
   },
   home: {
     badge: "Official Travel Guide",
@@ -816,6 +826,8 @@ const EN: TranslationSchema = {
     cat_din: "Religion",
     cat_arxeologiya: "Archaeology",
     see_all: "See All",
+    uzb_banner_title: "Learn about Uzbekistan",
+    uzb_banner_desc: "First trip here? History, regions and practical tips in one place.",
   },
   locations: {
     title: "Locations",
@@ -1055,6 +1067,7 @@ const ZH: TranslationSchema = {
     ai: "AI",
     services: "服务",
     profile: "我的",
+    about: "关于",
   },
   home: {
     badge: "官方旅游指南",
@@ -1079,6 +1092,8 @@ const ZH: TranslationSchema = {
     cat_din: "宗教",
     cat_arxeologiya: "考古",
     see_all: "查看全部",
+    uzb_banner_title: "了解乌兹别克斯坦",
+    uzb_banner_desc: "第一次来这里？历史、地区与实用建议都在这里。",
   },
   locations: {
     title: "景点",
@@ -1316,6 +1331,7 @@ const DE: TranslationSchema = {
     ai: "KI",
     services: "Services",
     profile: "Profil",
+    about: "Über",
   },
   home: {
     badge: "Offizieller Reiseführer",
@@ -1341,6 +1357,8 @@ const DE: TranslationSchema = {
     cat_din: "Religion",
     cat_arxeologiya: "Archäologie",
     see_all: "Alle anzeigen",
+    uzb_banner_title: "Erfahren Sie mehr über Usbekistan",
+    uzb_banner_desc: "Erste Reise hierher? Geschichte, Regionen und praktische Tipps an einem Ort.",
   },
   locations: {
     title: "Orte",
@@ -1581,6 +1599,7 @@ const FR: TranslationSchema = {
     ai: "IA",
     services: "Services",
     profile: "Profil",
+    about: "À propos",
   },
   home: {
     badge: "Guide touristique officiel",
@@ -1606,6 +1625,8 @@ const FR: TranslationSchema = {
     cat_din: "Religion",
     cat_arxeologiya: "Archéologie",
     see_all: "Voir tout",
+    uzb_banner_title: "Découvrir l'Ouzbékistan",
+    uzb_banner_desc: "Premier voyage ici ? Histoire, régions et conseils pratiques réunis.",
   },
   locations: {
     title: "Lieux",

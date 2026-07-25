@@ -9,6 +9,7 @@ import LocationDetail from "@/pages/LocationDetail";
 import Chat from "@/pages/Chat";
 import Services from "@/pages/Services";
 import Profile from "@/pages/Profile";
+import Uzbekistan from "@/pages/Uzbekistan";
 import { useAppStore } from "@/store";
 
 function ThemeApplier() {
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/chat"          element={<Chat />} />
           <Route path="/services"      element={<Services />} />
           <Route path="/profile"       element={<Profile />} />
+          <Route path="/uzbekistan"    element={<Uzbekistan />} />
         </Route>
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>

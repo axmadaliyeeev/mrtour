@@ -359,7 +359,10 @@ export function AuthModal() {
                   <div className="sm:hidden w-9 h-1 rounded-full bg-[var(--border)] mx-auto mb-4" />
 
                   <div className="flex items-center justify-between mb-4">
-                    <img src="/img/logo-s-trova.png" alt="trova" className="h-5 w-auto" />
+                    <div>
+                      <img src="/img/logo-l.svg" alt="trova" className="h-5 w-auto dark:hidden" />
+                      <img src="/img/logo-d.svg" alt="trova" className="h-5 w-auto hidden dark:block" />
+                    </div>
                     <Dialog.Close asChild>
                       <button className="w-11 h-11 rounded-full flex items-center justify-center transition-colors -mr-2" aria-label="Close">
                         <span className="w-7 h-7 rounded-full bg-[var(--muted)] hover:bg-[var(--border)] flex items-center justify-center transition-colors">

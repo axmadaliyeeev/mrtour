@@ -14,11 +14,12 @@ export function TopHeader() {
   const planCount = plan.length;
 
   const ROUTE_LABELS: Record<string, string> = {
-    "/home":      t("nav", "home"),
-    "/locations": t("nav", "locations"),
-    "/chat":      "Trova AI",
-    "/services":  t("nav", "services"),
-    "/profile":   t("nav", "profile"),
+    "/home":       t("nav", "home"),
+    "/locations":  t("nav", "locations"),
+    "/chat":       "Trova AI",
+    "/services":   t("nav", "services"),
+    "/profile":    t("nav", "profile"),
+    "/uzbekistan": t("nav", "about"),
   };
 
   const label =
@@ -48,7 +49,8 @@ export function TopHeader() {
           onClick={() => navigate("/home")}
           className="flex items-center flex-1 min-w-0 active:opacity-70 transition-opacity"
         >
-          <img src="/img/logo-s-trova.png" alt="trova" className="h-6 w-auto" />
+          <img src="/img/logo-l.svg" alt="trova" className="h-6 w-auto dark:hidden" />
+          <img src="/img/logo-d.svg" alt="trova" className="h-6 w-auto hidden dark:block" />
         </button>
       )}
 
