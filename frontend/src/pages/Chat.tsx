@@ -198,7 +198,7 @@ export default function Chat() {
     setMessages((prev) =>
       prev.map((m) => (m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m))
     );
-    showToast(t("chat", "reaction_thanks"), reaction === "up" ? "👍" : "👎", "info");
+    showToast(t("chat", "reaction_thanks"), undefined, "info");
   }
 
   function sendPlanTourRequest() {

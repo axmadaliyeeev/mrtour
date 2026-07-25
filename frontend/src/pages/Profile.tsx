@@ -18,6 +18,12 @@ import {
   Lock,
   ClipboardList,
   Settings,
+  Building2,
+  DollarSign,
+  Ambulance,
+  Flame,
+  AlertTriangle,
+  Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -33,18 +39,18 @@ function PlanSummary({ plan, freeLabel }: { plan: Location[]; freeLabel: string 
   const cities = new Set(plan.map((l) => l.city)).size;
   const total = plan.reduce((sum, l) => sum + (l.priceUSD ?? 0), 0);
   const items = [
-    { emoji: "📍", value: plan.length },
-    { emoji: "🏙️", value: cities },
-    { emoji: "💵", value: total === 0 ? freeLabel : `~$${total}` },
+    { Icon: MapPin, value: plan.length },
+    { Icon: Building2, value: cities },
+    { Icon: DollarSign, value: total === 0 ? freeLabel : `~$${total}` },
   ];
   return (
     <div className="grid grid-cols-3 gap-2 mb-3">
-      {items.map((it) => (
+      {items.map((it, i) => (
         <div
-          key={it.emoji}
+          key={i}
           className="flex flex-col items-center gap-0.5 py-2.5 rounded-xl bg-indigo-500/8 border border-indigo-500/20"
         >
-          <span className="text-sm">{it.emoji}</span>
+          <it.Icon className="w-3.5 h-3.5 text-indigo-500" strokeWidth={2} />
           <span className="text-sm font-extrabold text-[var(--foreground)] tabular-nums">
             {it.value}
           </span>
@@ -67,11 +73,11 @@ const LANGUAGES: { code: Lang; label: string }[] = [
 ];
 
 const EMERGENCY_NUMBERS_RAW = [
-  { emoji: "🚑", key: "emergency_ambulance" as const, number: "103" },
-  { emoji: "🚒", key: "emergency_fire"      as const, number: "101" },
-  { emoji: "👮", key: "emergency_police"    as const, number: "102" },
-  { emoji: "⚠️", key: "emergency_gas"       as const, number: "104" },
-  { emoji: "ℹ️", key: "emergency_tourism"   as const, number: "1219" },
+  { Icon: Ambulance,     key: "emergency_ambulance" as const, number: "103" },
+  { Icon: Flame,         key: "emergency_fire"      as const, number: "101" },
+  { Icon: Shield,        key: "emergency_police"    as const, number: "102" },
+  { Icon: AlertTriangle, key: "emergency_gas"       as const, number: "104" },
+  { Icon: Info,          key: "emergency_tourism"   as const, number: "1219" },
 ];
 
 export default function Profile() {
@@ -524,7 +530,7 @@ export default function Profile() {
               className="flex items-center justify-between p-2 rounded-xl hover:bg-[var(--muted)] transition-colors"
             >
               <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">
-                <span>{item.emoji}</span>
+                <item.Icon className="w-4 h-4 text-red-400" strokeWidth={2} />
                 {t("services", item.key)}
               </span>
               <span className="text-sm font-bold text-red-400">{item.number}</span>

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft, Bookmark, BookmarkCheck, MapPin, Clock, DollarSign,
   Calendar, Bus, ExternalLink, Tag, Star, Send, Sparkles, Loader2,
-  ChevronDown, ChevronUp, Share2,
+  ChevronDown, ChevronUp, Share2, MessageSquare, Check, CheckCircle2, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS, INIT_REVIEWS } from "@/data";
@@ -62,8 +62,9 @@ function ReviewCard({ review, t }: { review: Review; t: TFn }) {
         <div className="flex flex-col items-end gap-1">
           <Stars rating={review.stars} size="sm" />
           {review.verified && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
-              ✓ {t("detail", "verified")}
+            <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">
+              <Check className="w-2.5 h-2.5" strokeWidth={3} />
+              {t("detail", "verified")}
             </span>
           )}
         </div>
@@ -145,8 +146,10 @@ function SmartReview({
           </div>
           <div className="text-left">
             <p className="text-xs font-bold text-indigo-400">{t("detail", "smart_review_label")}</p>
-            <p className="text-[10px] text-[var(--muted-foreground)]">
-              {reviews.length} {t("detail", "total_reviews")} · ⭐ {avgRating.toFixed(1)}
+            <p className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
+              {reviews.length} {t("detail", "total_reviews")} ·
+              <Star className="w-2.5 h-2.5 text-indigo-500 fill-indigo-500" />
+              {avgRating.toFixed(1)}
             </p>
           </div>
         </div>
@@ -219,7 +222,9 @@ export default function LocationDetail() {
   if (!location) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 px-4">
-        <div className="text-6xl">🗺️</div>
+        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <MapPin className="w-7 h-7 text-indigo-500/60" strokeWidth={1.5} />
+        </div>
         <h2 className="text-xl font-bold text-[var(--foreground)]">{t("detail", "not_found_title")}</h2>
         <p className="text-[var(--muted-foreground)] text-sm text-center">{t("detail", "not_found_desc")}</p>
         <button
@@ -238,11 +243,11 @@ export default function LocationDetail() {
     if (inPlan) {
       removeFromPlan(loc.id);
       syncRemoveFromPlan(loc.id);
-      showToast(`${loc.name} ${t("card", "removed_toast")}`, "🗑️", "info");
+      showToast(`${loc.name} ${t("card", "removed_toast")}`, undefined, "info");
     } else {
       addToPlan(loc);
       syncAddToPlan(loc.id);
-      showToast(`${loc.name} ${t("card", "added_toast")}`, "📍", "success");
+      showToast(`${loc.name} ${t("card", "added_toast")}`, undefined, "success");
     }
   }
 
@@ -254,7 +259,7 @@ export default function LocationDetail() {
         await navigator.share(data);
       } else {
         await navigator.clipboard.writeText(url);
-        showToast(url, "🔗", "info");
+        showToast(url, undefined, "info");
       }
     } catch {
       // user cancelled the share sheet — nothing to do
@@ -458,7 +463,7 @@ export default function LocationDetail() {
           <div className="mb-4 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-3">
             {submitted ? (
               <div className="flex items-center justify-center gap-2 py-4">
-                <span className="text-2xl">✅</span>
+                <CheckCircle2 className="w-6 h-6 text-indigo-500" strokeWidth={1.5} />
                 <p className="text-sm font-semibold text-[var(--foreground)]">{t("detail", "review_success")}</p>
               </div>
             ) : (
@@ -496,8 +501,9 @@ export default function LocationDetail() {
                   <button
                     onClick={() => setReviewOpen(false)}
                     className="px-4 py-2.5 rounded-xl border border-[var(--border)] text-[var(--muted-foreground)] text-sm hover:bg-[var(--muted)] transition-colors"
+                    aria-label="Cancel"
                   >
-                    ✕
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </>
@@ -510,7 +516,7 @@ export default function LocationDetail() {
         {/* Reviews list */}
         {allReviews.length === 0 ? (
           <div className="text-center py-8 text-[var(--muted-foreground)] text-sm">
-            <p className="text-3xl mb-2">💬</p>
+            <MessageSquare className="w-8 h-8 mx-auto mb-2 text-indigo-500/40" strokeWidth={1.5} />
             <p>{t("detail", "no_reviews")}</p>
             <button
               onClick={() => setReviewOpen(true)}

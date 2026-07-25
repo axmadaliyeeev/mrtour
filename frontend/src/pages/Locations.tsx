@@ -260,7 +260,9 @@ export default function Locations() {
       {/* Results */}
       {results.length === 0 ? (
         <div className="px-4 flex flex-col items-center justify-center py-16 gap-3">
-          <div className="text-5xl">🔍</div>
+          <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <Search className="w-7 h-7 text-indigo-500/60" strokeWidth={1.5} />
+          </div>
           <p className="text-[var(--foreground)] font-semibold text-base">
             {t("locations", "no_results")}
           </p>

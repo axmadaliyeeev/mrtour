@@ -48,11 +48,14 @@ export function LocationCard({ location, variant = "default", className }: Locat
     if (inPlan) {
       removeFromPlan(location.id);
       syncRemoveFromPlan(location.id);
-      showToast(`${location.name} ${t("card", "removed_toast")}`, "🗑️", "info");
+      // No emoji icon argument — Toaster already renders a clean lucide
+      // icon based on the toast type, so this used to double up (a raw
+      // emoji glyph next to/instead of the real icon).
+      showToast(`${location.name} ${t("card", "removed_toast")}`, undefined, "info");
     } else {
       addToPlan(location);
       syncAddToPlan(location.id);
-      showToast(`${location.name} ${t("card", "added_toast")}`, "📍", "success");
+      showToast(`${location.name} ${t("card", "added_toast")}`, undefined, "success");
     }
   };
 
@@ -297,7 +300,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           )}
         >
           {inPlan ? (
-            <><BookmarkCheck className="w-3.5 h-3.5" /> {t("card", "in_plan")} ✓</>
+            <><BookmarkCheck className="w-3.5 h-3.5" /> {t("card", "in_plan")}</>
           ) : (
             <><Bookmark className="w-3.5 h-3.5" /> {t("card", "add_plan")}</>
           )}

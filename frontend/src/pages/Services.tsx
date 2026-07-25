@@ -4,6 +4,7 @@ import {
   Search, MapPin, Clock, Phone, CheckCircle, Star,
   Wifi, Car, Coffee, Dumbbell, Utensils, Hotel, Compass,
   Train, Bus, Zap, TrendingUp, Globe2, CircleDot,
+  Ambulance, Flame, Shield, AlertTriangle, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES } from "@/data";
@@ -39,7 +40,7 @@ function RestaurantsTab({ search }: { search: string }) {
   if (filtered.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-4xl mb-3">🍽️</p>
+        <Utensils className="w-9 h-9 mx-auto mb-3 text-indigo-500/40" strokeWidth={1.5} />
         <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_restaurant")}</p>
       </div>
     );
@@ -97,7 +98,7 @@ function HotelsTab({ search }: { search: string }) {
   if (filtered.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-4xl mb-3">🏨</p>
+        <Hotel className="w-9 h-9 mx-auto mb-3 text-indigo-500/40" strokeWidth={1.5} />
         <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_hotel")}</p>
       </div>
     );
@@ -175,7 +176,7 @@ function GuidesTab({ search }: { search: string }) {
   if (filtered.length === 0) {
     return (
       <div className="text-center py-16">
-        <p className="text-4xl mb-3">🧭</p>
+        <Compass className="w-9 h-9 mx-auto mb-3 text-indigo-500/40" strokeWidth={1.5} />
         <p className="text-sm text-[var(--muted-foreground)]">{t("services", "not_found_guide")}</p>
       </div>
     );
@@ -261,7 +262,6 @@ function TransportTab() {
   const TRANSPORT_OPTIONS = [
     {
       type: t("services", "train_type"),
-      emoji: "🚄",
       icon: <Train className="w-4 h-4" />,
       desc: t("services", "train_desc"),
       routes: [
@@ -272,7 +272,6 @@ function TransportTab() {
     },
     {
       type: t("services", "bus_type"),
-      emoji: "🚌",
       icon: <Bus className="w-4 h-4" />,
       desc: t("services", "bus_desc"),
       routes: [
@@ -283,7 +282,6 @@ function TransportTab() {
     },
     {
       type: t("services", "taxi_type"),
-      emoji: "🚕",
       icon: <Zap className="w-4 h-4" />,
       desc: t("services", "taxi_desc"),
       routes: [
@@ -295,11 +293,11 @@ function TransportTab() {
   ];
 
   const EMERGENCY = [
-    { name: t("services", "emergency_ambulance"), number: "103", emoji: "🚑" },
-    { name: t("services", "emergency_fire"),      number: "101", emoji: "🚒" },
-    { name: t("services", "emergency_police"),    number: "102", emoji: "👮" },
-    { name: t("services", "emergency_gas"),       number: "104", emoji: "⚠️" },
-    { name: t("services", "emergency_tourism"),   number: "1219", emoji: "ℹ️" },
+    { name: t("services", "emergency_ambulance"), number: "103",  Icon: Ambulance },
+    { name: t("services", "emergency_fire"),      number: "101",  Icon: Flame },
+    { name: t("services", "emergency_police"),    number: "102",  Icon: Shield },
+    { name: t("services", "emergency_gas"),       number: "104",  Icon: AlertTriangle },
+    { name: t("services", "emergency_tourism"),   number: "1219", Icon: Info },
   ];
 
   return (
@@ -307,8 +305,8 @@ function TransportTab() {
       {TRANSPORT_OPTIONS.map((opt) => (
         <div key={opt.type}>
           <div className="flex items-center gap-2.5 mb-2.5">
-            <div className="w-10 h-10 rounded-xl bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center text-xl">
-              {opt.emoji}
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500">
+              {opt.icon}
             </div>
             <div>
               <h3 className="text-sm font-bold text-[var(--foreground)]">{opt.type}</h3>
@@ -352,7 +350,7 @@ function TransportTab() {
               className="flex items-center justify-between px-4 py-3 bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
             >
               <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">
-                <span>{item.emoji}</span>
+                <item.Icon className="w-4 h-4 text-red-400" strokeWidth={2} />
                 {item.name}
               </span>
               <span className="text-sm font-bold text-red-400">{item.number}</span>
@@ -495,20 +493,20 @@ export default function Services() {
   const [activeTab, setActiveTab] = useState<Tab>("restoranlar");
   const [search, setSearch] = useState("");
 
-  const TABS: { key: Tab; label: string; emoji: string; icon: React.ReactNode }[] = [
-    { key: "restoranlar", label: t("services", "tab_restaurants"), emoji: "🍽️", icon: <Utensils className="w-3.5 h-3.5" /> },
-    { key: "hotellar",    label: t("services", "tab_hotels"),      emoji: "🏨", icon: <Hotel className="w-3.5 h-3.5" /> },
-    { key: "gidlar",      label: t("services", "tab_guides"),      emoji: "🧭", icon: <Compass className="w-3.5 h-3.5" /> },
-    { key: "transport",   label: t("services", "tab_transport"),   emoji: "🚌", icon: <Train className="w-3.5 h-3.5" /> },
-    { key: "valyuta",     label: t("services", "tab_currency"),    emoji: "💱", icon: <TrendingUp className="w-3.5 h-3.5" /> },
+  const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+    { key: "restoranlar", label: t("services", "tab_restaurants"), icon: <Utensils className="w-3.5 h-3.5" /> },
+    { key: "hotellar",    label: t("services", "tab_hotels"),      icon: <Hotel className="w-3.5 h-3.5" /> },
+    { key: "gidlar",      label: t("services", "tab_guides"),      icon: <Compass className="w-3.5 h-3.5" /> },
+    { key: "transport",   label: t("services", "tab_transport"),   icon: <Train className="w-3.5 h-3.5" /> },
+    { key: "valyuta",     label: t("services", "tab_currency"),    icon: <TrendingUp className="w-3.5 h-3.5" /> },
   ];
 
-  const TAB_META: Record<Tab, { title: string; desc: string; emoji: string }> = {
-    restoranlar: { title: t("services", "restaurants_title"), desc: t("services", "restaurants_desc"), emoji: "🍽️" },
-    hotellar:    { title: t("services", "hotels_title"),      desc: t("services", "hotels_desc"),      emoji: "🏨" },
-    gidlar:      { title: t("services", "guides_title"),      desc: t("services", "guides_desc"),      emoji: "🧭" },
-    transport:   { title: t("services", "transport_title"),   desc: t("services", "transport_desc"),   emoji: "🚌" },
-    valyuta:     { title: t("services", "currency_title"),    desc: t("services", "currency_desc"),    emoji: "💱" },
+  const TAB_META: Record<Tab, { title: string; desc: string; Icon: typeof Utensils }> = {
+    restoranlar: { title: t("services", "restaurants_title"), desc: t("services", "restaurants_desc"), Icon: Utensils },
+    hotellar:    { title: t("services", "hotels_title"),      desc: t("services", "hotels_desc"),      Icon: Hotel },
+    gidlar:      { title: t("services", "guides_title"),      desc: t("services", "guides_desc"),      Icon: Compass },
+    transport:   { title: t("services", "transport_title"),   desc: t("services", "transport_desc"),   Icon: Train },
+    valyuta:     { title: t("services", "currency_title"),    desc: t("services", "currency_desc"),    Icon: TrendingUp },
   };
 
   const showSearch = ["restoranlar", "hotellar", "gidlar"].includes(activeTab);
@@ -543,8 +541,8 @@ export default function Services() {
 
       {/* Section header */}
       <div className="px-4 mb-3 flex items-center gap-2.5">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-lg shrink-0">
-          {meta.emoji}
+        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+          <meta.Icon className="w-4.5 h-4.5 text-indigo-500" strokeWidth={2} />
         </div>
         <div>
           <h2 className="text-sm font-bold text-[var(--foreground)]">{meta.title}</h2>

@@ -1,7 +1,7 @@
 ﻿import { useState, useRef, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Eye, EyeOff, ChevronRight } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -280,23 +280,29 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
           transition={{ type: "spring", stiffness: 320, damping: 26 }}
           className="text-center py-4 space-y-4"
         >
-          <div className="text-6xl">🎉</div>
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <PartyPopper className="w-7 h-7 text-indigo-500" strokeWidth={1.5} />
+          </div>
           <div>
             <h3 className="text-xl font-bold text-[var(--foreground)]">{t("auth", "success_title")}, {doneUser}!</h3>
             <p className="text-sm text-[var(--muted-foreground)] mt-1">{t("auth", "success_desc")}</p>
           </div>
           <div className="space-y-1.5 text-left">
             {[
-              `✅ ${t("auth", "success_feature1")}`,
-              `✅ ${t("auth", "success_feature2")}`,
-              `✅ ${t("auth", "success_feature3")}`,
+              t("auth", "success_feature1"),
+              t("auth", "success_feature2"),
+              t("auth", "success_feature3"),
             ].map((item) => (
-              <p key={item} className="text-sm text-[var(--foreground)]/80">{item}</p>
+              <p key={item} className="flex items-center gap-2 text-sm text-[var(--foreground)]/80">
+                <CheckCircle2 className="w-4 h-4 text-indigo-500 shrink-0" />
+                {item}
+              </p>
             ))}
           </div>
           <button onClick={onClose}
-            className="w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-colors">
-            {t("auth", "start")} 🚀
+            className="w-full flex items-center justify-center gap-1.5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-colors">
+            {t("auth", "start")}
+            <ChevronRight className="w-4 h-4" />
           </button>
         </motion.div>
       )}

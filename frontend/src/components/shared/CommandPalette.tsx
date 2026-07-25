@@ -87,11 +87,11 @@ export function CommandPalette() {
       {
         id: "random",
         icon: <Shuffle className="w-4 h-4 text-indigo-400" />,
-        label: t("home", "explore_btn") + " 🎲",
+        label: t("home", "explore_btn"),
         run: () => {
           const loc = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
           close();
-          showToast(loc.name, "🎲", "info");
+          showToast(loc.name, undefined, "info");
           navigate(`/locations/${loc.id}`);
         },
       },
@@ -186,8 +186,9 @@ export function CommandPalette() {
             {/* Results */}
             <div ref={listRef} className="max-h-[52vh] overflow-y-auto p-2">
               {results.length === 0 && query.trim() !== "" && (
-                <p className="text-center text-xs text-[var(--muted-foreground)] py-6">
-                  {t("locations", "no_results")} 🔍
+                <p className="flex items-center justify-center gap-1.5 text-xs text-[var(--muted-foreground)] py-6">
+                  <Search className="w-3.5 h-3.5" />
+                  {t("locations", "no_results")}
                 </p>
               )}
 
