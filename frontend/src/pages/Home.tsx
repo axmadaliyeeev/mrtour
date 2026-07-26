@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   MapPin, Star, Users, Globe, Bot, ChevronRight,
@@ -39,6 +40,7 @@ function Section({
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [heroLoaded, setHeroLoaded] = useState(false);
   const featured = LOCATIONS.filter((l) => l.featured);
   const all = LOCATIONS;
 
@@ -72,12 +74,22 @@ export default function Home() {
         <div className="grain-overlay relative overflow-hidden rounded-3xl border border-[var(--border)] shadow-2xl shadow-black/10">
           {/* Background photo, kept crisp — a single soft scrim (not several
               stacked gradients/blends) keeps the headline legible without
-              muddying the photo underneath it. */}
+              muddying the photo underneath it. The headline/scrim are
+              separate layers that render immediately regardless of photo
+              load state — this fade is just so the photo itself doesn't
+              pop in abruptly once it arrives. fetchPriority hints the
+              browser to prioritize it since it's the largest above-the-
+              fold image (LCP), not something to lazy-load. */}
           <img
             src={heroImg}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-[center_30%] opacity-90 dark:opacity-70"
+            fetchPriority="high"
+            onLoad={() => setHeroLoaded(true)}
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover object-[center_30%] transition-opacity duration-500",
+              heroLoaded ? "opacity-90 dark:opacity-70" : "opacity-0"
+            )}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--background)] via-[var(--background)]/90 to-[var(--background)]/35" />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)]/60 via-transparent to-transparent" />

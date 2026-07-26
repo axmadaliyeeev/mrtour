@@ -20,7 +20,13 @@ const pageVariants = {
 function PageTransition({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    // mode="wait" made the OLD page fully fade out (220ms) before the NEW
+    // one started fading in — a real blank-content gap on every route
+    // change, exactly the "header/sidebar load instantly, content area
+    // stays empty for a moment" bug. popLayout crossfades them instead
+    // (new page renders immediately, old one animates out on top of it,
+    // pulled out of document flow so it doesn't cause a layout jump).
+    <AnimatePresence mode="popLayout" initial={false}>
       <motion.div
         key={pathname}
         variants={pageVariants}
