@@ -4,6 +4,7 @@ import {
   Landmark, HeartHandshake, UtensilsCrossed, ShieldCheck,
   Users, MapPin, Languages, Banknote, Bus, FileCheck,
   Sun, Snowflake, Flower2, Leaf, ChevronRight, Bot, Globe2,
+  Shirt, HandCoins, MessageCircleHeart, Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
@@ -55,6 +56,9 @@ interface UzContent {
   tipsTitle: string;
   tipsSubtitle: string;
   tips: { title: string; desc: string }[];
+  etiquetteTitle: string;
+  etiquetteSubtitle: string;
+  etiquette: { title: string; desc: string }[];
   seasonsTitle: string;
   seasons: { title: string; desc: string }[];
   ctaTitle: string;
@@ -65,6 +69,7 @@ interface UzContent {
 
 const WHY_ICONS = [Landmark, HeartHandshake, UtensilsCrossed, ShieldCheck];
 const TIP_ICONS = [FileCheck, Banknote, Bus, Languages];
+const ETIQUETTE_ICONS = [Shirt, HandCoins, MessageCircleHeart, Camera];
 const SEASON_ICONS = [Flower2, Sun, Leaf, Snowflake];
 const REGION_IMAGES = [registanImg, arkQalasiImg, ichanQalaImg, chorsuImg, chimganImg];
 
@@ -106,6 +111,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "Pul almashtirish", desc: "So'm — asosiy valyuta. Bank yoki rasmiy almashtirish shoxobchalaridan foydalaning, karta ko'p joyda qabul qilinadi." },
       { title: "Transport", desc: "Shaharlararo tezyurar poyezd (Afrosiyob) qulay va tez. Shahar ichida taksi ilovalari (Yandex Go) keng tarqalgan." },
       { title: "Til", desc: "O'zbek va rus tillari asosiy. Turistik joylarda ingliz tilida so'zlashuvchilarni topish mumkin, Trova AI ham yordam beradi." },
+    ],
+    etiquetteTitle: "Madaniy odob-axloq",
+    etiquetteSubtitle: "Mahalliy an'analarni hurmat qilish uchun kichik maslahatlar",
+    etiquette: [
+      { title: "Diniy joylarda kiyinish", desc: "Machit va maqbaralarga kirishda yelka va tizzalar yopiq bo'lishi kerak, ayollar ro'mol olib yurishi tavsiya etiladi." },
+      { title: "Choy pul (tip)", desc: "Restoranlarda 10% atrofida choy pul odatiy holat, lekin majburiy emas — hisobga qo'shilmagan bo'lsa qoldirish yaxshi odat." },
+      { title: "Salomlashish", desc: "\"Assalomu alaykum\" — eng keng tarqalgan salom. Katta yoshdagilarga ikki qo'l bilan qo'l berish hurmat belgisi." },
+      { title: "Suratga olish", desc: "Odamlarni, ayniqsa ayollarni suratga olishdan oldin ruxsat so'rang — ko'pchilik mamnuniyat bilan rozi bo'ladi." },
     ],
     seasonsTitle: "Yilning qaysi faslida borish kerak",
     seasons: [
@@ -157,6 +170,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "Транспорт", desc: "Скоростной поезд «Afrosiyob» между городами удобен и быстр. В городе популярны такси-приложения (Yandex Go)." },
       { title: "Язык", desc: "Основные языки — узбекский и русский. В туристических местах часто говорят по-английски, а Trova AI всегда поможет." },
     ],
+    etiquetteTitle: "Культурный этикет",
+    etiquetteSubtitle: "Небольшие советы для уважения местных традиций",
+    etiquette: [
+      { title: "Одежда в религиозных местах", desc: "При посещении мечетей и мавзолеев плечи и колени должны быть закрыты, женщинам рекомендуется иметь платок." },
+      { title: "Чаевые", desc: "В ресторанах обычны чаевые около 10%, но необязательны — если не включены в счёт, оставить их будет уместно." },
+      { title: "Приветствие", desc: "«Ассалому алейкум» — самое распространённое приветствие. Пожатие обеими руками — знак уважения к старшим." },
+      { title: "Фотосъёмка", desc: "Прежде чем фотографировать людей, особенно женщин, спросите разрешения — большинство охотно соглашается." },
+    ],
     seasonsTitle: "Когда лучше ехать",
     seasons: [
       { title: "Весна (Мар–Май)", desc: "Лучший сезон — тепло, цветение, идеальная температура для путешествий." },
@@ -207,6 +228,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "Transport", desc: "The Afrosiyob high-speed train between cities is fast and comfortable. Taxi apps (Yandex Go) are common in cities." },
       { title: "Language", desc: "Uzbek and Russian are the main languages. English is common at tourist sites, and Trova AI is always there to help." },
     ],
+    etiquetteTitle: "Cultural etiquette",
+    etiquetteSubtitle: "A few tips for respecting local traditions",
+    etiquette: [
+      { title: "Dress at religious sites", desc: "Shoulders and knees should be covered when visiting mosques and mausoleums; women may want to carry a headscarf." },
+      { title: "Tipping", desc: "Around 10% is customary at restaurants but not mandatory — leaving it is a nice gesture if it isn't already included in the bill." },
+      { title: "Greetings", desc: "\"Assalomu alaykum\" is the most common greeting. A two-handed handshake is a sign of respect toward elders." },
+      { title: "Photography", desc: "Ask permission before photographing people, especially women — most are happy to say yes." },
+    ],
     seasonsTitle: "The best time to visit",
     seasons: [
       { title: "Spring (Mar–May)", desc: "The best season — warm, blooming, ideal travel temperatures." },
@@ -255,6 +284,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "货币兑换", desc: "苏姆是主要货币，请使用银行或官方兑换点，多数场所可刷卡。" },
       { title: "交通", desc: "城际高铁「Afrosiyob」快捷舒适，市内打车软件（Yandex Go）非常普及。" },
       { title: "语言", desc: "乌兹别克语和俄语为主要语言，旅游景点常见英语交流，Trova AI 也随时提供帮助。" },
+    ],
+    etiquetteTitle: "文化礼仪",
+    etiquetteSubtitle: "尊重当地传统的几点小建议",
+    etiquette: [
+      { title: "宗教场所着装", desc: "参观清真寺和陵墓时应遮住肩膀和膝盖，女性建议随身携带头巾。" },
+      { title: "小费", desc: "餐厅通常给约10%小费，但并非强制——如果账单未包含服务费，留下小费是不错的礼节。" },
+      { title: "问候方式", desc: "「Assalomu alaykum」是最常见的问候语，双手握手是对长辈表示尊重的方式。" },
+      { title: "拍照礼仪", desc: "拍摄他人，尤其是女性之前，请先征得同意——大多数人都会欣然同意。" },
     ],
     seasonsTitle: "最佳旅行季节",
     seasons: [
@@ -306,6 +343,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "Transport", desc: "Der Hochgeschwindigkeitszug „Afrosiyob\" zwischen den Städten ist schnell und bequem. Taxi-Apps (Yandex Go) sind in Städten verbreitet." },
       { title: "Sprache", desc: "Usbekisch und Russisch sind die Hauptsprachen. An touristischen Orten wird oft Englisch gesprochen, und Trova AI hilft jederzeit." },
     ],
+    etiquetteTitle: "Kultureller Knigge",
+    etiquetteSubtitle: "Ein paar Tipps zum Respekt lokaler Traditionen",
+    etiquette: [
+      { title: "Kleidung an religiösen Stätten", desc: "Beim Besuch von Moscheen und Mausoleen sollten Schultern und Knie bedeckt sein; Frauen sollten ein Kopftuch dabeihaben." },
+      { title: "Trinkgeld", desc: "In Restaurants sind etwa 10% üblich, aber nicht verpflichtend — sinnvoll, wenn es nicht bereits in der Rechnung enthalten ist." },
+      { title: "Begrüßung", desc: "„Assalomu alaykum\" ist die gebräuchlichste Begrüßung. Ein beidhändiger Handschlag zeigt Respekt gegenüber Älteren." },
+      { title: "Fotografieren", desc: "Fragen Sie um Erlaubnis, bevor Sie Menschen fotografieren, besonders Frauen — die meisten stimmen gerne zu." },
+    ],
     seasonsTitle: "Die beste Reisezeit",
     seasons: [
       { title: "Frühling (Mär–Mai)", desc: "Die beste Saison — warm, blühend, ideale Reisetemperaturen." },
@@ -355,6 +400,14 @@ const CONTENT: Record<Lang, UzContent> = {
       { title: "Change de devises", desc: "Le som est la monnaie principale. Utilisez les banques ou les bureaux de change officiels ; les cartes sont acceptées presque partout." },
       { title: "Transport", desc: "Le train à grande vitesse Afrosiyob entre les villes est rapide et confortable. Les applications de taxi (Yandex Go) sont courantes en ville." },
       { title: "Langue", desc: "L'ouzbek et le russe sont les langues principales. L'anglais est courant sur les sites touristiques, et Trova AI est toujours là pour aider." },
+    ],
+    etiquetteTitle: "Étiquette culturelle",
+    etiquetteSubtitle: "Quelques conseils pour respecter les traditions locales",
+    etiquette: [
+      { title: "Tenue dans les lieux religieux", desc: "Épaules et genoux doivent être couverts dans les mosquées et mausolées ; les femmes peuvent prévoir un foulard." },
+      { title: "Pourboire", desc: "Environ 10% est courant dans les restaurants mais non obligatoire — un geste apprécié s'il n'est pas déjà inclus dans l'addition." },
+      { title: "Salutations", desc: "« Assalomu alaykum » est la salutation la plus courante. Une poignée de main à deux mains marque le respect envers les aînés." },
+      { title: "Photographie", desc: "Demandez la permission avant de photographier des personnes, surtout des femmes — la plupart acceptent volontiers." },
     ],
     seasonsTitle: "La meilleure période pour visiter",
     seasons: [
@@ -549,6 +602,40 @@ export default function Uzbekistan() {
                 <div>
                   <p className="text-xs font-bold text-[var(--foreground)] mb-0.5">{tip.title}</p>
                   <p className="text-[12px] text-[var(--muted-foreground)] leading-relaxed">{tip.desc}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* ── Cultural etiquette ───────────────────────────────────
+          The one genuinely new content section here — visa/currency/
+          transport/language were already covered by Practical Tips
+          above, so this adds what wasn't there yet rather than
+          duplicating it. */}
+      <Section className="px-4 mb-10" delay={0}>
+        <div className="mb-5 text-center max-w-lg mx-auto">
+          <h2 className="reveal-wipe font-display text-xl sm:text-2xl font-bold text-[var(--foreground)] mb-1.5">
+            {c.etiquetteTitle}
+          </h2>
+          <p className="text-sm text-[var(--muted-foreground)]">{c.etiquetteSubtitle}</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {c.etiquette.map((item, i) => {
+            const Icon = ETIQUETTE_ICONS[i % ETIQUETTE_ICONS.length];
+            return (
+              <div
+                key={item.title}
+                className="tilt-hover animate-fade-up flex items-start gap-3.5 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
+                style={{ animationDelay: `${i * 70 + 100}ms` }}
+              >
+                <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-indigo-500" strokeWidth={2} />
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-[var(--foreground)] mb-1">{item.title}</p>
+                  <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             );

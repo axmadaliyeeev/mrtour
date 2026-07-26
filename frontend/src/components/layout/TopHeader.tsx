@@ -20,6 +20,7 @@ export function TopHeader() {
     "/services":   t("nav", "services"),
     "/profile":    t("nav", "profile"),
     "/uzbekistan": t("nav", "about"),
+    "/saved":      t("nav", "saved"),
   };
 
   const label =
@@ -57,8 +58,12 @@ export function TopHeader() {
       {/* ── Right controls ── */}
       <div className="flex items-center gap-1.5 shrink-0">
 
-        {/* Global search */}
-        {isDesktop ? (
+        {/* Global search — the full text field only makes sense where
+            page-specific search actually exists (Locations). Everywhere
+            else it was implying a search scope that isn't real; other
+            pages just get the icon, with Ctrl+K still globally available
+            via the command palette regardless of route. */}
+        {isDesktop && pathname === "/locations" ? (
           <button
             onClick={() => setSearchOpen(true)}
             className="flex items-center gap-2 h-8 px-3 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 text-[var(--muted-foreground)] transition-all active:scale-95"
@@ -75,6 +80,7 @@ export function TopHeader() {
             onClick={() => setSearchOpen(true)}
             className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
             aria-label={t("locations", "search_placeholder")}
+            title="Ctrl K"
           >
             <Search className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
           </button>
@@ -93,10 +99,12 @@ export function TopHeader() {
           )}
         </button>
 
-        {/* Plan bookmark */}
+        {/* Plan bookmark — opens the dedicated Saved Places page, not
+            Profile (routing it to Profile was confusing: bookmarking a
+            place has nothing to do with account settings). */}
         <button
-          onClick={() => navigate("/profile")}
-          className="relative hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+          onClick={() => navigate("/saved")}
+          className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
           aria-label={`${planCount} ${t("profile", "plan_count_suffix")}`}
         >
           <Bookmark

@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2 } from "lucide-react";
+import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
@@ -29,6 +29,7 @@ function RouteIndicator({ layoutId }: { layoutId: string }) {
 const NAV_TABS = [
   { route: "/home",       Icon: Home,       key: "home"      },
   { route: "/locations",  Icon: MapPin,     key: "locations" },
+  { route: "/saved",      Icon: Bookmark,   key: "saved"     },
   { route: "/uzbekistan", Icon: Globe2,     key: "about"     },
   { route: "/services",   Icon: LayoutGrid, key: "services"  },
 ] as const;
@@ -96,8 +97,8 @@ export function Sidebar() {
                 {t("nav", key)}
               </span>
 
-              {/* Plan badge on profile nav */}
-              {route === "/locations" && plan.length > 0 && (
+              {/* Plan count badge — belongs on Saved Places now, not Locations */}
+              {route === "/saved" && plan.length > 0 && (
                 <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-indigo-500/20 text-indigo-500 text-[9px] font-bold flex items-center justify-center border border-indigo-500/25">
                   {plan.length}
                 </span>
@@ -107,7 +108,7 @@ export function Sidebar() {
         })}
 
         {/* ── Divider + Trova AI ───────────────────────── */}
-        <div className="mt-2 pt-3 border-t border-[var(--sidebar-border)]">
+        <div className="mt-3 pt-4 border-t border-[var(--sidebar-border)]/40">
           {(() => {
             const route = "/chat";
             const active = pathname === route || pathname.startsWith(route);
@@ -180,11 +181,6 @@ export function Sidebar() {
                 )}>
                   {t("nav", "profile")}
                 </span>
-                {plan.length > 0 && (
-                  <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-indigo-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
-                    {plan.length > 99 ? "99+" : plan.length}
-                  </span>
-                )}
               </button>
             );
           })()}

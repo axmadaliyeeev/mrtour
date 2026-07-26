@@ -24,6 +24,8 @@ import {
   Flame,
   AlertTriangle,
   Info,
+  Bookmark,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -33,6 +35,7 @@ import { Stars } from "@/components/ui/stars";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { Location } from "@/types";
+import { LOCATIONS } from "@/data";
 
 /* Trip totals computed from the saved plan */
 function PlanSummary({ plan, freeLabel }: { plan: Location[]; freeLabel: string }) {
@@ -94,7 +97,15 @@ export default function Profile() {
     theme,
     toggleTheme,
     openAuthModal,
+    userReviews,
   } = useAppStore();
+
+  // Flatten { locationId: Review[] } into a single list with the location
+  // name attached, so "My Reviews" reads like a real activity feed
+  // instead of raw store internals.
+  const myReviews = Object.entries(userReviews).flatMap(([locationId, reviews]) =>
+    reviews.map((r) => ({ ...r, locationName: LOCATIONS.find((l) => l.id === locationId)?.name ?? locationId }))
+  );
 
   function handleLogout() {
     // Best-effort: also terminate the session server-side (clears the
@@ -370,6 +381,26 @@ export default function Profile() {
         </div>
       </div>
 
+      {/* Stats row — trips planned (cities in the saved plan), places
+          saved, and reviews written. Scaled-down version of Home's stat
+          tiles for this context. */}
+      <div className="px-4 mb-5 grid grid-cols-3 gap-2.5">
+        {[
+          { Icon: Globe, value: new Set(plan.map((l) => l.city)).size, label: t("profile", "stat_trips") },
+          { Icon: Bookmark, value: plan.length, label: t("profile", "stat_saved") },
+          { Icon: MessageSquare, value: myReviews.length, label: t("profile", "stat_reviews") },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]"
+          >
+            <s.Icon className="w-4 h-4 text-indigo-500" strokeWidth={2} />
+            <span className="text-lg font-extrabold text-[var(--foreground)] tabular-nums">{s.value}</span>
+            <span className="text-[10px] text-[var(--muted-foreground)] text-center leading-tight">{s.label}</span>
+          </div>
+        ))}
+      </div>
+
       {/* Plan list */}
       <section className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
@@ -455,6 +486,38 @@ export default function Profile() {
             </button>
           </div>
           </>
+        )}
+      </section>
+
+      {/* My Reviews */}
+      <section className="px-4 mb-5">
+        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3 flex items-center gap-1.5">
+          <MessageSquare className="w-4 h-4 text-indigo-400" /> {t("profile", "reviews_title")}
+          {myReviews.length > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
+              {myReviews.length}
+            </span>
+          )}
+        </h3>
+        {myReviews.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 py-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-center">
+            <MessageSquare className="w-7 h-7 text-indigo-400/50" strokeWidth={1.5} />
+            <p className="text-xs text-[var(--muted-foreground)] max-w-[220px]">
+              {t("profile", "reviews_empty")}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {myReviews.map((r) => (
+              <div key={r.id} className="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-[var(--foreground)]">{r.locationName}</span>
+                  <Stars rating={r.stars} size="sm" />
+                </div>
+                <p className="text-xs text-[var(--muted-foreground)] line-clamp-2">{r.text}</p>
+              </div>
+            ))}
+          </div>
         )}
       </section>
 

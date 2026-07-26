@@ -8,6 +8,7 @@ export interface TranslationSchema {
     services: string;
     profile: string;
     about: string;
+    saved: string;
   };
   home: {
     badge: string;
@@ -217,10 +218,19 @@ export interface TranslationSchema {
     plan_count_suffix: string;
     theme_label: string;
     emergency_label: string;
+    stat_trips: string;
+    stat_saved: string;
+    stat_reviews: string;
+    reviews_title: string;
+    reviews_empty: string;
   };
   auth: {
     login: string;
     register: string;
+    continue_google: string;
+    continue_apple: string;
+    or_email: string;
+    social_soon: string;
     email: string;
     password: string;
     name: string;
@@ -258,6 +268,16 @@ export interface TranslationSchema {
     err_waking_up: string;
     err_password_required: string;
   };
+  saved: {
+    title: string;
+    subtitle: string;
+    empty_title: string;
+    empty_desc: string;
+    explore_btn: string;
+    ai_btn: string;
+    cities_suffix: string;
+    ai_banner: string;
+  };
 }
 
 // ─── Uzbek (base) ────────────────────────────────────────────────────────────
@@ -270,6 +290,7 @@ const UZ: TranslationSchema = {
     services: "Xizmat",
     profile: "Profil",
     about: "Haqida",
+    saved: "Saqlangan",
   },
   home: {
     badge: "Rasmiy turizm gidi",
@@ -482,9 +503,18 @@ const UZ: TranslationSchema = {
     plan_count_suffix: "joy rejada",
     theme_label: "Mavzu",
     emergency_label: "Favqulodda",
+    stat_trips: "Shaharlar",
+    stat_saved: "Saqlangan",
+    stat_reviews: "Sharhlar",
+    reviews_title: "Mening sharhlarim",
+    reviews_empty: "Hali sharh qoldirmadingiz. Joy sahifasida fikringizni yozing.",
   },
   auth: {
     login: "Kirish",
+    continue_google: "Google orqali davom etish",
+    continue_apple: "Apple orqali davom etish",
+    or_email: "yoki email orqali",
+    social_soon: "Google/Apple orqali kirish tez orada qo'shiladi",
     register: "Ro'yxatdan o'tish",
     email: "Email",
     password: "Parol",
@@ -523,6 +553,16 @@ const UZ: TranslationSchema = {
     err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring.",
     err_password_required: "Parol kiritilishi shart",
   },
+  saved: {
+    title: "Saqlangan joylar",
+    subtitle: "Rejaga qo'shgan joylaringiz shu yerda",
+    empty_title: "Hali hech narsa saqlanmagan",
+    empty_desc: "Yoqqan joylarni \"Rejaga qo'sh\" tugmasi orqali saqlang — ular shu yerda to'planadi.",
+    explore_btn: "Joylarni ko'rish",
+    ai_btn: "AI bilan reja tuzish",
+    cities_suffix: "shahar",
+    ai_banner: "Saqlangan joylar asosida Trova AI'dan marshrut so'rang",
+  },
 };
 
 // ─── Russian ─────────────────────────────────────────────────────────────────
@@ -535,6 +575,7 @@ const RU: TranslationSchema = {
     services: "Сервисы",
     profile: "Профиль",
     about: "О стране",
+    saved: "Сохранено",
   },
   home: {
     badge: "Официальный туристический гид",
@@ -749,9 +790,18 @@ const RU: TranslationSchema = {
     plan_count_suffix: "мест в плане",
     theme_label: "Тема",
     emergency_label: "Экстренные",
+    stat_trips: "Города",
+    stat_saved: "Сохранено",
+    stat_reviews: "Отзывы",
+    reviews_title: "Мои отзывы",
+    reviews_empty: "Вы ещё не оставили отзывов. Напишите его на странице места.",
   },
   auth: {
     login: "Вход",
+    continue_google: "Продолжить через Google",
+    continue_apple: "Продолжить через Apple",
+    or_email: "или через email",
+    social_soon: "Вход через Google/Apple скоро появится",
     register: "Регистрация",
     email: "Email",
     password: "Пароль",
@@ -790,6 +840,16 @@ const RU: TranslationSchema = {
     err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова.",
     err_password_required: "Введите пароль",
   },
+  saved: {
+    title: "Сохранённые места",
+    subtitle: "Места, добавленные в план, собраны здесь",
+    empty_title: "Пока ничего не сохранено",
+    empty_desc: "Сохраняйте понравившиеся места кнопкой «В план» — они появятся здесь.",
+    explore_btn: "Смотреть места",
+    ai_btn: "Составить план с AI",
+    cities_suffix: "город(ов)",
+    ai_banner: "Попросите Trova AI составить маршрут по сохранённым местам",
+  },
 };
 
 // ─── English ──────────────────────────────────────────────────────────────────
@@ -802,6 +862,7 @@ const EN: TranslationSchema = {
     services: "Services",
     profile: "Profile",
     about: "About",
+    saved: "Saved",
   },
   home: {
     badge: "Official Travel Guide",
@@ -1015,9 +1076,18 @@ const EN: TranslationSchema = {
     plan_count_suffix: "places in plan",
     theme_label: "Theme",
     emergency_label: "Emergency",
+    stat_trips: "Cities",
+    stat_saved: "Saved",
+    stat_reviews: "Reviews",
+    reviews_title: "My Reviews",
+    reviews_empty: "You haven't written a review yet. Leave one on a place's page.",
   },
   auth: {
     login: "Sign In",
+    continue_google: "Continue with Google",
+    continue_apple: "Continue with Apple",
+    or_email: "or continue with email",
+    social_soon: "Google/Apple sign-in is coming soon",
     register: "Create Account",
     email: "Email",
     password: "Password",
@@ -1056,6 +1126,16 @@ const EN: TranslationSchema = {
     err_waking_up: "Server is waking up — please wait a moment and try again.",
     err_password_required: "Please enter your password",
   },
+  saved: {
+    title: "Saved Places",
+    subtitle: "Everything you've added to your plan lives here",
+    empty_title: "Nothing saved yet",
+    empty_desc: "Save places you like with the \"Add to Plan\" button — they'll show up here.",
+    explore_btn: "Browse places",
+    ai_btn: "Plan with AI",
+    cities_suffix: "cities",
+    ai_banner: "Ask Trova AI to build a route from your saved places",
+  },
 };
 
 // ─── Chinese Simplified ───────────────────────────────────────────────────────
@@ -1068,6 +1148,7 @@ const ZH: TranslationSchema = {
     services: "服务",
     profile: "我的",
     about: "关于",
+    saved: "收藏",
   },
   home: {
     badge: "官方旅游指南",
@@ -1279,9 +1360,18 @@ const ZH: TranslationSchema = {
     plan_count_suffix: "个地点",
     theme_label: "主题",
     emergency_label: "紧急",
+    stat_trips: "城市",
+    stat_saved: "收藏",
+    stat_reviews: "评价",
+    reviews_title: "我的评价",
+    reviews_empty: "您还没有发表评价。可在地点页面留下您的看法。",
   },
   auth: {
     login: "登录",
+    continue_google: "使用 Google 继续",
+    continue_apple: "使用 Apple 继续",
+    or_email: "或使用邮箱",
+    social_soon: "Google/Apple 登录即将上线",
     register: "注册",
     email: "邮箱",
     password: "密码",
@@ -1320,6 +1410,16 @@ const ZH: TranslationSchema = {
     err_waking_up: "服务器正在唤醒，请稍等片刻后重试。",
     err_password_required: "请输入密码",
   },
+  saved: {
+    title: "收藏的地点",
+    subtitle: "您添加到计划中的地点都在这里",
+    empty_title: "还没有收藏任何地点",
+    empty_desc: "点击「加入计划」保存喜欢的地点，它们会显示在这里。",
+    explore_btn: "浏览地点",
+    ai_btn: "使用 AI 规划",
+    cities_suffix: "个城市",
+    ai_banner: "让 Trova AI 根据收藏的地点规划路线",
+  },
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -1332,6 +1432,7 @@ const DE: TranslationSchema = {
     services: "Services",
     profile: "Profil",
     about: "Über",
+    saved: "Gespeichert",
   },
   home: {
     badge: "Offizieller Reiseführer",
@@ -1547,9 +1648,18 @@ const DE: TranslationSchema = {
     plan_count_suffix: "Orte im Plan",
     theme_label: "Thema",
     emergency_label: "Notfall",
+    stat_trips: "Städte",
+    stat_saved: "Gespeichert",
+    stat_reviews: "Bewertungen",
+    reviews_title: "Meine Bewertungen",
+    reviews_empty: "Sie haben noch keine Bewertung geschrieben. Tun Sie dies auf der Seite eines Ortes.",
   },
   auth: {
     login: "Anmelden",
+    continue_google: "Mit Google fortfahren",
+    continue_apple: "Mit Apple fortfahren",
+    or_email: "oder mit E-Mail",
+    social_soon: "Anmeldung über Google/Apple folgt in Kürze",
     register: "Registrieren",
     email: "E-Mail",
     password: "Passwort",
@@ -1588,6 +1698,16 @@ const DE: TranslationSchema = {
     err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut.",
     err_password_required: "Bitte geben Sie Ihr Passwort ein",
   },
+  saved: {
+    title: "Gespeicherte Orte",
+    subtitle: "Alles, was Sie zu Ihrem Plan hinzugefügt haben, ist hier",
+    empty_title: "Noch nichts gespeichert",
+    empty_desc: "Speichern Sie Orte, die Ihnen gefallen, über „Zum Plan hinzufügen\" — sie erscheinen dann hier.",
+    explore_btn: "Orte entdecken",
+    ai_btn: "Mit KI planen",
+    cities_suffix: "Städte",
+    ai_banner: "Lassen Sie Trova AI eine Route aus Ihren gespeicherten Orten erstellen",
+  },
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -1600,6 +1720,7 @@ const FR: TranslationSchema = {
     services: "Services",
     profile: "Profil",
     about: "À propos",
+    saved: "Enregistrés",
   },
   home: {
     badge: "Guide touristique officiel",
@@ -1816,9 +1937,18 @@ const FR: TranslationSchema = {
     plan_count_suffix: "lieux dans le plan",
     theme_label: "Thème",
     emergency_label: "Urgences",
+    stat_trips: "Villes",
+    stat_saved: "Enregistrés",
+    stat_reviews: "Avis",
+    reviews_title: "Mes avis",
+    reviews_empty: "Vous n'avez pas encore laissé d'avis. Faites-le sur la page d'un lieu.",
   },
   auth: {
     login: "Connexion",
+    continue_google: "Continuer avec Google",
+    continue_apple: "Continuer avec Apple",
+    or_email: "ou avec e-mail",
+    social_soon: "La connexion via Google/Apple arrive bientôt",
     register: "Inscription",
     email: "E-mail",
     password: "Mot de passe",
@@ -1857,6 +1987,16 @@ const FR: TranslationSchema = {
     err_register: "Une erreur est survenue lors de l'inscription",
     err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer.",
     err_password_required: "Veuillez saisir votre mot de passe",
+  },
+  saved: {
+    title: "Lieux enregistrés",
+    subtitle: "Tout ce que vous avez ajouté à votre plan se trouve ici",
+    empty_title: "Rien d'enregistré pour l'instant",
+    empty_desc: "Enregistrez les lieux qui vous plaisent via « Ajouter au plan » — ils apparaîtront ici.",
+    explore_btn: "Explorer les lieux",
+    ai_btn: "Planifier avec l'IA",
+    cities_suffix: "villes",
+    ai_banner: "Demandez à Trova AI de créer un itinéraire à partir de vos lieux enregistrés",
   },
 };
 

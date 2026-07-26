@@ -264,8 +264,16 @@ export default function Chat() {
   const showQuickActions = messages.length <= 1;
 
   return (
+    // Full-bleed: this used to be max-w-[720px] mx-auto on the OUTER
+    // panel, which shrank the header and input bars down to a narrow
+    // column with dead space on either side — reading as a widget boxed
+    // inside the page rather than a native full-page view. The panel now
+    // fills the whole content area; each inner row (header, messages,
+    // input) centers its own content at 720px instead, the same way
+    // ChatGPT's header/composer span edge-to-edge while the text column
+    // stays readable-width.
     <div
-      className="flex flex-col overflow-hidden w-full max-w-[720px] mx-auto"
+      className="flex flex-col overflow-hidden w-full"
       style={{
         height: isDesktop
           ? "calc(100dvh - 3.5rem)"
@@ -274,8 +282,10 @@ export default function Chat() {
     >
       {/* Header — --header-bg is now a fully opaque color (see index.css);
           a translucent sticky header let fast-scrolled content bleed/clip
-          through it at the boundary. */}
-      <div className="glass flex items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 relative z-20">
+          through it at the boundary. The bar itself spans the full
+          content area; only its content centers at 720px. */}
+      <div className="glass border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 relative z-20 w-full">
+      <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 max-w-[720px] mx-auto">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div
             className={cn(
@@ -315,13 +325,17 @@ export default function Chat() {
           </button>
         </div>
       </div>
+      </div>
 
-      {/* Messages area */}
+      {/* Messages area — the scroll container spans full width so its
+          scrollbar sits at the true content-area edge; the message
+          column inside centers at 720px. */}
       <div
         ref={scrollAreaRef}
         onScroll={handleScroll}
-        className="relative flex-1 overflow-y-auto px-3 sm:px-4 pt-5 pb-4 space-y-4"
+        className="relative flex-1 overflow-y-auto px-3 sm:px-4 pt-5 pb-4"
       >
+        <div className="max-w-[720px] mx-auto space-y-4">
         {/* Empty-state hero — soft pulsing orb + centered heading instead
             of just another chat bubble, so the first screen reads as "an
             assistant is here" rather than a blank inbox. */}
@@ -582,11 +596,12 @@ export default function Chat() {
         </AnimatePresence>
 
         <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Plan banner */}
       {showPlanBanner && (
-        <div className="px-3 sm:px-4 pb-3 shrink-0 space-y-3">
+        <div className="px-3 sm:px-4 pb-3 shrink-0 space-y-3 max-w-[720px] mx-auto w-full">
           {/* Plan-aware tour creation banner */}
           {showPlanBanner && (
             <div className="relative rounded-2xl border border-indigo-500/40 bg-indigo-500/8 p-3.5 overflow-hidden">
@@ -621,7 +636,7 @@ export default function Chat() {
                       {t("chat", "plan_btn")}
                     </button>
                     <button
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/saved")}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] transition-all"
                     >
                       <MapPin className="w-3 h-3" />
@@ -636,8 +651,9 @@ export default function Chat() {
         </div>
       )}
 
-      {/* Input area */}
+      {/* Input area — full-width bar, content centered at 720px */}
       <div className="glass px-3 sm:px-4 pb-3 sm:pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
+      <div className="max-w-[720px] mx-auto">
         <div
           className={cn(
             // A neutral, recessed surface (not the same --card tone as
@@ -707,6 +723,7 @@ export default function Chat() {
         <p className="text-[10px] text-[var(--muted-foreground)]/50 text-center mt-1.5 px-4">
           {t("chat", "disclaimer")}
         </p>
+      </div>
       </div>
     </div>
   );

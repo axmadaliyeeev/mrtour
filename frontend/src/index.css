@@ -77,7 +77,7 @@
   --gold-soft:         rgba(209,242,235,0.1);
   --modal:             #1c2622; /* L2 — distinct from both L0 and L1 */
   --modal-border:      #2b3631;
-  --sidebar-bg:        #0a0f0d;
+  --sidebar-bg:        #0c1210; /* a hair lighter than the page bg — enough to read as its own surface, not a harsh separate block */
   --sidebar-border:    #232c27;
   --header-bg:         #0a0f0d; /* fully opaque — see light-mode note above */
   --nav-bg:            rgba(10,15,13,0.97);
