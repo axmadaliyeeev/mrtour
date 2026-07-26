@@ -16,7 +16,18 @@ const client = new OpenAI({
 const MODEL = "llama-3.3-70b-versatile";
 
 export interface ChatMessage  { role: "user" | "assistant"; content: string; }
-export interface UserContext  { name?: string; country?: string; plan?: string; }
+export interface UserContext  { name?: string; country?: string; plan?: string; lang?: string; }
+
+// Human-readable names the model can act on reliably — passing the raw
+// locale code ("zh") alone was less consistent than naming the language.
+const LANG_NAMES: Record<string, string> = {
+  uz: "Uzbek",
+  ru: "Russian",
+  en: "English",
+  zh: "Chinese",
+  de: "German",
+  fr: "French",
+};
 export interface TourData     { days: string; people: string; regions: string[]; budget: string; }
 export interface ReviewForInsight { author: string; stars: number; text: string; trustScore: number; }
 export interface AnalysisResult   { trustScore: number; aiTags: string[]; verified: boolean; }
@@ -43,10 +54,20 @@ async function callGroq<T>(fn: () => Promise<T>): Promise<T> {
 // ── 1. chat ────────────────────────────────────────────
 export async function chat(messages: ChatMessage[], ctx: UserContext = {}): Promise<string> {
   const hasPlan = ctx.plan && ctx.plan.trim().length > 0;
+  const interfaceLang = LANG_NAMES[ctx.lang ?? ""] ?? "English";
 
   const system = `Sen Trova AI — trova sayohat platformasining sun'iy intellekt yordamchisisan. O'zbekiston turizmi bo'yicha tajribali professional maslahatchi.
 Foydalanuvchi: ${ctx.name ?? "Mehmon"}${ctx.country ? `, ${ctx.country}` : ""}.
 ${hasPlan ? `Foydalanuvchi saqlagan joylar: ${ctx.plan}.` : ""}
+
+LANGUAGE RULE (highest priority, overrides everything else in this
+prompt including the language this prompt itself is written in):
+Respond in ${interfaceLang} — that's the app's current interface
+language — UNLESS the user's message is clearly written in a
+different language, in which case respond in THAT language for this
+reply instead (matching what they just typed always wins over the
+interface default). Never default to Uzbek just because parts of
+this instruction are in Uzbek.
 
 Quyida trova platformasining TO'LIQ MA'LUMOTLAR BAZASI berilgan.
 Bu ma'lumotlar haqiqiy va aniq — foydalanuvchi narx, vaqt, transport haqida so'rasa,
@@ -116,7 +137,7 @@ noto'g'ri yoki singan holda ko'rinadi.
 BOSHQA QOIDALAR:
 - Saqlangan joylarni ALBATTA rejaga qo'sh (agar bo'lsa), boshqa joylar ham qo'sh
 - FAQAT ma'lumotlar bazasidagi HAQIQIY narx va vaqtlarni ishlatgin
-- Savol tiliga mos javob ber (uz/ru/en)
+- Til bo'yicha yuqoridagi LANGUAGE RULE'ga qat'iy amal qil
 - Oddiy savollarga qisqa (100–150 so'z, markdown shart emas), tur reja uchun to'liq format
 - Noaniq, taxminiy, "qarang interneta" kabi javoblar berma — aniq bo'l`;
 

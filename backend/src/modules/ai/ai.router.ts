@@ -17,6 +17,7 @@ const chatSchema = z.object({
     name:    z.string().optional(),
     country: z.string().optional(),
     plan:    z.string().optional(),
+    lang:    z.string().optional(),
   }).optional(),
 });
 
@@ -41,6 +42,7 @@ aiRouter.post("/chat", optionalAuth, validateBody(chatSchema),
         name:    req.user?.email?.split("@")[0] ?? userContext?.name,
         country: userContext?.country,
         plan:    userContext?.plan,
+        lang:    userContext?.lang,
       });
       sendSuccess(res, { reply });
     } catch (err) { next(err); }

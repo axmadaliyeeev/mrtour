@@ -167,7 +167,10 @@ export default function Chat() {
       // generation time can together take well past the default timeout.
       const res = await apiClient.post<{ reply: string }>(
         "/ai/chat",
-        { messages: apiMessages, userContext: { plan: buildPlanContext() } },
+        // lang is the interface's current locale — the backend replies in
+        // it by default, but still switches to whatever language the
+        // user actually typed in for that specific message.
+        { messages: apiMessages, userContext: { plan: buildPlanContext(), lang } },
         { timeout: 45_000 }
       );
 
