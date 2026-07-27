@@ -83,7 +83,7 @@ export default function SavedPlaces() {
 
       <button
         onClick={() => navigate("/chat")}
-        className="w-full flex items-center gap-2.5 p-3 mb-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/20 active:scale-[0.98] transition-transform"
+        className="w-full flex items-center gap-2.5 p-3 mb-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-sm active:scale-[0.98] transition-transform"
       >
         <Sparkles className="w-4 h-4 shrink-0" />
         <span className="text-sm font-semibold flex-1 text-left">{t("saved", "ai_banner")}</span>

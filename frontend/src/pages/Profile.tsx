@@ -159,7 +159,7 @@ export default function Profile() {
               as a deliberate placeholder treatment rather than a flat
               filled circle; the thinner stroke keeps it feeling refined
               instead of a generic bold person glyph. */}
-          <div className="relative w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-indigo-500 to-[#7fe0ae] shadow-lg shadow-indigo-500/25 animate-pop-in">
+          <div className="relative w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-indigo-500 to-[#7fe0ae] shadow-md animate-pop-in">
             <div className="w-full h-full rounded-full bg-[var(--card)] flex items-center justify-center">
               <UserIcon className="w-8 h-8 text-indigo-400" strokeWidth={1.5} />
             </div>
@@ -175,7 +175,7 @@ export default function Profile() {
           <div className="flex gap-2 w-full">
             <button
               onClick={openAuthModal}
-              className="btn-shine ripple flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-500/25 transition-all active:scale-[0.98]"
+              className="btn-shine ripple flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm transition-all active:scale-[0.98]"
             >
               {t("profile", "login_btn")}
             </button>
@@ -273,7 +273,7 @@ export default function Profile() {
                 className={cn(
                   "flex flex-col items-center gap-1 p-2.5 rounded-xl border text-xs font-medium transition-all",
                   lang === l.code
-                    ? "bg-indigo-500 border-indigo-500 text-white shadow-sm shadow-indigo-500/25"
+                    ? "bg-indigo-500 border-indigo-500 text-white shadow-sm"
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
                 )}
               >
@@ -351,7 +351,7 @@ export default function Profile() {
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
         <div className="relative flex items-center gap-4">
           <div className="relative animate-pop-in">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-indigo-500/30 ring-2 ring-indigo-500/25 ring-offset-2 ring-offset-[var(--background)]">
+            <div className="w-16 h-16 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-extrabold shadow-md ring-2 ring-indigo-500/25 ring-offset-2 ring-offset-[var(--background)]">
               {user.name.charAt(0).toUpperCase()}
             </div>
             {user.isPremium && (
@@ -479,7 +479,7 @@ export default function Profile() {
             {/* AI tour creation button */}
             <button
               onClick={() => navigate("/chat")}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm transition-all active:scale-[0.98]"
             >
               <Sparkles className="w-4 h-4" />
               {t("profile", "plan_ai_btn")}

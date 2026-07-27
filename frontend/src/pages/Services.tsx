@@ -529,7 +529,7 @@ export default function Services() {
             className={cn(
               "flex items-center gap-1.5 px-3.5 rounded-xl border text-xs font-semibold shrink-0 transition-all min-h-[44px]",
               activeTab === tab.key
-                ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                ? "bg-indigo-500 border-indigo-500 text-white shadow-sm"
                 : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
             )}
           >

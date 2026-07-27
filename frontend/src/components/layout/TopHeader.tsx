@@ -124,7 +124,7 @@ export function TopHeader() {
         {user ? (
           <button
             onClick={() => navigate("/profile")}
-            className="flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xs font-bold hover:scale-105 transition-transform shadow-md shadow-indigo-500/30 active:scale-95"
+            className="flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-indigo-500 text-white text-xs font-bold hover:scale-105 transition-transform shadow-sm active:scale-95"
             aria-label={t("nav", "profile")}
           >
             {user.name.charAt(0).toUpperCase()}
@@ -132,7 +132,7 @@ export function TopHeader() {
         ) : (
           <button
             onClick={openAuthModal}
-            className="flex items-center gap-1.5 px-3 h-8 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-all active:scale-95 shadow-md shadow-indigo-500/30 hover:-translate-y-px"
+            className="flex items-center gap-1.5 px-3 h-8 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-all active:scale-95 shadow-sm hover:-translate-y-px"
           >
             <LogIn className="w-3.5 h-3.5" />
             <span>{t("auth", "login")}</span>

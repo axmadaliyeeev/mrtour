@@ -66,7 +66,7 @@ export function BottomNav() {
               <div className="relative flex items-center justify-center w-9 h-9">
                 <div className={cn(
                   "absolute inset-0 rounded-xl transition-all duration-250",
-                  active ? "bg-indigo-500 shadow-md shadow-indigo-500/30 scale-100" : "scale-90 opacity-0"
+                  active ? "bg-indigo-500 shadow-sm scale-100" : "scale-90 opacity-0"
                 )} />
                 <Icon className={cn(
                   "relative transition-all duration-250 w-5 h-5",

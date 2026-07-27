@@ -264,7 +264,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
               <button key={l.code} type="button" onClick={() => setSelectedLang(l.code)}
                 className={cn("flex items-center justify-center px-3 py-3 rounded-xl border text-sm font-medium transition-all min-h-[44px]",
                   selectedLang === l.code
-                    ? "bg-indigo-500 border-indigo-500 text-white font-semibold shadow-sm shadow-indigo-500/25"
+                    ? "bg-indigo-500 border-indigo-500 text-white font-semibold shadow-sm"
                     : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/20")}>
                 {l.label}
               </button>
@@ -440,7 +440,7 @@ export function AuthModal() {
                             <motion.span
                               layoutId="auth-tab-pill"
                               transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                              className="absolute inset-0 rounded-lg bg-indigo-500 shadow-sm shadow-indigo-500/25"
+                              className="absolute inset-0 rounded-lg bg-indigo-500 shadow-sm"
                             />
                           )}
                           <span className="relative">{tab === "login" ? t("auth", "login") : t("auth", "register")}</span>

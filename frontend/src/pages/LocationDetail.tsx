@@ -52,7 +52,7 @@ function ReviewCard({ review, t }: { review: Review; t: TFn }) {
     <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+          <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
             {review.author.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -142,7 +142,7 @@ function SmartReview({
         className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-indigo-500/8 transition-colors disabled:opacity-50"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
           <div className="text-left">
@@ -545,7 +545,7 @@ export default function LocationDetail() {
             "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.97]",
             inPlan
               ? "bg-indigo-500/15 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/25"
-              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
+              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
           )}
         >
           {inPlan ? (
@@ -578,10 +578,10 @@ export default function LocationDetail() {
           <button
             onClick={togglePlan}
             className={cn(
-              "w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition-all active:scale-[0.98] shadow-lg",
+              "w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition-all active:scale-[0.98] shadow-md",
               inPlan
                 ? "bg-indigo-500/15 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/25"
-                : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30"
+                : "bg-indigo-500 hover:bg-indigo-600 text-white"
             )}
           >
             {inPlan ? (

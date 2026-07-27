@@ -117,7 +117,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           whileTap={{ scale: 0.85 }}
           className={cn(
             "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors",
-            inPlan ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/50" : "bg-black/40 text-white hover:bg-indigo-500/80"
+            inPlan ? "bg-indigo-500 text-white shadow-md" : "bg-black/40 text-white hover:bg-indigo-500/80"
           )}
           aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
         >
@@ -217,7 +217,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
           className={cn(
             "absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-md transition-colors",
             inPlan
-              ? "bg-indigo-500 text-white shadow-indigo-500/50"
+              ? "bg-indigo-500 text-white"
               : "bg-black/50 text-white/80 hover:bg-indigo-500/90"
           )}
           aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
@@ -296,7 +296,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
             "ripple w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer",
             inPlan
               ? "bg-[var(--muted)] border border-indigo-500/35 text-indigo-400 hover:bg-indigo-500/10"
-              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm shadow-indigo-500/25"
+              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
           )}
         >
           {inPlan ? (

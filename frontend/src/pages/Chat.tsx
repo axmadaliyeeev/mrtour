@@ -289,7 +289,7 @@ export default function Chat() {
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div
             className={cn(
-              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center text-white shadow-md shadow-indigo-500/30 shrink-0 transition-shadow",
+              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center text-white shadow-sm shrink-0 transition-shadow",
               // The spinning ring is meaningful, not decorative — it only
               // runs while Trova AI is actually composing a reply, so an
               // always-on animation isn't idling for no reason at rest.
@@ -346,7 +346,7 @@ export default function Chat() {
                   well past the orb itself so the falloff reads as ambient
                   light, not a ring. */}
               <div className="absolute -inset-4 rounded-full bg-[#50C878] opacity-[0.07] blur-2xl" />
-              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-orb-breathe">
+              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center shadow-md animate-orb-breathe">
                 <RouteOrb className="w-10 h-10" />
               </div>
             </div>
@@ -374,7 +374,7 @@ export default function Chat() {
                 msg.role === "assistant"
                   ? msg.isError
                     ? "bg-red-500/15 border border-red-500/30 text-red-400"
-                    : "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-sm shadow-indigo-500/30"
+                    : "bg-indigo-500 text-white shadow-sm"
                   : "bg-gradient-to-br from-indigo-500/80 to-indigo-600/80 text-white"
               )}
             >
@@ -410,7 +410,7 @@ export default function Chat() {
                       // (#151C19), one clear step up from the #0A0F0D
                       // page background.
                       : "px-6 py-5 rounded-2xl max-w-[720px] bg-[var(--card)] dark:bg-[#151C19] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
-                    : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-gradient-to-br from-indigo-500 to-indigo-600 text-white shadow-md shadow-indigo-500/25"
+                    : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-indigo-500 text-white shadow-sm"
                 )}
               >
                 <MessageContent text={msg.content} />
@@ -561,7 +561,7 @@ export default function Chat() {
             exit={{ opacity: 0 }}
             className="flex gap-2.5"
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm shadow-indigo-500/30">
+            <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm">
               <RouteOrb className="w-4 h-4" />
             </div>
             <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
@@ -693,7 +693,7 @@ export default function Chat() {
             className={cn(
               "ripple flex items-center justify-center w-10 h-10 rounded-full transition-all active:scale-95 shrink-0 overflow-hidden",
               input.trim() && !isLoading
-                ? "bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/40"
+                ? "bg-indigo-500 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-sm hover:shadow-lg hover:shadow-indigo-500/40"
                 : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
             )}
             aria-label={t("chat", "input_placeholder")}

@@ -41,7 +41,7 @@ export function Sidebar() {
   const { t } = useTranslation();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-60 z-40 flex flex-col bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] overflow-hidden">
+    <aside className="glass fixed left-0 top-0 h-screen w-60 z-40 flex flex-col bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] overflow-hidden">
 
       {/* ── Subtle top gradient glow ───────────────────── */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/6 to-transparent pointer-events-none" />
@@ -124,8 +124,8 @@ export function Sidebar() {
               >
                 {active && <RouteIndicator layoutId="sidebar-indicator" />}
                 <div className={cn(
-                  "border-glow-spin w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-md transition-all",
-                  active ? "shadow-indigo-500/50 scale-105" : "shadow-indigo-500/25 hover:scale-105"
+                  "border-glow-spin w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm transition-all",
+                  active ? "scale-105" : "hover:scale-105"
                 )}>
                   <Bot className="w-4 h-4 text-white" />
                 </div>
@@ -200,7 +200,7 @@ export function Sidebar() {
               className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-[var(--muted)] transition-all group active:scale-[0.98]"
             >
               {/* Avatar */}
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md shadow-indigo-500/30">
+              <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm">
                 {user.name[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0 text-left">

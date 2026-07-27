@@ -123,7 +123,7 @@ export default function Home() {
             <div className="animate-fade-up delay-200 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => navigate("/chat")}
-                className="btn-shine btn-aura ripple group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-base font-bold transition-all active:scale-[0.97] shadow-xl shadow-indigo-500/35 hover:shadow-indigo-500/50 hover:-translate-y-0.5"
+                className="btn-shine btn-aura ripple group flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-base font-bold transition-all active:scale-[0.97] shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
                 <span className="relative w-6 h-6 shrink-0 flex items-center justify-center">
                   <span className="absolute inset-0 rounded-full bg-white/25 animate-breathe" />
@@ -167,7 +167,7 @@ export default function Home() {
           card and the stats row — the same S-curve motif as the logo and
           sidebar indicator, threaded through the page instead of a hard
           rule. */}
-      <div className="px-4 mt-4 mb-4 flex justify-center pointer-events-none" aria-hidden="true">
+      <div className="px-4 mt-6 mb-6 flex justify-center pointer-events-none" aria-hidden="true">
         <svg width="120" height="12" viewBox="0 0 120 12" fill="none">
           {/* Draws in once on first mount (framer-motion's pathLength
               handles the stroke-dashoffset math) — it doesn't replay on
@@ -183,8 +183,8 @@ export default function Home() {
       </div>
 
       {/* ── Stats ─────────────────────────────────────────────── */}
-      <section className="px-4 mb-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <section className="px-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {STATS.map(({ icon: Icon, value, label, color, glow }, i) => {
             // The rating is the single most persuasive trust signal on the
             // page — it gets a visibly larger card and a mint outline
@@ -195,10 +195,10 @@ export default function Home() {
                 key={label}
                 className={cn(
                   "tilt-hover animate-fade-up flex flex-col items-center gap-2.5 rounded-2xl border transition-all duration-300 cursor-default",
-                  "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-lg",
+                  "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-md",
                   isRating
-                    ? "p-5 border-gold-500/40 ring-1 ring-gold-500/20"
-                    : "p-4 border-[var(--border)]",
+                    ? "p-5 border-gold-500/30"
+                    : "p-4 border-[var(--border)]/60",
                   `hover:${glow}`
                 )}
                 style={{ animationDelay: `${i * 80 + 100}ms` }}
@@ -247,7 +247,7 @@ export default function Home() {
                   "relative flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
                   "hover:-translate-y-0.5 hover:shadow-md",
                   cat.key === "all"
-                    ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/25"
+                    ? "bg-indigo-500 border-indigo-500 text-white shadow-sm"
                     : "bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-indigo-500/5 hover:shadow-indigo-500/10"
                 )}
                 style={{ animationDelay: `${i * 40}ms` }}
