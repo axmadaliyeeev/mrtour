@@ -1,30 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
-
-const SPRING = { type: "spring" as const, stiffness: 420, damping: 34 };
-
-// A soft S-curve instead of a flat rectangle — echoes the route-motif from
-// the wordmark so "you are here" reads as a point on a path, not just a
-// highlighted menu row.
-function RouteIndicator({ layoutId }: { layoutId: string }) {
-  return (
-    <motion.svg
-      layoutId={layoutId}
-      transition={SPRING}
-      className="absolute left-0 top-1/2 -translate-y-1/2"
-      width="4" height="26" viewBox="0 0 4 26" fill="none"
-    >
-      <path
-        d="M3.5 1C3.5 6 0.5 8 0.5 13C0.5 18 3.5 20 3.5 25"
-        stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round"
-      />
-    </motion.svg>
-  );
-}
 
 const NAV_TABS = [
   { route: "/home",       Icon: Home,       key: "home"      },
@@ -56,13 +34,13 @@ export function Sidebar() {
              Dropped the "Travel Guide" tagline underneath — it was
              restating the obvious and added a line of dashboard-style
              chrome for nothing. ── */}
-      <div className="relative flex items-center px-5 h-[72px] shrink-0">
+      <div className="relative flex items-center px-6 h-[76px] shrink-0">
         <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />
         <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
       </div>
 
       {/* ── Main navigation ────────────────────────────── */}
-      <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
+      <nav className="flex-1 px-3.5 py-5 flex flex-col gap-1.5 overflow-y-auto">
 
         {NAV_TABS.map(({ route, Icon, key }) => {
           const active = pathname === route || (route !== "/home" && pathname.startsWith(route));
@@ -71,37 +49,33 @@ export function Sidebar() {
               key={route}
               onClick={() => navigate(route)}
               className={cn(
-                "relative w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all group active:scale-[0.98]",
+                "relative w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 group active:scale-[0.98]",
                 active
-                  ? "bg-indigo-500/12 text-indigo-500 shadow-sm"
+                  ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/25"
                   : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
               )}
             >
-              {/* Left active bar — shared sliding indicator */}
-              {active && <RouteIndicator layoutId="sidebar-indicator" />}
-
-              <div className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
-                active
-                  ? "bg-indigo-500/15 shadow-sm"
-                  : "bg-[var(--muted)] group-hover:bg-[var(--card-hover)]"
-              )}>
-                <Icon className={cn(
-                  "w-4 h-4 transition-all",
-                  active ? "text-indigo-500 scale-110" : "text-[var(--muted-foreground)]"
-                )} />
-              </div>
+              {/* Solid fill on the active tab reads far more confident than a
+                  faint tint — this is the one thing your eye should land on
+                  scanning down the rail. Everything else stays quiet. */}
+              <Icon className={cn(
+                "w-[18px] h-[18px] shrink-0 transition-all",
+                active ? "text-white scale-110" : "text-[var(--muted-foreground)] group-hover:scale-105"
+              )} />
 
               <span className={cn(
-                "text-sm font-medium transition-colors",
-                active ? "font-semibold text-indigo-500" : ""
+                "text-[13.5px] tracking-tight transition-colors",
+                active ? "font-semibold text-white" : "font-medium"
               )}>
                 {t("nav", key)}
               </span>
 
               {/* Plan count badge — belongs on Saved Places now, not Locations */}
               {route === "/saved" && plan.length > 0 && (
-                <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-indigo-500/20 text-indigo-500 text-[9px] font-bold flex items-center justify-center border border-indigo-500/25">
+                <span className={cn(
+                  "ml-auto min-w-[19px] h-[19px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center",
+                  active ? "bg-white/25 text-white" : "bg-indigo-500/15 text-indigo-500"
+                )}>
                   {plan.length}
                 </span>
               )}
@@ -110,7 +84,7 @@ export function Sidebar() {
         })}
 
         {/* ── Divider + Trova AI ───────────────────────── */}
-        <div className="mt-3 pt-4 border-t border-[var(--sidebar-border)]/40">
+        <div className="mt-4 pt-5 border-t border-[var(--sidebar-border)]/40">
           {(() => {
             const route = "/chat";
             const active = pathname === route || pathname.startsWith(route);
@@ -118,31 +92,36 @@ export function Sidebar() {
               <button
                 onClick={() => navigate(route)}
                 className={cn(
-                  "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all relative active:scale-[0.98]",
+                  "w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 relative active:scale-[0.98]",
                   active
-                    ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10"
+                    ? "bg-gradient-to-r from-indigo-500 to-[#3fb896] shadow-md shadow-indigo-500/25"
                     : "hover:bg-indigo-500/6"
                 )}
               >
-                {active && <RouteIndicator layoutId="sidebar-indicator" />}
                 <div className={cn(
-                  "border-glow-spin w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm transition-all",
-                  active ? "scale-105" : "hover:scale-105"
+                  "border-glow-spin w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all",
+                  active ? "bg-white/20 scale-105" : "bg-indigo-500 hover:scale-105"
                 )}>
                   <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex-1 text-left">
                   <p className={cn(
-                    "text-sm font-semibold leading-tight transition-colors",
-                    active ? "text-indigo-500" : "text-indigo-400"
+                    "text-[13.5px] font-semibold leading-tight transition-colors",
+                    active ? "text-white" : "text-indigo-400"
                   )}>
                     Trova AI
                   </p>
-                  <p className="text-[10px] text-[var(--muted-foreground)] font-medium">
+                  <p className={cn(
+                    "text-[10px] font-medium",
+                    active ? "text-white/70" : "text-[var(--muted-foreground)]"
+                  )}>
                     Sayohat yordamchisi
                   </p>
                 </div>
-                <span className="glint shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-gold-500/15 text-shimmer-gold font-bold border border-gold-500/30">
+                <span className={cn(
+                  "glint shrink-0 text-[9px] px-1.5 py-0.5 rounded-full font-bold",
+                  active ? "bg-white/20 text-white" : "bg-gold-500/15 text-shimmer-gold border border-gold-500/30"
+                )}>
                   AI
                 </span>
               </button>
@@ -151,7 +130,7 @@ export function Sidebar() {
         </div>
 
         {/* ── Profile nav item ───────────────────────── */}
-        <div className="mt-1">
+        <div className="mt-1.5">
           {(() => {
             const route = "/profile";
             const active = pathname === route;
@@ -159,27 +138,19 @@ export function Sidebar() {
               <button
                 onClick={() => navigate(route)}
                 className={cn(
-                  "relative w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all group active:scale-[0.98]",
+                  "relative w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 group active:scale-[0.98]",
                   active
-                    ? "bg-indigo-500/12 text-indigo-500"
+                    ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/25"
                     : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
                 )}
               >
-                {active && <RouteIndicator layoutId="sidebar-indicator" />}
-                <div className={cn(
-                  "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all",
-                  active
-                    ? "bg-indigo-500/15"
-                    : "bg-[var(--muted)] group-hover:bg-[var(--card-hover)]"
-                )}>
-                  <User className={cn(
-                    "w-4 h-4 transition-all",
-                    active ? "text-indigo-500 scale-110" : "text-[var(--muted-foreground)]"
-                  )} />
-                </div>
+                <User className={cn(
+                  "w-[18px] h-[18px] shrink-0 transition-all",
+                  active ? "text-white scale-110" : "text-[var(--muted-foreground)] group-hover:scale-105"
+                )} />
                 <span className={cn(
-                  "text-sm transition-colors flex-1 text-left",
-                  active ? "font-semibold text-indigo-500" : "font-medium"
+                  "text-[13.5px] transition-colors flex-1 text-left",
+                  active ? "font-semibold text-white" : "font-medium"
                 )}>
                   {t("nav", "profile")}
                 </span>

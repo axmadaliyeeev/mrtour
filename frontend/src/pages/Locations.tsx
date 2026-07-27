@@ -102,14 +102,14 @@ export default function Locations() {
       {/* Header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-0.5">
             {t("locations", "title")}
           </h1>
           <p className="text-xs text-[var(--muted-foreground)]">
             {results.length} {t("locations", "found")}
           </p>
         </div>
-        <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold">
+        <span className="px-3 py-1.5 rounded-full bg-indigo-500 text-white text-xs font-bold shadow-sm shadow-indigo-500/20">
           {results.length}
         </span>
       </div>
@@ -166,17 +166,17 @@ export default function Locations() {
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
               className={cn(
-                "relative flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-full border text-xs font-medium shrink-0 transition-colors",
+                "relative flex items-center gap-1.5 px-4 min-h-[44px] rounded-2xl border text-xs font-semibold shrink-0 transition-all",
                 active
-                  ? "border-indigo-500 text-white"
-                  : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
+                  ? "border-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                  : "bg-[var(--muted)] border-transparent text-[var(--foreground)] hover:border-indigo-500/30"
               )}
             >
               {active && (
                 <motion.span
                   layoutId="locations-category-pill"
                   transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                  className="absolute inset-0 rounded-full bg-indigo-500"
+                  className="absolute inset-0 rounded-2xl bg-indigo-500"
                 />
               )}
               <cat.Icon className="relative w-3.5 h-3.5" strokeWidth={2} />

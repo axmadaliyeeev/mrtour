@@ -47,7 +47,7 @@ export function TopHeader() {
         {isDesktop && pathname === "/locations" ? (
           <button
             onClick={() => setSearchOpen(true)}
-            className="flex items-center gap-2 h-8 px-3 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 text-[var(--muted-foreground)] transition-all active:scale-95"
+            className="flex items-center gap-2 h-8 px-3 rounded-xl bg-[var(--muted)] border border-transparent hover:border-indigo-500/40 text-[var(--muted-foreground)] transition-all active:scale-95"
             aria-label={t("locations", "search_placeholder")}
           >
             <Search className="w-3.5 h-3.5" />
@@ -59,7 +59,7 @@ export function TopHeader() {
         ) : (
           <button
             onClick={() => setSearchOpen(true)}
-            className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+            className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-transparent hover:border-indigo-500/40 transition-all active:scale-90"
             aria-label={t("locations", "search_placeholder")}
             title="Ctrl K"
           >
@@ -70,7 +70,7 @@ export function TopHeader() {
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+          className="flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-transparent hover:border-indigo-500/40 transition-all active:scale-90"
           aria-label={theme === "dark" ? t("profile", "theme_light") : t("profile", "theme_dark")}
         >
           {theme === "dark" ? (
@@ -85,7 +85,7 @@ export function TopHeader() {
             place has nothing to do with account settings). */}
         <button
           onClick={() => navigate("/saved")}
-          className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-[var(--border)] hover:border-indigo-500/40 transition-all active:scale-90"
+          className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-[var(--muted)] border border-transparent hover:border-indigo-500/40 transition-all active:scale-90"
           aria-label={`${planCount} ${t("profile", "plan_count_suffix")}`}
         >
           <Bookmark

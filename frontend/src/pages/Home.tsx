@@ -107,12 +107,12 @@ export default function Home() {
             </div>
 
             {/* Headline */}
-            <h1 className="animate-fade-up delay-75 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gradient leading-[1.05] pb-1 mb-4 tracking-tight">
+            <h1 className="animate-fade-up delay-75 text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gradient leading-[1.02] pb-1 mb-5 tracking-[-0.03em]">
               {t("home", "hero_title")}
             </h1>
 
             {/* Subtitle */}
-            <p className="animate-fade-up delay-150 text-[var(--muted-foreground)] text-sm sm:text-base leading-relaxed mb-7 max-w-lg">
+            <p className="animate-fade-up delay-150 text-[var(--muted-foreground)] text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
               {t("home", "hero_subtitle")}
             </p>
 
@@ -230,9 +230,9 @@ export default function Home() {
       </section>
 
       {/* ── Categories ────────────────────────────────────────── */}
-      <Section className="px-4 mb-8" delay={50}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-bold text-[var(--muted-foreground)] uppercase tracking-widest">
+      <Section className="px-4 mb-10" delay={50}>
+        <div className="flex items-center justify-between mb-3.5">
+          <h2 className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-widest">
             {t("home", "cat_all")}
           </h2>
           <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
@@ -244,11 +244,11 @@ export default function Home() {
                 key={cat.key}
                 onClick={() => navigate("/locations")}
                 className={cn(
-                  "relative flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
+                  "relative flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-2xl border text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
                   "hover:-translate-y-0.5 hover:shadow-md",
                   cat.key === "all"
-                    ? "bg-indigo-500 border-indigo-500 text-white shadow-sm"
-                    : "bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-indigo-500/5 hover:shadow-indigo-500/10"
+                    ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                    : "bg-[var(--card)] border-transparent shadow-[var(--shadow-card)] text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-indigo-500/5"
                 )}
                 style={{ animationDelay: `${i * 40}ms` }}
               >
@@ -274,7 +274,7 @@ export default function Home() {
           Primary discovery path to the new page on mobile, where the
           bottom nav has no room for a 6th tab (desktop also has it in
           the sidebar). */}
-      <Section className="px-4 mb-8" delay={0}>
+      <Section className="px-4 mb-10" delay={0}>
         <button
           onClick={() => navigate("/uzbekistan")}
           className="tilt-hover group relative w-full h-28 sm:h-32 rounded-2xl overflow-hidden text-left shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
@@ -304,10 +304,10 @@ export default function Home() {
       </Section>
 
       {/* ── Featured locations ────────────────────────────────── */}
-      <Section className="mb-8" delay={0}>
-        <div className="px-4 flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <h2 className="reveal-wipe text-base font-bold text-[var(--foreground)]">
+      <Section className="mb-10" delay={0}>
+        <div className="px-4 flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="reveal-wipe text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--foreground)]">
               {t("home", "featured_title")}
             </h2>
             <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 text-[10px] font-bold border border-indigo-500/20">
@@ -336,9 +336,9 @@ export default function Home() {
       </Section>
 
       {/* ── All locations grid ────────────────────────────────── */}
-      <Section className="px-4 mb-8" delay={0}>
+      <Section className="px-4 mb-10" delay={0}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="reveal-wipe text-base font-bold text-[var(--foreground)]">
+          <h2 className="reveal-wipe text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--foreground)]">
             {t("home", "all_title")}
           </h2>
           <div className="flex items-center gap-2">
