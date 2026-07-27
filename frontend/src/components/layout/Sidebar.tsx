@@ -41,22 +41,24 @@ export function Sidebar() {
   const { t } = useTranslation();
 
   return (
-    <aside className="glass fixed left-0 top-0 h-screen w-60 z-40 flex flex-col bg-[var(--sidebar-bg)] border-r border-[var(--sidebar-border)] overflow-hidden">
+    // border-r replaced with a barely-there shadow — a hard rule down the
+    // full height of the screen next to a dense icon+label nav column is
+    // exactly the CMS/admin-dashboard silhouette; a soft edge reads as a
+    // floating panel instead.
+    <aside className="glass fixed left-0 top-0 h-screen w-60 z-40 flex flex-col bg-[var(--sidebar-bg)] shadow-[1px_0_0_0_var(--sidebar-border)] overflow-hidden">
 
       {/* ── Subtle top gradient glow ───────────────────── */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/6 to-transparent pointer-events-none" />
 
       {/* ── Logo — real brand mark (mark + wordmark in one image) instead
              of a generic MapPin icon standing in for it. Theme-matched
-             variant (dark text for light bg, light text for dark bg). ── */}
-      <div className="relative flex items-center px-5 h-[68px] border-b border-[var(--sidebar-border)] shrink-0">
-        <div>
-          <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />
-          <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
-          <p className="text-[9px] text-[var(--muted-foreground)] font-medium tracking-wider uppercase mt-0.5 ml-0.5">
-            Travel Guide
-          </p>
-        </div>
+             variant (dark text for light bg, light text for dark bg).
+             Dropped the "Travel Guide" tagline underneath — it was
+             restating the obvious and added a line of dashboard-style
+             chrome for nothing. ── */}
+      <div className="relative flex items-center px-5 h-[72px] shrink-0">
+        <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />
+        <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
       </div>
 
       {/* ── Main navigation ────────────────────────────── */}
@@ -190,7 +192,7 @@ export function Sidebar() {
       {/* ── Bottom: user card ─────────────────────────────
           (theme toggle lives in the header now — it read as a
           stranded debug switch tucked at the bottom of the sidebar) */}
-      <div className="shrink-0 border-t border-[var(--sidebar-border)]">
+      <div className="shrink-0 shadow-[0_-1px_0_0_var(--sidebar-border)]">
 
         {/* User / guest card */}
         <div className="p-3">

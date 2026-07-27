@@ -42,7 +42,7 @@ export default function SavedPlaces() {
         </h1>
         <p className="text-xs text-[var(--muted-foreground)] mb-6">{t("saved", "subtitle")}</p>
 
-        <div className="flex flex-col items-center text-center gap-3 py-16 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="flex flex-col items-center text-center gap-3 py-16 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
             <Bookmark className="w-6 h-6 text-indigo-500/60" strokeWidth={1.5} />
           </div>
@@ -106,7 +106,7 @@ export default function SavedPlaces() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] group"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] group"
                   >
                     <img
                       src={loc.img}

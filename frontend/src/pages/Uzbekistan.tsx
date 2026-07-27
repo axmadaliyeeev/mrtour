@@ -522,7 +522,7 @@ export default function Uzbekistan() {
             return (
               <div
                 key={w.title}
-                className="tilt-hover animate-fade-up flex items-start gap-3.5 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
+                className="tilt-hover animate-fade-up flex items-start gap-3.5 p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
                 style={{ animationDelay: `${i * 70 + 100}ms` }}
               >
                 <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -593,7 +593,7 @@ export default function Uzbekistan() {
             return (
               <div
                 key={tip.title}
-                className="animate-fade-up flex items-start gap-3 p-3.5 rounded-xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]"
+                className="animate-fade-up flex items-start gap-3 p-3.5 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]"
                 style={{ animationDelay: `${i * 60 + 100}ms` }}
               >
                 <span className="w-9 h-9 shrink-0 rounded-lg bg-[var(--muted)] flex items-center justify-center">
@@ -627,7 +627,7 @@ export default function Uzbekistan() {
             return (
               <div
                 key={item.title}
-                className="tilt-hover animate-fade-up flex items-start gap-3.5 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
+                className="tilt-hover animate-fade-up flex items-start gap-3.5 p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
                 style={{ animationDelay: `${i * 70 + 100}ms` }}
               >
                 <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -654,7 +654,7 @@ export default function Uzbekistan() {
             return (
               <div
                 key={s.title}
-                className="tilt-hover animate-fade-up flex flex-col items-center text-center gap-2 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
+                className="tilt-hover animate-fade-up flex flex-col items-center text-center gap-2 p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
                 style={{ animationDelay: `${i * 70 + 100}ms` }}
               >
                 <span className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">

@@ -49,7 +49,7 @@ type TFn = ReturnType<typeof useTranslation>["t"];
 // ── Review Card ──────────────────────────────────────────────────────────────
 function ReviewCard({ review, t }: { review: Review; t: TFn }) {
   return (
-    <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-2">
+    <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-2">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
@@ -358,19 +358,19 @@ export default function LocationDetail() {
           (not border alone) so these read as distinct lifted panels
           against the page, not a same-toned rectangle. */}
       <div className="px-4 mt-4 grid grid-cols-3 gap-2 mb-5">
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
           <DollarSign className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.priceUSD === 0 ? t("detail", "free") : loc.price}
           </span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "price_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
           <Clock className="w-4 h-4 text-purple-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">{loc.duration}</span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "duration_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
           <Calendar className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.bestSeason.split(",")[0] ?? loc.bestSeason}
@@ -389,21 +389,21 @@ export default function LocationDetail() {
       <section className="px-4 mb-5">
         <h2 className="text-base font-bold text-[var(--foreground)] mb-3">{t("detail", "practical_info")}</h2>
         <div className="space-y-2">
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
             <Clock className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)]">{t("detail", "hours")}</p>
               <p className="text-xs text-[var(--muted-foreground)]">{loc.hours}</p>
             </div>
           </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
             <Bus className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)]">{t("detail", "how_to_get")}</p>
               <p className="text-xs text-[var(--muted-foreground)]">{loc.transport}</p>
             </div>
           </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
             <Calendar className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)]">{t("detail", "best_season")}</p>
@@ -463,7 +463,7 @@ export default function LocationDetail() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-          <div className="mb-4 p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-3">
+          <div className="mb-4 p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-3">
             {submitted ? (
               <div className="flex items-center justify-center gap-2 py-4">
                 <CheckCircle2 className="w-6 h-6 text-indigo-500" strokeWidth={1.5} />

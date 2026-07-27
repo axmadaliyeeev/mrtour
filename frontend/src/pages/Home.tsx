@@ -198,7 +198,7 @@ export default function Home() {
                   "bg-[var(--card)] shadow-[var(--shadow-card)] hover:shadow-md",
                   isRating
                     ? "p-5 border-gold-500/30"
-                    : "p-4 border-[var(--border)]/60",
+                    : "p-4 border-transparent",
                   `hover:${glow}`
                 )}
                 style={{ animationDelay: `${i * 80 + 100}ms` }}

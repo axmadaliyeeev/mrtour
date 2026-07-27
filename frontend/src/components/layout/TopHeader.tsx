@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Bookmark, LogIn, ChevronRight, Sun, Moon, Search } from "lucide-react";
+import { Bookmark, LogIn, Sun, Moon, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAppStore } from "@/store";
@@ -13,38 +13,19 @@ export function TopHeader() {
   const { t } = useTranslation();
   const planCount = plan.length;
 
-  const ROUTE_LABELS: Record<string, string> = {
-    "/home":       t("nav", "home"),
-    "/locations":  t("nav", "locations"),
-    "/chat":       "Trova AI",
-    "/services":   t("nav", "services"),
-    "/profile":    t("nav", "profile"),
-    "/uzbekistan": t("nav", "about"),
-    "/saved":      t("nav", "saved"),
-  };
-
-  const label =
-    ROUTE_LABELS[pathname] ??
-    (pathname.startsWith("/locations/") ? t("nav", "locations") : "");
-
   return (
-    <header className="sticky top-0 z-50 h-14 flex items-center px-4 gap-3 glass bg-[var(--header-bg)] border-b border-[var(--border)]">
+    // No border line — the .glass blur itself is the separation, plus a
+    // faint shadow (Apple toolbars rarely draw a hard rule under the bar).
+    <header className="sticky top-0 z-50 h-14 flex items-center px-4 gap-3 glass bg-[var(--header-bg)] shadow-[0_1px_0_0_var(--border)]">
 
-      {/* ── Left side ── */}
+      {/* ── Left side — the breadcrumb ("trova > Page Name") that used to
+          live here was the single biggest "admin dashboard" tell: the
+          sidebar's active nav item and the page's own heading already
+          say where you are, so repeating it a third time added nothing
+          but clutter. Left empty on desktop; mobile keeps the wordmark
+          since there's no sidebar there to establish it. ── */}
       {isDesktop ? (
-        <div className="flex items-center gap-1.5 text-sm flex-1 min-w-0">
-          <span className="text-[var(--muted-foreground)] text-xs font-semibold tracking-wider uppercase">
-            trova
-          </span>
-          {label && (
-            <>
-              <ChevronRight className="w-3.5 h-3.5 text-[var(--border)] shrink-0" />
-              <span key={label} className="font-semibold text-[var(--foreground)] truncate animate-fade-in">
-                {label}
-              </span>
-            </>
-          )}
-        </div>
+        <div className="flex-1" />
       ) : (
         <button
           onClick={() => navigate("/home")}
@@ -71,7 +52,7 @@ export function TopHeader() {
           >
             <Search className="w-3.5 h-3.5" />
             <span className="text-xs">{t("locations", "search_placeholder")}</span>
-            <kbd className="text-[9px] font-semibold bg-[var(--card)] border border-[var(--border)] rounded px-1 py-px">
+            <kbd className="text-[9px] font-semibold bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] rounded px-1 py-px">
               Ctrl K
             </kbd>
           </button>

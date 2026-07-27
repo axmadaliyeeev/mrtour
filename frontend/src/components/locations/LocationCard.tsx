@@ -163,7 +163,12 @@ export function LocationCard({ location, variant = "default", className }: Locat
       onClick={go}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        "spotlight-card tilt-hover rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden cursor-pointer",
+        // Shadow-only elevation, no resting border — a grid of bordered
+        // boxes is the single strongest "admin table" tell; a floating
+        // card with just a soft shadow (Apple's own card language) reads
+        // as content, not data rows. A border only appears on hover, as
+        // a focus cue rather than a permanent outline.
+        "spotlight-card tilt-hover rounded-2xl border border-transparent bg-[var(--card)] overflow-hidden cursor-pointer",
         "hover:border-indigo-500/40",
         "transition-all duration-200 group",
         "shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]",

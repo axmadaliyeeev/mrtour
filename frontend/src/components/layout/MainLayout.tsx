@@ -65,7 +65,7 @@ function ScrollToTop() {
       aria-label="Scroll to top"
       className={cn(
         "fixed right-4 z-40 w-10 h-10 rounded-full",
-        "bg-[var(--card)] border border-[var(--border)] shadow-lg",
+        "bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-lg",
         "flex items-center justify-center",
         "text-[var(--muted-foreground)] hover:text-indigo-400 hover:border-indigo-500/40",
         "transition-all duration-250 active:scale-90",

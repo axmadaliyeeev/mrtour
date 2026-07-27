@@ -564,7 +564,7 @@ export default function Chat() {
             <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm">
               <RouteOrb className="w-4 h-4" />
             </div>
-            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]">
+            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-1">
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
@@ -588,7 +588,7 @@ export default function Chat() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.9 }}
               onClick={scrollToBottom}
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-10"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-10"
             >
               <ChevronDown className="w-3.5 h-3.5" />
             </motion.button>

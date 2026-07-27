@@ -49,7 +49,7 @@ function RestaurantsTab({ search }: { search: string }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((r) => (
-        <div key={r.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <div key={r.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
           <div className="relative h-44 overflow-hidden">
             <img
               src={r.img}
@@ -107,7 +107,7 @@ function HotelsTab({ search }: { search: string }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((h) => (
-        <div key={h.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <div key={h.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
           <div className="relative h-44 overflow-hidden">
             <img
               src={h.img}
@@ -185,7 +185,7 @@ function GuidesTab({ search }: { search: string }) {
   return (
     <div className="space-y-3">
       {filtered.map((g) => (
-        <div key={g.id} className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all duration-200">
+        <div key={g.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all duration-200">
           <div className="p-4">
             <div className="flex items-start gap-3">
               <div className="relative shrink-0">
@@ -379,7 +379,7 @@ function CurrencyTab() {
   return (
     <div className="space-y-4">
       {/* Converter */}
-      <div className="rounded-2xl bg-[var(--card)] border border-[var(--border)] p-4 space-y-4">
+      <div className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] p-4 space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-indigo-400" />

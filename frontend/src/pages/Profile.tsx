@@ -152,7 +152,7 @@ export default function Profile() {
         </div>
 
         {/* Guest card */}
-        <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-6 text-center shadow-[var(--shadow-card)]">
+        <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] mb-6 text-center shadow-[var(--shadow-card)]">
           <div className="absolute -top-16 -right-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
           <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/8 rounded-full blur-2xl pointer-events-none" />
           {/* A gradient ring (emerald → mint) around a dark center reads
@@ -211,7 +211,7 @@ export default function Profile() {
               {plan.map((loc) => (
                 <div
                   key={loc.id}
-                  className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] group"
+                  className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] group"
                 >
                   <img
                     src={loc.img}
@@ -291,7 +291,7 @@ export default function Profile() {
           {GUEST_BENEFITS.map((b, i) => (
             <div
               key={b.title}
-              className="animate-fade-up flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] hover:border-indigo-500/35 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all"
+              className="animate-fade-up flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] hover:border-indigo-500/35 hover:-translate-y-0.5 hover:shadow-md hover:shadow-indigo-500/10 transition-all"
               style={{ animationDelay: `${i * 70}ms` }}
             >
               <span className="w-11 h-11 shrink-0 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
@@ -306,7 +306,7 @@ export default function Profile() {
         </div>
 
         {/* Theme toggle for guest */}
-        <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {theme === "dark" ? (
@@ -392,7 +392,7 @@ export default function Profile() {
         ].map((s) => (
           <div
             key={s.label}
-            className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)]"
+            className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]"
           >
             <s.Icon className="w-4 h-4 text-indigo-500" strokeWidth={2} />
             <span className="text-lg font-extrabold text-[var(--foreground)] tabular-nums">{s.value}</span>
@@ -421,7 +421,7 @@ export default function Profile() {
         </div>
 
         {plan.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-8 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-center">
+          <div className="flex flex-col items-center gap-3 py-8 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-center">
             <Map className="w-9 h-9 text-indigo-400/60" strokeWidth={1.5} />
             <p className="text-sm font-semibold text-[var(--foreground)]">
               {t("profile", "plan_empty_title")}
@@ -443,7 +443,7 @@ export default function Profile() {
             {plan.map((loc) => (
               <div
                 key={loc.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] group"
+                className="flex items-center gap-3 p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] group"
               >
                 <img
                   src={loc.img}
@@ -500,7 +500,7 @@ export default function Profile() {
           )}
         </h3>
         {myReviews.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-6 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-center">
+          <div className="flex flex-col items-center gap-2 py-6 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-center">
             <MessageSquare className="w-7 h-7 text-indigo-400/50" strokeWidth={1.5} />
             <p className="text-xs text-[var(--muted-foreground)] max-w-[220px]">
               {t("profile", "reviews_empty")}
@@ -509,7 +509,7 @@ export default function Profile() {
         ) : (
           <div className="space-y-2">
             {myReviews.map((r) => (
-              <div key={r.id} className="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+              <div key={r.id} className="p-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-semibold text-[var(--foreground)]">{r.locationName}</span>
                   <Stars rating={r.stars} size="sm" />
@@ -549,7 +549,7 @@ export default function Profile() {
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
           <Settings className="w-4 h-4 text-indigo-400" /> {t("profile", "settings_title")}
         </h3>
-        <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)]">
+        <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {theme === "dark" ? (
@@ -585,7 +585,7 @@ export default function Profile() {
         <h3 className="text-sm font-bold text-[var(--foreground)] mb-3 flex items-center gap-2">
           <Phone className="w-4 h-4 text-red-400" /> {t("profile", "emergency_label")}
         </h3>
-        <div className="p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-1">
+        <div className="p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-1">
           {EMERGENCY_NUMBERS_RAW.map((item) => (
             <a
               key={item.number}

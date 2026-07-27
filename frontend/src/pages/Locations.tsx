@@ -196,7 +196,7 @@ export default function Locations() {
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
           className="px-4 mb-4 overflow-hidden"
         >
-          <div className="p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] space-y-4">
+          <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-4">
             {/* City */}
             <div>
               <p className="text-xs font-semibold text-[var(--foreground)] mb-2">
