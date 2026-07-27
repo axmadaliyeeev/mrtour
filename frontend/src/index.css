@@ -47,6 +47,15 @@
   --shadow-sm:         0 1px 2px 0 rgb(50 40 25 / 0.06);
   --font-body:         "Manrope", system-ui, -apple-system, sans-serif;
   --font-display:      "Sora", "Manrope", system-ui, sans-serif;
+  /* L2: a modal surface distinct from both the warm off-white page and
+     the pure-white cards. Defined here (not a second :root block after
+     .dark) — :root matches <html> regardless of which theme class is
+     on it, so a later :root rule with equal specificity was silently
+     overriding .dark's --modal and forcing the auth modal white even
+     in dark mode. */
+  --modal:             #ffffff;
+  --modal-border:      #ddd7c9;
+  --shadow-modal:      0 24px 60px -12px rgb(50 40 25 / 0.28), 0 0 0 1px rgb(50 40 25 / 0.04);
 }
 
 .dark {
@@ -64,9 +73,16 @@
        L3 --primary    : #50c878 — accent only (buttons/active/icons/links) */
   --background:        #0a0f0d;
   --foreground:        #f0f2f1; /* near-white, not green-tinted */
-  --card:              #141b18;
-  --card-hover:        #19221e;
-  --border:            #1d2622; /* hairline — softened, shadow carries most of the separation */
+  /* Bumped a step lighter than the original #141b18 — against the
+     near-black page that step read as almost no separation at all
+     (worst on the Chat message list, where a card-wrapped reply and
+     the bare page looked like the same surface). This is still
+     clearly darker than --modal (#1c2622) so the elevation order
+     (page < card < modal) stays intact, just each step is now
+     actually visible. */
+  --card:              #171f1b;
+  --card-hover:        #1c2521;
+  --border:            #263129; /* a touch lighter than --card so edges stay visible even where shadow alone can't read against a near-black page */
   --border-focus:      #50c878;
   --muted:             #101512; /* recessed neutral inset (inputs, chips) */
   --muted-foreground:  #93a39c;
@@ -87,14 +103,6 @@
   --shadow-card-hover: 0 2px 6px 0 rgb(0 0 0 / 0.35), 0 20px 44px -10px rgb(0 0 0 / 0.45);
   --shadow-sm:         0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-modal:      0 24px 60px -12px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(0 0 0 / 0.3);
-}
-
-/* Light mode needs the same L2 concept: a modal surface distinct from
-   both the warm off-white page and the pure-white cards. */
-:root {
-  --modal:             #ffffff;
-  --modal-border:      #ddd7c9;
-  --shadow-modal:      0 24px 60px -12px rgb(50 40 25 / 0.28), 0 0 0 1px rgb(50 40 25 / 0.04);
 }
 
 /* ── Base reset ─────────────────────────────────────── */

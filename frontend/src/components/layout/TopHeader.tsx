@@ -5,6 +5,20 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 
+// A single, present-tense page label — not the old "trova > Page Name"
+// breadcrumb (that repeated what the sidebar's active item already said).
+// This is just filling real dead space: an empty 900px-wide bar above
+// every page read as an unfinished screen, not a clean one.
+const PAGE_LABEL: Record<string, [string, string]> = {
+  "/home":       ["nav", "home"],
+  "/locations":  ["nav", "locations"],
+  "/saved":      ["nav", "saved"],
+  "/uzbekistan": ["nav", "about"],
+  "/services":   ["nav", "services"],
+  "/chat":       ["nav", "ai"],
+  "/profile":    ["nav", "profile"],
+};
+
 export function TopHeader() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -12,20 +26,27 @@ export function TopHeader() {
   const { user, plan, theme, toggleTheme, openAuthModal, setSearchOpen } = useAppStore();
   const { t } = useTranslation();
   const planCount = plan.length;
+  const pageLabelKey = PAGE_LABEL[pathname];
 
   return (
     // No border line — the .glass blur itself is the separation, plus a
     // faint shadow (Apple toolbars rarely draw a hard rule under the bar).
     <header className="sticky top-0 z-50 h-14 flex items-center px-4 gap-3 glass bg-[var(--header-bg)] shadow-[0_1px_0_0_var(--border)]">
 
-      {/* ── Left side — the breadcrumb ("trova > Page Name") that used to
-          live here was the single biggest "admin dashboard" tell: the
-          sidebar's active nav item and the page's own heading already
-          say where you are, so repeating it a third time added nothing
-          but clutter. Left empty on desktop; mobile keeps the wordmark
-          since there's no sidebar there to establish it. ── */}
+      {/* ── Left side — the old "trova > Page Name" breadcrumb was clutter
+          (the sidebar's active item already says where you are), but
+          leaving this totally empty made the whole bar read as a blank,
+          unfinished strip above every page. A single quiet page label
+          fills that space without repeating the sidebar. Mobile keeps
+          the wordmark since there's no sidebar there to establish it. ── */}
       {isDesktop ? (
-        <div className="flex-1" />
+        <div className="flex-1 min-w-0">
+          {pageLabelKey && (
+            <span className="text-sm font-semibold text-[var(--foreground)] tracking-tight">
+              {t(pageLabelKey[0] as "nav", pageLabelKey[1])}
+            </span>
+          )}
+        </div>
       ) : (
         <button
           onClick={() => navigate("/home")}
