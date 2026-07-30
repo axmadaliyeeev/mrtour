@@ -59,11 +59,17 @@ const CHIP_STYLES = [
 export default function Landing() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { openAuthModal, enterAsGuest } = useAppStore();
+  const { openAuthModal, isLoggedIn } = useAppStore();
   const featured = LOCATIONS.filter((l) => l.featured).slice(0, 6);
 
-  function continueAsGuest() {
-    enterAsGuest();
+  // "/" is a public marketing page reachable regardless of session state
+  // (typing it, clicking a shared link, the logo, etc.) — it used to
+  // redirect an already-signed-in visitor straight to /home, which meant
+  // there was no way to ever see this page again once you'd logged in
+  // once on a given browser. Instead it adapts: the header/CTAs read
+  // "open the app" rather than "sign in" / "create an account" for a
+  // returning, already-authenticated visitor.
+  function enterApp() {
     navigate("/home");
   }
 
@@ -96,10 +102,10 @@ export default function Landing() {
           <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
         </div>
         <button
-          onClick={() => openAuthModal("login")}
+          onClick={isLoggedIn ? enterApp : () => openAuthModal("login")}
           className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-colors"
         >
-          {t("landing", "sign_in")}
+          {isLoggedIn ? t("landing", "open_app") : t("landing", "sign_in")}
         </button>
       </header>
 
@@ -157,19 +163,31 @@ export default function Landing() {
             transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
           >
-            <button
-              onClick={() => openAuthModal("register")}
-              className="btn-shine group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
-            >
-              {t("landing", "cta_signup")}
-              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
-            <button
-              onClick={continueAsGuest}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/30 text-white text-sm font-bold bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all active:scale-[0.97]"
-            >
-              {t("landing", "cta_guest")}
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={enterApp}
+                className="btn-shine group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
+              >
+                {t("landing", "open_app")}
+                <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => openAuthModal("register")}
+                  className="btn-shine group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
+                >
+                  {t("landing", "cta_signup")}
+                  <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                <button
+                  onClick={enterApp}
+                  className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-white/30 text-white text-sm font-bold bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all active:scale-[0.97]"
+                >
+                  {t("landing", "cta_guest")}
+                </button>
+              </>
+            )}
           </motion.div>
         </div>
 
@@ -303,7 +321,7 @@ export default function Landing() {
           </Reveal>
           <Reveal className="text-center mt-8">
             <button
-              onClick={continueAsGuest}
+              onClick={enterApp}
               className="group text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
             >
               {t("landing", "see_all")}
@@ -326,18 +344,29 @@ export default function Landing() {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">{t("landing", "final_cta_title")}</h2>
             <p className="text-white/85 text-sm sm:text-base leading-relaxed mb-7 max-w-md mx-auto">{t("landing", "final_cta_desc")}</p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
-              <button
-                onClick={() => openAuthModal("register")}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-600 text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
-              >
-                {t("landing", "cta_signup")}
-              </button>
-              <button
-                onClick={continueAsGuest}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/15 hover:bg-white/22 border border-white/25 text-white text-sm font-bold backdrop-blur-sm transition-all active:scale-[0.97]"
-              >
-                {t("landing", "cta_guest")}
-              </button>
+              {isLoggedIn ? (
+                <button
+                  onClick={enterApp}
+                  className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-600 text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
+                >
+                  {t("landing", "open_app")}
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => openAuthModal("register")}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-600 text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
+                  >
+                    {t("landing", "cta_signup")}
+                  </button>
+                  <button
+                    onClick={enterApp}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/15 hover:bg-white/22 border border-white/25 text-white text-sm font-bold backdrop-blur-sm transition-all active:scale-[0.97]"
+                  >
+                    {t("landing", "cta_guest")}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -358,13 +387,13 @@ export default function Landing() {
           {/* Explore */}
           <div className="flex flex-col items-center sm:items-start gap-2.5">
             <p className="text-xs font-bold uppercase tracking-wide text-[var(--foreground)]">{t("nav", "locations")}</p>
-            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
+            <button onClick={enterApp} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "about")}
             </button>
-            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
+            <button onClick={enterApp} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "locations")}
             </button>
-            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
+            <button onClick={enterApp} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "services")}
             </button>
           </div>
@@ -375,7 +404,7 @@ export default function Landing() {
           <div className="flex flex-col items-center sm:items-start gap-2.5">
             <p className="text-xs font-bold uppercase tracking-wide text-[var(--foreground)]">Contact</p>
             <button
-              onClick={continueAsGuest}
+              onClick={enterApp}
               className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors"
             >
               <Bot className="w-3.5 h-3.5" />

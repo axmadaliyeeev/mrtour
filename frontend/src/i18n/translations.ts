@@ -303,6 +303,7 @@ export interface TranslationSchema {
     cta_signup: string;
     cta_guest: string;
     sign_in: string;
+    open_app: string;
     features_title: string;
     feature1_title: string;
     feature1_desc: string;
@@ -636,6 +637,7 @@ const UZ: TranslationSchema = {
     cta_signup: "Boshlash — Ro'yxatdan o'tish",
     cta_guest: "Mehmon sifatida davom etish",
     sign_in: "Kirish",
+    open_app: "Ilovaga o'tish",
     features_title: "Trova nima uchun boshqacha",
     feature1_title: "AI sayohat rejasi",
     feature1_desc: "Trova AI bilan suhbatlashib, sizga mos individual marshrut tuzing.",
@@ -971,6 +973,7 @@ const RU: TranslationSchema = {
     cta_signup: "Начать — создать аккаунт",
     cta_guest: "Продолжить как гость",
     sign_in: "Войти",
+    open_app: "Открыть приложение",
     features_title: "Почему Trova особенный",
     feature1_title: "AI-планирование поездки",
     feature1_desc: "Общайтесь с Trova AI, чтобы составить индивидуальный маршрут.",
@@ -1305,6 +1308,7 @@ const EN: TranslationSchema = {
     cta_signup: "Get Started — Create Account",
     cta_guest: "Continue as Guest",
     sign_in: "Sign In",
+    open_app: "Open the App",
     features_title: "Why Trova is different",
     feature1_title: "AI Trip Planning",
     feature1_desc: "Chat with Trova AI to build a custom itinerary just for you.",
@@ -1637,6 +1641,7 @@ const ZH: TranslationSchema = {
     cta_signup: "开始使用 — 创建账户",
     cta_guest: "以访客身份继续",
     sign_in: "登录",
+    open_app: "打开应用",
     features_title: "Trova 的与众不同之处",
     feature1_title: "AI 行程规划",
     feature1_desc: "与 Trova AI 对话，为您定制专属行程。",
@@ -1973,6 +1978,7 @@ const DE: TranslationSchema = {
     cta_signup: "Loslegen — Konto erstellen",
     cta_guest: "Als Gast fortfahren",
     sign_in: "Anmelden",
+    open_app: "App öffnen",
     features_title: "Warum Trova anders ist",
     feature1_title: "KI-Reiseplanung",
     feature1_desc: "Chatten Sie mit Trova AI, um eine individuelle Route zu erstellen.",
@@ -2311,6 +2317,7 @@ const FR: TranslationSchema = {
     cta_signup: "Commencer — Créer un compte",
     cta_guest: "Continuer en tant qu'invité",
     sign_in: "Se connecter",
+    open_app: "Ouvrir l'application",
     features_title: "Pourquoi Trova est différent",
     feature1_title: "Planification de voyage IA",
     feature1_desc: "Discutez avec Trova AI pour créer un itinéraire personnalisé.",

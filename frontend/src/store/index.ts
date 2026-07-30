@@ -38,8 +38,6 @@ interface AppStore {
   authModalTab: "login" | "register";
   openAuthModal: (tab?: "login" | "register") => void;
   closeAuthModal: () => void;
-  hasEnteredApp: boolean;
-  enterAsGuest: () => void;
   searchOpen: boolean;
   setSearchOpen: (open: boolean) => void;
 
@@ -111,13 +109,6 @@ export const useAppStore = create<AppStore>()(
       openAuthModal: (tab = "login") => set({ authModalOpen: true, authModalTab: tab }),
       closeAuthModal: () => set({ authModalOpen: false }),
 
-      // Guests who pick "Continue as Guest" on the landing page shouldn't
-      // be routed back to it on every subsequent visit — this flag (like
-      // auth) is part of the persisted slice below, so it survives a
-      // refresh the same way a logged-in session would.
-      hasEnteredApp: false,
-      enterAsGuest: () => set({ hasEnteredApp: true }),
-
       searchOpen: false,
       setSearchOpen: (open) => set({ searchOpen: open }),
 
@@ -178,14 +169,6 @@ export const useAppStore = create<AppStore>()(
     {
       name: "trova-v1",
       storage: createJSONStorage(() => localStorage),
-      // hasEnteredApp is deliberately NOT persisted here — it used to be,
-      // which meant clicking "Continue as Guest" just once permanently
-      // skipped the landing page on every future visit to this browser,
-      // even weeks later after closing it entirely. It should only skip
-      // the landing for the rest of THIS session (so SPA navigation back
-      // to "/" after entering doesn't re-show it), not forever — a fresh
-      // page load/new visit is exactly when the landing is supposed to
-      // greet the visitor.
       partialize: (state) => ({
         user: state.user,
         plan: state.plan,

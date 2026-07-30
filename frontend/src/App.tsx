@@ -14,26 +14,6 @@ import Uzbekistan from "@/pages/Uzbekistan";
 import SavedPlaces from "@/pages/SavedPlaces";
 import { useAppStore } from "@/store";
 
-// "/" is the pre-login marketing page for guests — but returning users
-// (already logged in, or who already picked "Continue as Guest" before)
-// shouldn't see it again on every visit, so it redirects straight into
-// the app for them instead. Reads the store reactively, so a successful
-// login/register *while already on this route* (modal stays open over
-// the landing page) flips this and redirects immediately without the
-// user needing to navigate manually.
-function LandingGate() {
-  // `isLoggedIn` alone isn't enough here: it only gets confirmed by
-  // checkAuth(), which runs inside MainLayout — a route this one never
-  // mounts. On a fresh load, a real returning user would have their
-  // persisted `user` object but isLoggedIn still defaults to false until
-  // they reach a route that runs checkAuth, so this route would show
-  // them the guest landing page forever with no way back in. `user`
-  // itself IS persisted across reloads, so check that directly instead.
-  const { isLoggedIn, user, hasEnteredApp } = useAppStore();
-  if (isLoggedIn || user || hasEnteredApp) return <Navigate to="/home" replace />;
-  return <Landing />;
-}
-
 function ThemeApplier() {
   const { theme, lang } = useAppStore();
   useEffect(() => {
@@ -54,7 +34,17 @@ export default function App() {
       <AuthModal />
       <CommandPalette />
       <Routes>
-        <Route path="/" element={<LandingGate />} />
+        {/* Always renders — a marketing/landing homepage that stays reachable
+            regardless of session state (the same pattern most SaaS sites
+            use: "/" is the public page, the dashboard lives at its own
+            path). Landing itself adapts its header/CTAs for an already-
+            signed-in visitor instead of the route silently redirecting
+            them away — the previous redirect-based gate was exactly why
+            the landing page appeared to "disappear" once a session (or
+            the old, over-eagerly-persisted guest flag) existed: any
+            visit to "/" from a browser that had ever logged in bounced
+            straight to /home with no way to see it again. */}
+        <Route path="/" element={<Landing />} />
         <Route element={<MainLayout />}>
           <Route path="/home"          element={<Home />} />
           <Route path="/locations"     element={<Locations />} />
