@@ -379,7 +379,7 @@ export default function Landing() {
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="px-4 sm:px-8 pt-12 pb-8 border-t border-[var(--border)]">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="flex flex-col items-center sm:items-start gap-2.5 text-center sm:text-left">
             <div>
@@ -424,6 +424,17 @@ export default function Landing() {
               <Mail className="w-3.5 h-3.5" />
               mrforce.uz
             </a>
+          </div>
+
+          {/* Legal */}
+          <div className="flex flex-col items-center sm:items-start gap-2.5">
+            <p className="text-xs font-bold uppercase tracking-wide text-[var(--foreground)]">Legal</p>
+            <button onClick={() => navigate("/privacy")} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
+              Privacy Policy
+            </button>
+            <button onClick={() => navigate("/terms")} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
+              Terms of Service
+            </button>
           </div>
         </div>
 

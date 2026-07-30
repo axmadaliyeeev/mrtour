@@ -4,6 +4,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import Landing from "@/pages/Landing";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
 import Home from "@/pages/Home";
 import Locations from "@/pages/Locations";
 import LocationDetail from "@/pages/LocationDetail";
@@ -45,6 +47,12 @@ export default function App() {
             visit to "/" from a browser that had ever logged in bounced
             straight to /home with no way to see it again. */}
         <Route path="/" element={<Landing />} />
+        {/* Static, public, unauthenticated — deliberately outside
+            MainLayout (no sidebar/app-shell) since Google's OAuth
+            verification crawler and logged-out visitors both need to
+            reach these without hitting any auth gate. */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms"   element={<Terms />} />
         <Route element={<MainLayout />}>
           <Route path="/home"          element={<Home />} />
           <Route path="/locations"     element={<Locations />} />
