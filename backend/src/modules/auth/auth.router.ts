@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import { z } from "zod";
 import * as authService from "./auth.service";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +9,14 @@ import { validateBody } from "@/middleware/validate";
 import { sendSuccess, sendError } from "@/utils/response";
 import { REFRESH_TOKEN_MS } from "@/utils/jwt";
 import { env } from "@/config/env";
+
+// Verifying a Google Identity Services ID token only ever needs the
+// Client ID (as the expected `audience`) — the client SECRET is only
+// needed for the server-side authorization-code exchange flow, which
+// this app doesn't use. The frontend gets an ID token directly from
+// Google Identity Services and POSTs it here; this just verifies its
+// signature/audience/issuer against Google's public keys.
+const googleClient = env.GOOGLE_CLIENT_ID ? new OAuth2Client(env.GOOGLE_CLIENT_ID) : null;
 
 function decodeExpiredToken(token: string): JwtPayload | null {
   try {
@@ -60,6 +69,10 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+const googleSchema = z.object({
+  idToken: z.string().min(1),
+});
+
 // ── POST /api/auth/register ────────────────────────────
 authRouter.post(
   "/register",
@@ -80,6 +93,54 @@ authRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.login(req.body as z.infer<typeof loginSchema>);
+      setRefreshCookie(res, result.tokens.refreshToken);
+      sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
+    } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/auth/google ──────────────────────────────
+authRouter.post(
+  "/google",
+  validateBody(googleSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!googleClient) {
+        sendError(res, "Google sign-in is not configured on this server", 500);
+        return;
+      }
+      const { idToken } = req.body as z.infer<typeof googleSchema>;
+
+      let ticket;
+      try {
+        ticket = await googleClient.verifyIdToken({
+          idToken,
+          audience: env.GOOGLE_CLIENT_ID,
+        });
+      } catch {
+        sendError(res, "Google token yaroqsiz", 401);
+        return;
+      }
+
+      const payload = ticket.getPayload();
+      if (!payload?.sub || !payload.email) {
+        sendError(res, "Google token yaroqsiz", 401);
+        return;
+      }
+      // Google-side flag for "is this email actually verified" — reject
+      // unverified emails rather than silently trusting whatever string
+      // came back in the token payload.
+      if (payload.email_verified === false) {
+        sendError(res, "Google email tasdiqlanmagan", 401);
+        return;
+      }
+
+      const result = await authService.googleAuth({
+        googleId: payload.sub,
+        email:    payload.email,
+        name:     payload.given_name ?? payload.name ?? "",
+        surname:  payload.family_name ?? "",
+      });
       setRefreshCookie(res, result.tokens.refreshToken);
       sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
     } catch (err) { next(err); }

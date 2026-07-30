@@ -1,5 +1,6 @@
 ﻿import { useState, useRef, useEffect, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { GoogleLogin } from "@react-oauth/google";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,37 +46,65 @@ const LANGUAGES: { code: Lang; label: string }[] = [
 ];
 
 // ── Social auth ──────────────────────────────────────────────────────────────
-// Real Google/Apple sign-in needs OAuth credentials (a Google Cloud client
-// ID, an Apple Developer Program enrollment) this environment doesn't have
-// and can't fabricate — wiring up the button to a fake success would be
-// actively misleading. Instead it's fully built and visible, but honestly
-// tells the user it's not connected yet rather than pretending to work.
-function SocialAuthButtons() {
+// Google is now real (Google Identity Services issues an ID token
+// client-side; we POST it to /api/auth/google, which verifies it and
+// returns the same access/refresh token pair as email/password login).
+// Apple still needs a paid Apple Developer enrollment this environment
+// doesn't have and can't fabricate — wiring it to a fake success would
+// be actively misleading, so it stays an honest "not connected yet"
+// placeholder until real credentials exist.
+function SocialAuthButtons({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
-  const { showToast } = useAppStore();
+  const { login, showToast } = useAppStore();
+  const [googleLoading, setGoogleLoading] = useState(false);
 
-  function notYetConnected() {
+  function appleNotYetConnected() {
     showToast(t("auth", "social_soon"), undefined, "info");
+  }
+
+  async function handleGoogleSuccess(idToken: string) {
+    setGoogleLoading(true);
+    try {
+      const res = await apiClient.post<{ user: User; accessToken: string }>(
+        "/auth/google", { idToken }, { timeout: 45_000 }
+      );
+      localStorage.setItem("trova-token", res.accessToken);
+      login(res.user);
+      mergePlanOnLogin().catch(() => {});
+      onClose();
+    } catch {
+      showToast(t("auth", "err_google"), undefined, "error");
+    } finally {
+      setGoogleLoading(false);
+    }
   }
 
   return (
     <div className="space-y-2 mb-4">
+      {/* Google's own widget can't be reskinned to our exact button
+          markup (custom SVG + copy) — "outline"/"pill" is the closest
+          built-in look to the rest of this form's bordered buttons. A
+          thin loading overlay covers it while the backend round-trip
+          for handleGoogleSuccess is in flight, since the widget itself
+          has no built-in loading state once its own popup closes. */}
+      <div className="relative flex justify-center [&>div]:w-full">
+        <GoogleLogin
+          onSuccess={(cred) => cred.credential && handleGoogleSuccess(cred.credential)}
+          onError={() => showToast(t("auth", "err_google"), undefined, "error")}
+          theme="outline"
+          shape="pill"
+          size="large"
+          width="336"
+        />
+        {googleLoading && (
+          <div className="absolute inset-0 rounded-full bg-[var(--card)]/80 backdrop-blur-sm flex items-center justify-center">
+            <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
+          </div>
+        )}
+      </div>
       <button
         type="button"
-        onClick={notYetConnected}
-        className="w-full flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-sm font-semibold hover:bg-[var(--muted)] transition-colors active:scale-[0.98]"
-      >
-        <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
-          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.3 2.8l6-6C34 6.5 29.3 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.4-.4-3.5z"/>
-          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c2.8 0 5.3 1 7.3 2.8l6-6C34 6.5 29.3 4.5 24 4.5c-7.7 0-14.4 4.4-17.7 10.2z"/>
-          <path fill="#4CAF50" d="M24 43.5c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 34.6 26.7 35.5 24 35.5c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.5 39 16.2 43.5 24 43.5z"/>
-          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.2 5.6l6.2 5.2C40.6 36.4 43.5 30.8 43.5 24c0-1.2-.1-2.4-.4-3.5z"/>
-        </svg>
-        {t("auth", "continue_google")}
-      </button>
-      <button
-        type="button"
-        onClick={notYetConnected}
+        onClick={appleNotYetConnected}
         className="w-full flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-sm font-semibold hover:bg-[var(--muted)] transition-colors active:scale-[0.98]"
       >
         <svg width="15" height="15" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
@@ -198,7 +227,7 @@ function LoginTab({ onClose }: { onClose: () => void }) {
 
   return (
     <>
-    <SocialAuthButtons />
+    <SocialAuthButtons onClose={onClose} />
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       <Field label={t("auth", "email")} type="email" value={email} onChange={setEmail}
         placeholder={t("auth", "email_placeholder")} autoComplete="email" error={errors.email} />

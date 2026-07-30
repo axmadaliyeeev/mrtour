@@ -17,6 +17,11 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default("15m"),
   JWT_REFRESH_EXPIRES_IN: z.string().default("7d"),
   GROQ_API_KEY: z.string({ required_error: "GROQ_API_KEY is required" }),
+  // Optional (not required) — Google Sign-In is an added feature, not
+  // core to the app; existing deployments shouldn't fail to boot just
+  // because this hasn't been configured yet. The /api/auth/google route
+  // itself returns a clear 500 if this is missing when actually called.
+  GOOGLE_CLIENT_ID: z.string().optional(),
   FRONTEND_URL: z
     .string({ required_error: "FRONTEND_URL is required" })
     .url("FRONTEND_URL must be a valid URL"),

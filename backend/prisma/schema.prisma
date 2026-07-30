@@ -12,7 +12,12 @@ model User {
   name         String
   surname      String
   email        String     @unique
-  passwordHash String
+  // Optional now: a Google-authenticated account has no password to
+  // hash. Email/password registration still always sets this; the
+  // login flow's bcrypt.compare guards against it being null for a
+  // Google-only account (see auth.service.ts).
+  passwordHash String?
+  googleId     String?    @unique
   country      String     @default("")
   lang         String     @default("uz")
   isPremium    Boolean    @default(false)

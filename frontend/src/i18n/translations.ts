@@ -283,6 +283,7 @@ export interface TranslationSchema {
     required: string;
     form_errors_summary: string;
     err_login: string;
+    err_google: string;
     err_register: string;
     err_waking_up: string;
     err_password_required: string;
@@ -617,6 +618,7 @@ const UZ: TranslationSchema = {
     required: "majburiy",
     form_errors_summary: "Iltimos, quyidagi xatolarni tuzating",
     err_login: "Email yoki parol noto'g'ri",
+    err_google: "Google orqali kirishda xatolik yuz berdi",
     err_register: "Ro'yxatdan o'tishda xato yuz berdi",
     err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring.",
     err_password_required: "Parol kiritilishi shart",
@@ -953,6 +955,7 @@ const RU: TranslationSchema = {
     required: "обязательно",
     form_errors_summary: "Пожалуйста, исправьте ошибки ниже",
     err_login: "Неверный email или пароль",
+    err_google: "Ошибка при входе через Google",
     err_register: "Ошибка при регистрации",
     err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова.",
     err_password_required: "Введите пароль",
@@ -1288,6 +1291,7 @@ const EN: TranslationSchema = {
     required: "required",
     form_errors_summary: "Please fix the errors below",
     err_login: "Incorrect email or password",
+    err_google: "Something went wrong signing in with Google",
     err_register: "Something went wrong during registration",
     err_waking_up: "Server is waking up — please wait a moment and try again.",
     err_password_required: "Please enter your password",
@@ -1621,6 +1625,7 @@ const ZH: TranslationSchema = {
     required: "必填",
     form_errors_summary: "请修正以下错误",
     err_login: "邮箱或密码错误",
+    err_google: "使用 Google 登录时出错",
     err_register: "注册过程中出现错误",
     err_waking_up: "服务器正在唤醒，请稍等片刻后重试。",
     err_password_required: "请输入密码",
@@ -1958,6 +1963,7 @@ const DE: TranslationSchema = {
     required: "erforderlich",
     form_errors_summary: "Bitte korrigieren Sie die folgenden Fehler",
     err_login: "Falsche E-Mail-Adresse oder falsches Passwort",
+    err_google: "Fehler bei der Anmeldung mit Google",
     err_register: "Bei der Registrierung ist ein Fehler aufgetreten",
     err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut.",
     err_password_required: "Bitte geben Sie Ihr Passwort ein",
@@ -2297,6 +2303,7 @@ const FR: TranslationSchema = {
     required: "obligatoire",
     form_errors_summary: "Veuillez corriger les erreurs ci-dessous",
     err_login: "Adresse e-mail ou mot de passe incorrect",
+    err_google: "Erreur lors de la connexion avec Google",
     err_register: "Une erreur est survenue lors de l'inscription",
     err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer.",
     err_password_required: "Veuillez saisir votre mot de passe",

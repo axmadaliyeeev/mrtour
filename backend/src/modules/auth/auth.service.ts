@@ -81,6 +81,12 @@ export async function login(
   );
   if (!user) throw createError("Email yoki parol noto'g'ri", 401);
 
+  // A Google-only account has no passwordHash — reject the email/password
+  // attempt with the same generic message as a wrong password, rather
+  // than a bcrypt.compare(x, null) crash or a message that reveals the
+  // account exists and is Google-only (that's an account-enumeration leak).
+  if (!user.passwordHash) throw createError("Email yoki parol noto'g'ri", 401);
+
   const isMatch = await bcrypt.compare(dto.password, user.passwordHash);
   if (!isMatch) throw createError("Email yoki parol noto'g'ri", 401);
 
@@ -120,6 +126,58 @@ export async function refresh(
   );
 
   return { tokens };
+}
+
+export interface GoogleProfile {
+  googleId: string;
+  email:    string;
+  name:     string;
+  surname:  string;
+}
+
+// ── googleAuth ───────────────────────────────────────
+// Called after the router has already verified the Google ID token —
+// this only handles the find-or-create + token-issuing side, the same
+// shape as register()/login() so the router can treat all three
+// identically (set cookie, send { user, accessToken }).
+export async function googleAuth(
+  profile: GoogleProfile
+): Promise<{ user: SafeUser; tokens: TokenPair }> {
+  const email = profile.email.toLowerCase();
+
+  let user = await withRetry(() => prisma.user.findUnique({ where: { email } }));
+
+  if (user) {
+    // An account already exists with this email (created via email/
+    // password, or a previous Google sign-in). Link the Google ID if it
+    // isn't set yet, so this same Google account can sign back in next
+    // time without a duplicate-email conflict.
+    if (!user.googleId) {
+      user = await withRetry(() =>
+        prisma.user.update({ where: { id: user!.id }, data: { googleId: profile.googleId } })
+      );
+    }
+  } else {
+    user = await withRetry(() =>
+      prisma.user.create({
+        data: {
+          name:     profile.name,
+          surname:  profile.surname,
+          email,
+          googleId: profile.googleId,
+          // passwordHash intentionally omitted — null for a Google-only
+          // account. See the schema comment on User.passwordHash.
+        },
+      })
+    );
+  }
+
+  const tokens = buildTokens(user);
+  await withRetry(() =>
+    prisma.user.update({ where: { id: user!.id }, data: { refreshToken: tokens.refreshToken } })
+  );
+
+  return { user: sanitize(user), tokens };
 }
 
 // ── logout ────────────────────────────────────────────

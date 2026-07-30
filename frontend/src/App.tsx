@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
@@ -29,8 +30,16 @@ function ThemeApplier() {
   return null;
 }
 
+// Empty string is a safe default when VITE_GOOGLE_CLIENT_ID isn't set
+// (e.g. a fresh local checkout before Google credentials exist) — the
+// provider just won't be able to issue a real sign-in, which surfaces
+// as the Google button failing gracefully rather than the whole app
+// crashing at boot over a missing env var for an optional feature.
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
+
 export default function App() {
   return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ThemeApplier />
       <AuthModal />
@@ -66,5 +75,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
