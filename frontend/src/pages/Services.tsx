@@ -9,6 +9,8 @@ import {
 import { cn } from "@/lib/utils";
 import { RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES } from "@/data";
 import { Stars } from "@/components/ui/stars";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 import { useTranslation } from "@/i18n";
 
 type Tab = "restoranlar" | "hotellar" | "gidlar" | "transport" | "valyuta";
@@ -47,9 +49,9 @@ function RestaurantsTab({ search }: { search: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((r) => (
-        <div key={r.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <motion.div key={r.id} variants={staggerItem} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
           <div className="relative h-44 overflow-hidden">
             <img
               src={r.img}
@@ -81,9 +83,9 @@ function RestaurantsTab({ search }: { search: string }) {
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
@@ -105,9 +107,9 @@ function HotelsTab({ search }: { search: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((h) => (
-        <div key={h.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <motion.div key={h.id} variants={staggerItem} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
           <div className="relative h-44 overflow-hidden">
             <img
               src={h.img}
@@ -159,9 +161,9 @@ function HotelsTab({ search }: { search: string }) {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
@@ -514,29 +516,40 @@ export default function Services() {
 
   return (
     <div className="pb-6">
-      {/* Page header */}
-      <div className="px-4 pt-4 pb-3">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">{t("services", "title")}</h1>
-        <p className="text-xs text-[var(--muted-foreground)]">{t("services", "subtitle")}</p>
-      </div>
+      <PageHeader title={t("services", "title")} subtitle={t("services", "subtitle")} />
 
       {/* Tabs */}
       <div className="flex gap-1.5 overflow-x-auto px-4 pb-3 scrollbar-hide">
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => { setActiveTab(tab.key); setSearch(""); }}
-            className={cn(
-              "flex items-center gap-1.5 px-3.5 rounded-xl border text-xs font-semibold shrink-0 transition-all min-h-[44px]",
-              activeTab === tab.key
-                ? "bg-indigo-500 border-indigo-500 text-white shadow-sm"
-                : "bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)] hover:border-indigo-500/30"
-            )}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
+        {/* Active fill slides between tabs via a shared layoutId, matching
+            the Locations category pills and sidebar nav — switching reads
+            as one element moving rather than a hard color swap. */}
+        {TABS.map((tab) => {
+          const active = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setSearch(""); }}
+              className={cn(
+                "relative flex items-center gap-1.5 px-3.5 rounded-2xl border text-xs font-semibold shrink-0 transition-colors min-h-[44px] active:scale-[0.97]",
+                active
+                  ? "border-indigo-500 text-white"
+                  : "bg-[var(--muted)] border-transparent text-[var(--foreground)] hover:border-indigo-500/30"
+              )}
+            >
+              {active && (
+                <motion.span
+                  layoutId="services-tab-pill"
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  className="absolute inset-0 rounded-2xl bg-indigo-500 shadow-md shadow-indigo-500/20"
+                />
+              )}
+              <span className="relative flex items-center gap-1.5">
+                {tab.icon}
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Section header */}

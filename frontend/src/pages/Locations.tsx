@@ -5,6 +5,8 @@ import { Search, SlidersHorizontal, X, Map as MapIcon, Landmark, Leaf, Palette, 
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 import { useTranslation } from "@/i18n";
 import type { Location } from "@/types";
 
@@ -106,20 +108,23 @@ export default function Locations() {
 
   return (
     <div className="pb-6">
-      {/* Header */}
-      <div className="px-4 pt-4 pb-3 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[var(--foreground)] mb-0.5">
-            {t("locations", "title")}
-          </h1>
-          <p className="text-xs text-[var(--muted-foreground)]">
-            {results.length} {t("locations", "found")}
-          </p>
-        </div>
-        <span className="px-3 py-1.5 rounded-full bg-indigo-500 text-white text-xs font-bold shadow-sm shadow-indigo-500/20">
-          {results.length}
-        </span>
-      </div>
+      <PageHeader
+        title={t("locations", "title")}
+        subtitle={`${results.length} ${t("locations", "found")}`}
+        action={
+          // Count animates on filter changes so the number visibly reacts
+          // to what the user just did, instead of silently swapping.
+          <motion.span
+            key={results.length}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            className="inline-block px-3 py-1.5 rounded-full bg-indigo-500 text-white text-xs font-bold shadow-sm shadow-indigo-500/20 tabular-nums"
+          >
+            {results.length}
+          </motion.span>
+        }
+      />
 
       {/* Search bar */}
       <div className="px-4 mb-3">
@@ -266,10 +271,20 @@ export default function Locations() {
 
       {/* Results */}
       {results.length === 0 ? (
-        <div className="px-4 flex flex-col items-center justify-center py-16 gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="px-4 flex flex-col items-center justify-center py-16 gap-3"
+        >
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.05 }}
+            className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center"
+          >
             <Search className="w-7 h-7 text-indigo-500/60" strokeWidth={1.5} />
-          </div>
+          </motion.div>
           <p className="text-[var(--foreground)] font-semibold text-base">
             {t("locations", "no_results")}
           </p>
@@ -278,25 +293,27 @@ export default function Locations() {
           </p>
           <button
             onClick={clearFilters}
-            className="px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors"
+            className="px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 hover:-translate-y-px shadow-sm hover:shadow-md transition-all active:scale-[0.97]"
           >
             {t("locations", "clear")}
           </button>
-        </div>
+        </motion.div>
       ) : (
         <div className="px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {results.map((loc, i) => (
-              <motion.div
-                key={loc.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: Math.min(i * 0.03, 0.3), ease: [0.16, 1, 0.3, 1] }}
-              >
+          {/* `layout` lets surviving cards glide to their new grid position
+              when a filter removes others, instead of teleporting. */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            {results.map((loc) => (
+              <motion.div key={loc.id} layout variants={staggerItem}>
                 <LocationCard location={loc} variant="default" />
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

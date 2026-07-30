@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   LogOut,
   MapPin,
@@ -35,6 +36,7 @@ import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
 import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { Stars } from "@/components/ui/stars";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { Location } from "@/types";
@@ -147,16 +149,9 @@ export default function Profile() {
   /* ── Guest view ───────────────────────────────────────────── */
   if (!isLoggedIn || !user) {
     return (
-      <div className="pb-8 px-4 w-full max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="pt-4 pb-6">
-          <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
-            {t("profile", "title")}
-          </h1>
-          <p className="text-xs text-[var(--muted-foreground)]">
-            {t("profile", "subtitle")}
-          </p>
-        </div>
+      <div className="pb-8 w-full max-w-2xl mx-auto">
+        <PageHeader title={t("profile", "title")} subtitle={t("profile", "subtitle")} className="pb-5" />
+        <div className="px-4">
 
         {/* Guest card */}
         <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] mb-6 text-center shadow-[var(--shadow-card)]">
@@ -345,6 +340,7 @@ export default function Profile() {
         <p className="text-center text-[10px] text-[var(--muted-foreground)]/60 mt-6">
           mrforce.uz tomonidan ishlab chiqildi
         </p>
+        </div>
       </div>
     );
   }
@@ -425,14 +421,21 @@ export default function Profile() {
               key={key}
               onClick={() => setTab(key)}
               className={cn(
-                "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
+                "relative flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-colors active:scale-[0.97]",
                 tab === key
-                  ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                  ? "text-white"
                   : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
               )}
             >
-              <Icon className="w-3.5 h-3.5" />
-              {label}
+              {tab === key && (
+                <motion.span
+                  layoutId="profile-tab-pill"
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  className="absolute inset-0 rounded-xl bg-indigo-500 shadow-md shadow-indigo-500/20"
+                />
+              )}
+              <Icon className="relative w-3.5 h-3.5" />
+              <span className="relative">{label}</span>
             </button>
           ))}
         </div>
@@ -441,6 +444,17 @@ export default function Profile() {
       {/* Saved Places tab — same plan data source as the dedicated /saved
           page (both read straight from the store's `plan`, so there's one
           source of truth rather than two copies of the same list). */}
+      {/* Tab panels crossfade instead of hard-swapping — with mode="wait"
+          the outgoing panel finishes before the next enters, so differing
+          panel heights do not cause a mid-animation jump. */}
+      <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={tab}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      >
       {tab === "saved" && (
       <section className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
@@ -508,7 +522,11 @@ export default function Profile() {
                 </div>
                 <button
                   onClick={() => { removeFromPlan(loc.id); syncRemoveFromPlan(loc.id); }}
-                  className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
+                  // Touch devices have no hover, so opacity-0 made this
+                  // permanently invisible there — removing a saved place
+                  // was impossible on a phone. Visible by default, fades
+                  // in on hover only where a real pointer exists.
+                  className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
                   aria-label={t("detail", "remove_plan")}
                 >
                   <BookmarkX className="w-4 h-4" />
@@ -690,6 +708,8 @@ export default function Profile() {
       </section>
       </>
       )}
+      </motion.div>
+      </AnimatePresence>
 
       {/* Emergency numbers */}
       <section className="px-4 mb-5">

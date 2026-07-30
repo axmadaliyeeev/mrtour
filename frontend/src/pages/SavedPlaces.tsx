@@ -6,6 +6,7 @@ import { useAppStore } from "@/store";
 import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
 import { Stars } from "@/components/ui/stars";
+import { PageHeader } from "@/components/ui/PageHeader";
 import type { Location } from "@/types";
 
 // A dedicated home for "Add to Plan" — the header bookmark icon used to
@@ -36,13 +37,15 @@ export default function SavedPlaces() {
 
   if (plan.length === 0) {
     return (
-      <div className="px-4 pt-4 pb-8 max-w-2xl mx-auto">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)] mb-0.5">
-          {t("saved", "title")}
-        </h1>
-        <p className="text-xs text-[var(--muted-foreground)] mb-6">{t("saved", "subtitle")}</p>
+      <div className="pb-8 max-w-2xl mx-auto">
+        <PageHeader title={t("saved", "title")} subtitle={t("saved", "subtitle")} />
 
-        <div className="flex flex-col items-center text-center gap-3 py-16 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-4 flex flex-col items-center text-center gap-3 py-16 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]"
+        >
           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
             <Bookmark className="w-6 h-6 text-indigo-500/60" strokeWidth={1.5} />
           </div>
@@ -64,26 +67,33 @@ export default function SavedPlaces() {
               {t("saved", "ai_btn")}
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="px-4 pt-4 pb-8 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-extrabold text-[var(--foreground)]">{t("saved", "title")}</h1>
-        <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold">
-          {plan.length}
-        </span>
-      </div>
-      <p className="text-xs text-[var(--muted-foreground)] mb-4">
-        {byCity.length} {t("saved", "cities_suffix")} · {total === 0 ? t("detail", "free") : `~$${total}`}
-      </p>
+    <div className="pb-8 max-w-2xl mx-auto">
+      <PageHeader
+        title={t("saved", "title")}
+        subtitle={`${byCity.length} ${t("saved", "cities_suffix")} · ${total === 0 ? t("detail", "free") : `~$${total}`}`}
+        action={
+          <motion.span
+            key={plan.length}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            className="inline-block px-3 py-1.5 rounded-full bg-indigo-500 text-white text-xs font-bold shadow-sm shadow-indigo-500/20 tabular-nums"
+          >
+            {plan.length}
+          </motion.span>
+        }
+      />
 
+      <div className="px-4">
       <button
         onClick={() => navigate("/chat")}
-        className="w-full flex items-center gap-2.5 p-3 mb-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-sm active:scale-[0.98] transition-transform"
+        className="w-full flex items-center gap-2.5 p-3 mb-5 rounded-2xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-sm hover:shadow-md hover:-translate-y-px active:scale-[0.98] transition-all"
       >
         <Sparkles className="w-4 h-4 shrink-0" />
         <span className="text-sm font-semibold flex-1 text-left">{t("saved", "ai_banner")}</span>
@@ -123,7 +133,11 @@ export default function SavedPlaces() {
                     </div>
                     <button
                       onClick={() => remove(loc.id)}
-                      className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 shrink-0"
+                      // Always visible on touch (no hover state exists
+                      // there — it was permanently invisible, so saved
+                      // places simply could not be removed on a phone);
+                      // fades in on hover only where a pointer exists.
+                      className="w-9 h-9 flex items-center justify-center rounded-full text-[var(--muted-foreground)] hover:text-red-400 hover:bg-red-500/10 transition-all shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
                       aria-label={t("detail", "remove_plan")}
                     >
                       <BookmarkX className="w-4 h-4" />
@@ -134,6 +148,7 @@ export default function SavedPlaces() {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );

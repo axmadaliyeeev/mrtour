@@ -185,6 +185,20 @@ export const useAppStore = create<AppStore>()(
         if (version < 1) state.lang = "en";
         return state;
       },
+      // `user` is persisted but `isLoggedIn` deliberately is not — a stale
+      // `true` surviving a failed logout would be a security-relevant lie.
+      // But leaving it at its `false` default after rehydration desynced it
+      // from the restored `user`, which broke real things: Profile rendered
+      // its guest view ("sign up to save places!") to someone who WAS signed
+      // in, the landing page offered "Create Account" to them, and
+      // syncAddToPlan/syncRemoveFromPlan silently no-op'd so saves stopped
+      // reaching the server. checkAuth() eventually repaired it — but only
+      // after a network round-trip (30-60s on a cold Render backend), and
+      // never at all when localStorage had a user but no token.
+      // Deriving it from the restored `user` closes that window entirely.
+      onRehydrateStorage: () => (state) => {
+        if (state) state.isLoggedIn = !!state.user;
+      },
     }
   )
 );
