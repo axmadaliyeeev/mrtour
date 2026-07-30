@@ -72,13 +72,31 @@ export async function sendVerificationCode(to: string, code: string): Promise<vo
     return;
   }
 
-  await transporter.sendMail({
-    from: env.MAIL_FROM ?? `trova <${env.SMTP_USER}>`,
-    to,
-    subject: `${code} — your trova verification code`,
-    // Always ship a text/plain alternative: some clients (and most spam
-    // filters) treat HTML-only mail as a negative signal.
-    text: `Your trova verification code is ${code}. It expires in 10 minutes.`,
-    html: codeEmailHtml(code),
-  });
+  try {
+    await transporter.sendMail({
+      from: env.MAIL_FROM ?? `trova <${env.SMTP_USER}>`,
+      to,
+      subject: `${code} — your trova verification code`,
+      // Always ship a text/plain alternative: some clients (and most spam
+      // filters) treat HTML-only mail as a negative signal.
+      text: `Your trova verification code is ${code}. It expires in 10 minutes.`,
+      html: codeEmailHtml(code),
+    });
+  } catch (err) {
+    // A refused send is an operational condition (bad credentials, an
+    // un-whitelisted IP, provider outage, quota), not a bug — letting it
+    // bubble up raw surfaced a bare "Internal server error" 500 to the
+    // user, which says nothing actionable and hides the real cause. Log
+    // the provider's own message for the operator, return a clean 502.
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error(`[mail] delivery to ${to} failed: ${detail}`);
+
+    const wrapped = new Error(
+      "Tasdiqlash kodini yuborib bo'lmadi — keyinroq urinib ko'ring"
+    ) as Error & { statusCode?: number; isOperational?: boolean; code?: string };
+    wrapped.statusCode = 502;
+    wrapped.isOperational = true;
+    wrapped.code = "MAIL_SEND_FAILED";
+    throw wrapped;
+  }
 }
