@@ -2,39 +2,59 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Bot, Compass, ShieldCheck, Globe2, ChevronRight,
-  MessageSquareText, Map as MapIcon, Sparkles, Star, Users,
+  MessageSquareText, Map as MapIcon, Sparkles, Star, Users, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
-import { useInView } from "@/hooks/useInView";
 import heroImg from "@/data/registan.jpg";
 
-// Same fade-up-on-scroll wrapper used on Home/Uzbekistan — one consistent
-// entrance motion across every marketing/content page rather than a
-// bespoke one for this page alone.
-function Section({
+// ── Scroll-reveal helpers ──────────────────────────────────────────────────
+// Real framer-motion viewport reveals (not just a CSS class toggled by
+// IntersectionObserver) so groups of cards can stagger their children in
+// one coordinated animation instead of each firing independently.
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const } },
+};
+
+function Reveal({
   children,
   className,
-  delay = 0,
+  as: stagger = false,
 }: {
   children: React.ReactNode;
   className?: string;
-  delay?: number;
+  as?: boolean;
 }) {
-  const [ref, inView] = useInView();
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={cn(className, "transition-none", inView ? "animate-fade-up" : "opacity-0")}
-      style={{ animationDelay: `${delay}ms` }}
+    <motion.div
+      className={className}
+      variants={stagger ? container : item}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
+
+// Icon chips vary hue per card (emerald/mint/gold/teal) instead of one flat
+// repeated color — same principle as Home's stat tiles, applied here so a
+// row of 4 identical-shape cards doesn't read as visually monotone.
+const CHIP_STYLES = [
+  "bg-indigo-500/12 border-indigo-500/25 text-indigo-500",
+  "bg-[#3fb896]/12 border-[#3fb896]/25 text-[#2f9a7d]",
+  "bg-gold-500/12 border-gold-500/25 text-gold-600",
+  "bg-indigo-600/12 border-indigo-600/25 text-indigo-700",
+];
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -85,36 +105,60 @@ export default function Landing() {
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative min-h-[92vh] flex items-end overflow-hidden">
-        <img
+        <motion.img
           src={heroImg}
           alt=""
           aria-hidden="true"
           fetchPriority="high"
+          initial={{ scale: 1.12 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
         />
         {/* Strong bottom-up scrim: near-opaque at the very bottom where the
             headline/CTAs sit, fully clear by the upper third so the photo
             itself stays the hero, not just a tinted backdrop. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 from-0% via-black/50 via-55% to-transparent to-100%" />
+        <div className="aurora-overlay absolute inset-0 opacity-30 pointer-events-none" />
 
         <div className="relative w-full px-5 sm:px-8 pb-16 sm:pb-20 max-w-3xl">
-          <div className="animate-fade-up inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-5 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="glint inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-5 backdrop-blur-sm"
+          >
             <Sparkles className="w-3.5 h-3.5" />
             Trova AI
-          </div>
-          <h1 className="animate-fade-up delay-75 text-4xl sm:text-6xl font-extrabold text-white leading-[1.05] mb-4 tracking-tight">
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-4xl sm:text-6xl font-extrabold text-white leading-[1.05] mb-4 tracking-tight"
+          >
             {t("landing", "hero_title")}
-          </h1>
-          <p className="animate-fade-up delay-150 text-white/80 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-white/80 text-base sm:text-lg leading-relaxed mb-8 max-w-lg"
+          >
             {t("landing", "hero_subtitle")}
-          </p>
-          <div className="animate-fade-up delay-200 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+          >
             <button
               onClick={() => openAuthModal("register")}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
+              className="btn-shine group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
             >
               {t("landing", "cta_signup")}
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
             <button
               onClick={continueAsGuest}
@@ -122,57 +166,84 @@ export default function Landing() {
             >
               {t("landing", "cta_guest")}
             </button>
-          </div>
+          </motion.div>
         </div>
+
+        {/* Scroll cue — a quiet, looping affordance rather than static text,
+            signaling there's more below the fold without being a distraction. */}
+        <motion.div
+          className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-1.5 text-white/50"
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <span className="w-5 h-8 rounded-full border border-white/30 flex justify-center pt-1.5">
+            <span className="w-1 h-1.5 rounded-full bg-white/60" />
+          </span>
+        </motion.div>
       </section>
 
       {/* ── Social proof strip ─────────────────────────────────── */}
-      <Section className="px-4 sm:px-8 -mt-8 relative z-10 mb-16" delay={0}>
+      <Reveal as className="px-4 sm:px-8 -mt-8 relative z-10 mb-20">
         <div className="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-          {STATS.map(({ icon: Icon, value, label }) => (
-            <div
+          {STATS.map(({ icon: Icon, value, label }, i) => (
+            <motion.div
               key={label}
-              className="flex flex-col items-center gap-1.5 p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]"
+              variants={item}
+              whileHover={{ y: -3 }}
+              className={cn(
+                "flex flex-col items-center gap-1.5 p-4 sm:p-5 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-shadow",
+              )}
             >
-              <Icon className="w-5 h-5 text-indigo-500" strokeWidth={2} />
+              <span className={cn("w-10 h-10 rounded-xl border flex items-center justify-center", CHIP_STYLES[i % CHIP_STYLES.length])}>
+                <Icon className="w-4.5 h-4.5" strokeWidth={2} />
+              </span>
               <span className="text-xl font-extrabold text-[var(--foreground)] tabular-nums">{value}</span>
               <span className="text-[11px] text-[var(--muted-foreground)] text-center leading-tight">{label}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </Section>
+      </Reveal>
 
       {/* ── Feature highlights ─────────────────────────────────── */}
-      <Section className="px-4 sm:px-8 mb-16" delay={0}>
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)] text-center mb-8">
-            {t("landing", "features_title")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="relative px-4 sm:px-8 mb-20">
+        {/* Soft ambient wash behind the section — decorative depth instead
+            of a flat page background stretching between hero and footer. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/[0.04] via-transparent to-transparent pointer-events-none" />
+        <div className="relative max-w-5xl mx-auto">
+          <Reveal className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
+              {t("landing", "features_title")}
+            </h2>
+          </Reveal>
+          <Reveal as className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {FEATURES.map(({ Icon, title, desc }, i) => (
-              <div
+              <motion.div
                 key={title}
-                className="tilt-hover animate-fade-up p-5 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all"
-                style={{ animationDelay: `${i * 70}ms` }}
+                variants={item}
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                className="p-5 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]"
               >
-                <span className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-3">
-                  <Icon className="w-5 h-5 text-indigo-500" strokeWidth={2} />
+                <span className={cn("w-12 h-12 rounded-xl border flex items-center justify-center mb-4", CHIP_STYLES[i % CHIP_STYLES.length])}>
+                  <Icon className="w-5.5 h-5.5" strokeWidth={2} />
                 </span>
-                <p className="text-sm font-bold text-[var(--foreground)] mb-1">{title}</p>
+                <p className="text-sm font-bold text-[var(--foreground)] mb-1.5">{title}</p>
                 <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed">{desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </Reveal>
         </div>
-      </Section>
+      </section>
 
       {/* ── How it works ───────────────────────────────────────── */}
-      <Section className="px-4 sm:px-8 mb-16" delay={0}>
+      <section className="px-4 sm:px-8 mb-20">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)] text-center mb-10">
-            {t("landing", "how_title")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 relative">
+          <Reveal className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
+              {t("landing", "how_title")}
+            </h2>
+          </Reveal>
+          <Reveal as className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-4 relative">
             {/* Route-curve connector — brand motif, echoing the sidebar
                 indicator and Home's hero->stats seam, tying this page
                 back into the same visual language instead of a plain
@@ -191,53 +262,61 @@ export default function Landing() {
               />
             </svg>
             {STEPS.map(({ Icon, title, desc }, i) => (
-              <div key={title} className="relative flex flex-col items-center text-center gap-3">
-                <span className="relative w-12 h-12 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-md shrink-0">
-                  <Icon className="w-5 h-5 text-white" strokeWidth={2} />
-                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gold-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-[var(--background)]">
+              <motion.div key={title} variants={item} className="relative flex flex-col items-center text-center gap-3">
+                <motion.span
+                  whileHover={{ scale: 1.08, rotate: -4 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="relative w-14 h-14 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-md shrink-0"
+                >
+                  <Icon className="w-6 h-6 text-white" strokeWidth={2} />
+                  <span className="absolute -top-1.5 -right-1.5 w-5.5 h-5.5 rounded-full bg-gold-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-[var(--background)]">
                     {i + 1}
                   </span>
-                </span>
+                </motion.span>
                 <p className="text-sm font-bold text-[var(--foreground)]">{title}</p>
                 <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed max-w-[220px]">{desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </Reveal>
         </div>
-      </Section>
+      </section>
 
       {/* ── Featured destinations ──────────────────────────────── */}
-      <Section className="mb-16" delay={0}>
+      <section className="mb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-8">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)]">
+          <Reveal className="mb-6">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
               {t("landing", "destinations_title")}
             </h2>
-          </div>
-          <p className="text-sm text-[var(--muted-foreground)] mb-6">{t("landing", "destinations_subtitle")}</p>
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 lg:grid-cols-6">
-            {featured.map((loc, i) => (
-              <div key={loc.id} className="shrink-0 w-56 sm:w-auto animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
+            <p className="text-sm text-[var(--muted-foreground)]">{t("landing", "destinations_subtitle")}</p>
+          </Reveal>
+          <Reveal as className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 lg:grid-cols-6">
+            {featured.map((loc) => (
+              <motion.div key={loc.id} variants={item} className="shrink-0 w-56 sm:w-auto">
                 <LocationCard location={loc} variant="default" className="w-full" />
-              </div>
+              </motion.div>
             ))}
-          </div>
-          <div className="text-center mt-6">
+          </Reveal>
+          <Reveal className="text-center mt-8">
             <button
               onClick={continueAsGuest}
-              className="text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
+              className="group text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1"
             >
               {t("landing", "see_all")}
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
-          </div>
+          </Reveal>
         </div>
-      </Section>
+      </section>
 
       {/* ── Final CTA ──────────────────────────────────────────── */}
-      <Section className="px-4 sm:px-8 mb-12" delay={0}>
+      <Reveal className="px-4 sm:px-8 mb-16">
         <div className="max-w-4xl mx-auto relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-[#1c7a64] p-8 sm:p-12 text-center">
-          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full pointer-events-none" />
+          <motion.div
+            className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full pointer-events-none"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          />
           <div className="absolute -bottom-6 -left-4 w-28 h-28 bg-white/5 rounded-full pointer-events-none" />
           <div className="relative">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">{t("landing", "final_cta_title")}</h2>
@@ -258,29 +337,59 @@ export default function Landing() {
             </div>
           </div>
         </div>
-      </Section>
+      </Reveal>
 
       {/* ── Footer ─────────────────────────────────────────────── */}
-      <footer className="px-4 sm:px-8 py-8 border-t border-[var(--border)]">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col items-center sm:items-start gap-1.5">
-            <img src="/img/logo-l.svg" alt="trova" className="h-6 w-auto dark:hidden" />
-            <img src="/img/logo-d.svg" alt="trova" className="h-6 w-auto hidden dark:block" />
-            <p className="text-xs text-[var(--muted-foreground)]">{t("landing", "footer_tagline")}</p>
+      <footer className="px-4 sm:px-8 pt-12 pb-8 border-t border-[var(--border)]">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 mb-8">
+          {/* Brand */}
+          <div className="flex flex-col items-center sm:items-start gap-2.5 text-center sm:text-left">
+            <div>
+              <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />
+              <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
+            </div>
+            <p className="text-xs text-[var(--muted-foreground)] max-w-[220px]">{t("landing", "footer_tagline")}</p>
           </div>
-          <div className="flex items-center gap-5 text-sm text-[var(--muted-foreground)]">
-            <button onClick={continueAsGuest} className="hover:text-[var(--foreground)] transition-colors">
+
+          {/* Explore */}
+          <div className="flex flex-col items-center sm:items-start gap-2.5">
+            <p className="text-xs font-bold uppercase tracking-wide text-[var(--foreground)]">{t("nav", "locations")}</p>
+            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "about")}
             </button>
-            <button onClick={continueAsGuest} className="hover:text-[var(--foreground)] transition-colors">
+            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "locations")}
             </button>
-            <button onClick={continueAsGuest} className="hover:text-[var(--foreground)] transition-colors">
+            <button onClick={continueAsGuest} className="text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors">
               {t("nav", "services")}
             </button>
           </div>
+
+          {/* Contact — routed to the one real, working contact channel
+              (Trova AI itself) instead of inventing an email/phone/social
+              account that doesn't actually exist behind it. */}
+          <div className="flex flex-col items-center sm:items-start gap-2.5">
+            <p className="text-xs font-bold uppercase tracking-wide text-[var(--foreground)]">Contact</p>
+            <button
+              onClick={continueAsGuest}
+              className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors"
+            >
+              <Bot className="w-3.5 h-3.5" />
+              {t("chat", "title")}
+            </button>
+            <a
+              href="https://mrforce.uz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-indigo-400 transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              mrforce.uz
+            </a>
+          </div>
         </div>
-        <p className="text-center text-[10px] text-[var(--muted-foreground)]/60 mt-6">
+
+        <p className="text-center text-[10px] text-[var(--muted-foreground)]/60 pt-6 border-t border-[var(--border)]">
           © {new Date().getFullYear()} trova — mrforce.uz tomonidan ishlab chiqildi
         </p>
       </footer>
