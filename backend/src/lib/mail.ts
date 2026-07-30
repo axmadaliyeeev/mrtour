@@ -12,7 +12,9 @@ import { env } from "@/config/env";
  * the building.
  */
 
-const isConfigured = Boolean(env.SMTP_USER && env.SMTP_PASS);
+export const isMailConfigured = Boolean(env.SMTP_USER && env.SMTP_PASS);
+
+const isConfigured = isMailConfigured;
 
 let transporter: Transporter | null = null;
 
@@ -54,6 +56,18 @@ function codeEmailHtml(code: string): string {
 
 export async function sendVerificationCode(to: string, code: string): Promise<void> {
   if (!transporter) {
+    // Printing the code is a development convenience only. In production
+    // it would write a live credential into the host's log stream (Render,
+    // etc.) where it is both useless to the user and a genuine leak — so
+    // there it fails loudly instead, which is the honest outcome: without
+    // SMTP configured, nobody can receive a code.
+    if (env.NODE_ENV === "production") {
+      console.error(
+        `[mail] SMTP is not configured — cannot send a verification code to ${to}. ` +
+        "Set SMTP_USER and SMTP_PASS."
+      );
+      throw new Error("Email delivery is not configured on this server");
+    }
     console.info(`📧 [dev] verification code for ${to}: ${code}`);
     return;
   }

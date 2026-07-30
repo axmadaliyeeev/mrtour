@@ -118,9 +118,16 @@ function CodeInput({
 function VerifyStep({
   email,
   onVerified,
+  initialDevCode,
 }: {
   email: string;
   onVerified: (user: User) => void;
+  /**
+   * Only ever set when the backend is running in development WITHOUT SMTP
+   * credentials — in that case no mail was actually sent, so it hands the
+   * code back and we show it here. Production never returns this field.
+   */
+  initialDevCode?: string;
 }) {
   const { t } = useTranslation();
   const { showToast } = useAppStore();
@@ -128,6 +135,7 @@ function VerifyStep({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [devCode, setDevCode] = useState(initialDevCode);
 
   // The backend enforces a 60s resend cooldown; mirroring it here means the
   // button visibly counts down instead of failing with a 429 when tapped.
@@ -161,7 +169,10 @@ function VerifyStep({
     setCooldown(60);
     setError("");
     try {
-      await apiClient.post("/auth/resend-code", { email }, { timeout: 45_000 });
+      const res = await apiClient.post<{ devCode?: string } | null>(
+        "/auth/resend-code", { email }, { timeout: 45_000 }
+      );
+      if (res?.devCode) setDevCode(res.devCode);
       showToast(t("auth", "resend_sent"), undefined, "success");
     } catch (err: unknown) {
       setError(extractAuthError(err, t("auth", "err_verify"), t("auth", "err_waking_up")));
@@ -178,6 +189,27 @@ function VerifyStep({
         <p className="text-xs text-[var(--muted-foreground)] mt-1">{t("auth", "verify_desc")}</p>
         <p className="text-sm font-semibold text-[var(--foreground)] mt-0.5 break-all">{email}</p>
       </div>
+
+      {/* Development affordance: the server had no SMTP credentials, so no
+          mail was sent and it handed the code back instead. Styled as an
+          obvious warning, never as normal UI, and unreachable in production
+          because the backend only returns devCode when NODE_ENV is
+          development AND SMTP is unconfigured. */}
+      {devCode && (
+        <div className="rounded-xl border border-gold-500/40 bg-gold-500/10 px-3 py-2.5 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-wide text-gold-600 dark:text-gold-300">
+            Dev — SMTP not configured
+          </p>
+          <button
+            type="button"
+            onClick={() => setCode(devCode)}
+            className="text-xl font-extrabold tracking-[6px] tabular-nums text-[var(--foreground)] hover:text-indigo-500 transition-colors"
+          >
+            {devCode}
+          </button>
+          <p className="text-[10px] text-[var(--muted-foreground)]">tap to fill</p>
+        </div>
+      )}
 
       <CodeInput value={code} onChange={setCode} disabled={loading} onComplete={submit} />
 
@@ -378,6 +410,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
   const [apiError, setApiError] = useState("");
   const [loading, setLoading]   = useState(false);
   const [doneUser, setDoneUser] = useState("");
+  const [devCode, setDevCode] = useState<string | undefined>();
 
   const STEPS = [
     t("auth", "step_lang"),
@@ -429,11 +462,12 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
       // Register no longer returns a session — it creates the account
       // unverified and emails a code. Step 3 collects that code, and
       // /auth/verify-email is what actually issues the tokens.
-      await apiClient.post(
+      const res = await apiClient.post<{ devCode?: string }>(
         "/auth/register",
         { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang },
         { timeout: 45_000 }
       );
+      setDevCode(res?.devCode);
       setStep(3);
     } catch (err: unknown) {
       setApiError(extractAuthError(err, t("auth", "err_register"), t("auth", "err_waking_up")));
@@ -562,7 +596,7 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <VerifyStep email={email.trim().toLowerCase()} onVerified={onVerified} />
+          <VerifyStep email={email.trim().toLowerCase()} onVerified={onVerified} initialDevCode={devCode} />
         </motion.div>
       )}
 

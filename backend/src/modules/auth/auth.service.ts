@@ -4,7 +4,8 @@ import { type User } from "@prisma/client";
 import { prisma, withRetry } from "@/lib/prisma";
 import { generateTokens, verifyRefreshToken, type TokenPair } from "@/utils/jwt";
 import { createError } from "@/middleware/error-handler";
-import { sendVerificationCode } from "@/lib/mail";
+import { sendVerificationCode, isMailConfigured } from "@/lib/mail";
+import { env } from "@/config/env";
 
 const SALT_ROUNDS = 12;
 
@@ -24,8 +25,15 @@ function generateCode(): string {
  * for that address are deleted first, so only the newest one is ever valid —
  * otherwise requesting a new code would leave the old one working too,
  * quietly multiplying the guessable surface with every resend.
+ *
+ * Returns the plaintext code ONLY when running in development AND no SMTP
+ * credentials are configured — that combination means no mail was actually
+ * sent, so the caller may surface it in the UI to keep the flow testable
+ * without credentials. It returns null in every other case, and the guard
+ * below is what makes that safe: a production deployment can never reach
+ * the branch that returns it, regardless of how SMTP is configured.
  */
-export async function issueVerificationCode(email: string): Promise<void> {
+export async function issueVerificationCode(email: string): Promise<string | null> {
   const normalized = email.toLowerCase().trim();
 
   const recent = await withRetry(() =>
@@ -52,6 +60,13 @@ export async function issueVerificationCode(email: string): Promise<void> {
   // Deliberately NOT swallowed: if the mail fails to send, the caller must
   // know, otherwise the user sits waiting for a code that will never arrive.
   await sendVerificationCode(normalized, code);
+
+  // Both conditions required. NODE_ENV is validated by zod as a strict enum,
+  // so "development" can't be spoofed by a stray value, and a real
+  // deployment sets it to "production" — the code is never returned there
+  // even if someone forgets to configure SMTP.
+  const isDevWithoutMail = env.NODE_ENV === "development" && !isMailConfigured;
+  return isDevWithoutMail ? code : null;
 }
 
 /**
@@ -144,7 +159,7 @@ function buildTokens(user: User): TokenPair {
 // Creates the account UNVERIFIED and issues a code — it deliberately does
 // not return tokens, because the session is only granted once the code is
 // confirmed (see verifyEmailCode). The caller gets nothing to log in with.
-export async function register(dto: RegisterDto): Promise<{ email: string }> {
+export async function register(dto: RegisterDto): Promise<{ email: string; devCode: string | null }> {
   const email = dto.email.toLowerCase().trim();
 
   const exists = await withRetry(() => prisma.user.findUnique({ where: { email } }));
@@ -167,8 +182,8 @@ export async function register(dto: RegisterDto): Promise<{ email: string }> {
           },
         })
       );
-      await issueVerificationCode(email);
-      return { email };
+      const devCode = await issueVerificationCode(email);
+      return { email, devCode };
     }
     throw createError("Bu email allaqachon ro'yxatdan o'tgan", 409);
   }
@@ -189,8 +204,8 @@ export async function register(dto: RegisterDto): Promise<{ email: string }> {
     })
   );
 
-  await issueVerificationCode(email);
-  return { email };
+  const devCode = await issueVerificationCode(email);
+  return { email, devCode };
 }
 
 // ── login ─────────────────────────────────────────────

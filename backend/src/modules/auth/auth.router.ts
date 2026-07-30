@@ -81,7 +81,15 @@ authRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.register(req.body as z.infer<typeof registerSchema>);
-      sendSuccess(res, { email: result.email, verificationRequired: true }, "Tasdiqlash kodi yuborildi", 201);
+      // devCode is non-null only in development with no SMTP configured
+      // (see issueVerificationCode) — the key is simply absent otherwise,
+      // so nothing leaks in production.
+      sendSuccess(
+        res,
+        { email: result.email, verificationRequired: true, ...(result.devCode && { devCode: result.devCode }) },
+        "Tasdiqlash kodi yuborildi",
+        201
+      );
     } catch (err) { next(err); }
   }
 );
@@ -111,10 +119,11 @@ authRouter.post(
       // Always answer the same way regardless of whether the account exists
       // or is already verified — a differing response here would turn this
       // endpoint into a free "is this address registered?" oracle.
+      let devCode: string | null = null;
       if (user && !user.emailVerified) {
-        await authService.issueVerificationCode(email);
+        devCode = await authService.issueVerificationCode(email);
       }
-      sendSuccess(res, null, "Tasdiqlash kodi yuborildi");
+      sendSuccess(res, devCode ? { devCode } : null, "Tasdiqlash kodi yuborildi");
     } catch (err) { next(err); }
   }
 );
