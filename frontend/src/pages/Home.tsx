@@ -84,7 +84,15 @@ export default function Home() {
             src={heroImg}
             alt=""
             aria-hidden="true"
-            fetchPriority="high"
+            // Lowercase, not a typo — this app is on React 18.3, which
+            // doesn't yet recognize the camelCase `fetchPriority` prop
+            // (that landed in React 19). @types/react already declares
+            // the camelCase form, so the runtime and the type defs
+            // actually disagree here; ts-expect-error bridges that gap
+            // rather than emitting the attribute React 18 warns about
+            // and silently drops.
+            // @ts-expect-error — intentionally lowercase for React 18's actual runtime support, see comment above
+            fetchpriority="high"
             onLoad={() => setHeroLoaded(true)}
             className={cn(
               "absolute inset-0 w-full h-full object-cover object-[center_30%] transition-opacity duration-500",

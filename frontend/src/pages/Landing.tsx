@@ -109,7 +109,11 @@ export default function Landing() {
           src={heroImg}
           alt=""
           aria-hidden="true"
-          fetchPriority="high"
+          // Lowercase, not a typo — see the matching comment in Home.tsx;
+          // React 18.3 (what this app runs) doesn't recognize the
+          // camelCase `fetchPriority` prop yet, only React 19 does.
+          // @ts-expect-error — intentionally lowercase for React 18's actual runtime support
+          fetchpriority="high"
           initial={{ scale: 1.12 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
