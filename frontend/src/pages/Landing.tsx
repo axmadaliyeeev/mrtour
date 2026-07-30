@@ -305,16 +305,21 @@ export default function Landing() {
 
       {/* ── Featured destinations ──────────────────────────────── */}
       <section className="mb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
           <Reveal className="mb-6">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--foreground)] mb-2">
               {t("landing", "destinations_title")}
             </h2>
             <p className="text-sm text-[var(--muted-foreground)]">{t("landing", "destinations_subtitle")}</p>
           </Reveal>
-          <Reveal as className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 lg:grid-cols-6">
+          {/* Same 3-column ceiling as Locations/Home's own grids — cramming
+              all 6 featured cards into one row (lg:grid-cols-6) squeezed
+              each one to ~150px, truncating every title/tag and warping
+              the badge layout. Mobile keeps the horizontal scroll strip
+              (fixed card width), everything sm+ becomes a real grid. */}
+          <Reveal as className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((loc) => (
-              <motion.div key={loc.id} variants={item} className="shrink-0 w-56 sm:w-auto">
+              <motion.div key={loc.id} variants={item} className="shrink-0 w-72 sm:w-auto">
                 <LocationCard location={loc} variant="default" className="w-full" />
               </motion.div>
             ))}
