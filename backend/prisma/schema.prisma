@@ -17,7 +17,13 @@ model User {
   // login flow's bcrypt.compare guards against it being null for a
   // Google-only account (see auth.service.ts).
   passwordHash String?
+  // Kept as a column even though Google sign-in was removed from the UI:
+  // dropping it would be a destructive migration for no benefit, and any
+  // account that was created through it still needs its row to be valid.
   googleId     String?    @unique
+  // Registration now creates the account first, then requires a code sent
+  // to this address before login is allowed. See auth.service.ts.
+  emailVerified Boolean   @default(false)
   country      String     @default("")
   lang         String     @default("uz")
   isPremium    Boolean    @default(false)
@@ -27,6 +33,21 @@ model User {
   updatedAt    DateTime   @updatedAt
   reviews      Review[]
   plan         UserPlan[]
+}
+
+model VerificationCode {
+  id        String   @id @default(cuid())
+  email     String
+  // The code is stored hashed, never in plaintext — a database leak
+  // shouldn't hand over live codes. Short TTL + the attempts cap below
+  // cover the fact that a 6-digit space is small enough to brute-force
+  // offline if the hash alone were the only defence.
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
 
 model Location {

@@ -7,6 +7,13 @@ import { env } from "@/config/env";
 export interface AppError extends Error {
   statusCode?: number;
   isOperational?: boolean;
+  /**
+   * Optional machine-readable discriminator, forwarded to the client
+   * alongside the message. Lets the frontend branch on a specific
+   * condition (e.g. EMAIL_NOT_VERIFIED → jump to the code screen) instead
+   * of string-matching a translated message.
+   */
+  code?: string;
 }
 
 export function createError(
@@ -105,6 +112,7 @@ export function errorHandler(
     res.status(appErr.statusCode ?? 400).json({
       success: false,
       message: err.message,
+      ...(appErr.code && { code: appErr.code }),
       ...(isDev && { stack: err.stack }),
     });
     return;

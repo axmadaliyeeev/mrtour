@@ -1,8 +1,7 @@
 ﻿import { useState, useRef, useEffect, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { GoogleLogin } from "@react-oauth/google";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2, MailCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -45,82 +44,173 @@ const LANGUAGES: { code: Lang; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
-// ── Social auth ──────────────────────────────────────────────────────────────
-// Google is now real (Google Identity Services issues an ID token
-// client-side; we POST it to /api/auth/google, which verifies it and
-// returns the same access/refresh token pair as email/password login).
-// Apple still needs a paid Apple Developer enrollment this environment
-// doesn't have and can't fabricate — wiring it to a fake success would
-// be actively misleading, so it stays an honest "not connected yet"
-// placeholder until real credentials exist.
-function SocialAuthButtons({ onClose }: { onClose: () => void }) {
-  const { t, lang } = useTranslation();
-  const { login, showToast } = useAppStore();
-  const [googleLoading, setGoogleLoading] = useState(false);
+// ── Verification code entry ──────────────────────────────────────────────────
+// Six separate boxes rather than one text field: it makes the expected
+// length obvious without instructions, and lets paste-from-email fill all
+// six at once (handled in onChange below).
+function CodeInput({
+  value,
+  onChange,
+  disabled,
+  onComplete,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  onComplete?: (code: string) => void;
+}) {
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
 
-  function appleNotYetConnected() {
-    showToast(t("auth", "social_soon"), undefined, "info");
+  useEffect(() => { refs.current[0]?.focus(); }, []);
+
+  function setDigit(i: number, raw: string) {
+    const digits = raw.replace(/\D/g, "");
+    if (!digits) {
+      // Deleting: blank this box only.
+      const next = value.split("");
+      next[i] = "";
+      onChange(next.join("").slice(0, 6));
+      return;
+    }
+    // Pasting a whole code into any box should fill from that box onward,
+    // not drop everything but the first character.
+    const next = (value.slice(0, i) + digits).slice(0, 6);
+    onChange(next);
+    const focusAt = Math.min(i + digits.length, 5);
+    refs.current[focusAt]?.focus();
+    if (next.length === 6) onComplete?.(next);
   }
 
-  async function handleGoogleSuccess(idToken: string) {
-    setGoogleLoading(true);
+  function onKeyDown(i: number, e: React.KeyboardEvent<HTMLInputElement>) {
+    // Backspace on an already-empty box steps back, which is what every
+    // native OTP field does — without it the caret gets stuck.
+    if (e.key === "Backspace" && !value[i] && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowLeft" && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowRight" && i < 5) refs.current[i + 1]?.focus();
+  }
+
+  return (
+    <div className="flex justify-center gap-2" dir="ltr">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <input
+          key={i}
+          ref={(el) => { refs.current[i] = el; }}
+          value={value[i] ?? ""}
+          onChange={(e) => setDigit(i, e.target.value)}
+          onKeyDown={(e) => onKeyDown(i, e)}
+          disabled={disabled}
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={6}
+          aria-label={`Digit ${i + 1}`}
+          className={cn(
+            "w-11 h-13 py-3 rounded-xl border text-center text-lg font-bold tabular-nums",
+            "bg-[var(--input-bg)] border-[var(--input-border)] text-[var(--foreground)]",
+            "outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20",
+            "disabled:opacity-50"
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+function VerifyStep({
+  email,
+  onVerified,
+}: {
+  email: string;
+  onVerified: (user: User) => void;
+}) {
+  const { t } = useTranslation();
+  const { showToast } = useAppStore();
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  // The backend enforces a 60s resend cooldown; mirroring it here means the
+  // button visibly counts down instead of failing with a 429 when tapped.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  }, [cooldown]);
+
+  async function submit(submitted?: string) {
+    const value = submitted ?? code;
+    if (value.length !== 6 || loading) return;
+    setLoading(true);
+    setError("");
     try {
-      // `lang` rides along so a brand-new Google account is created with
-      // the language the visitor is already browsing in — without it the
-      // DB default ("uz") won and login() silently switched the whole
-      // interface to Uzbek for non-Uzbek visitors.
       const res = await apiClient.post<{ user: User; accessToken: string }>(
-        "/auth/google", { idToken, lang }, { timeout: 45_000 }
+        "/auth/verify-email", { email, code: value }, { timeout: 45_000 }
       );
       localStorage.setItem("trova-token", res.accessToken);
-      login(res.user);
-      mergePlanOnLogin().catch(() => {});
-      onClose();
-    } catch {
-      showToast(t("auth", "err_google"), undefined, "error");
+      onVerified(res.user);
+    } catch (err: unknown) {
+      setError(extractAuthError(err, t("auth", "err_verify"), t("auth", "err_waking_up")));
+      setCode("");
     } finally {
-      setGoogleLoading(false);
+      setLoading(false);
+    }
+  }
+
+  async function resend() {
+    if (cooldown > 0) return;
+    setCooldown(60);
+    setError("");
+    try {
+      await apiClient.post("/auth/resend-code", { email }, { timeout: 45_000 });
+      showToast(t("auth", "resend_sent"), undefined, "success");
+    } catch (err: unknown) {
+      setError(extractAuthError(err, t("auth", "err_verify"), t("auth", "err_waking_up")));
     }
   }
 
   return (
-    <div className="space-y-2 mb-4">
-      {/* Google's own widget can't be reskinned to our exact button
-          markup (custom SVG + copy) — "outline"/"pill" is the closest
-          built-in look to the rest of this form's bordered buttons. A
-          thin loading overlay covers it while the backend round-trip
-          for handleGoogleSuccess is in flight, since the widget itself
-          has no built-in loading state once its own popup closes. */}
-      <div className="relative flex justify-center [&>div]:w-full">
-        <GoogleLogin
-          onSuccess={(cred) => cred.credential && handleGoogleSuccess(cred.credential)}
-          onError={() => showToast(t("auth", "err_google"), undefined, "error")}
-          theme="outline"
-          shape="pill"
-          size="large"
-          width="336"
-        />
-        {googleLoading && (
-          <div className="absolute inset-0 rounded-full bg-[var(--card)]/80 backdrop-blur-sm flex items-center justify-center">
-            <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
-          </div>
-        )}
+    <div className="space-y-5">
+      <div className="text-center">
+        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <MailCheck className="w-5 h-5 text-indigo-500" strokeWidth={2} />
+        </div>
+        <h3 className="text-base font-bold text-[var(--foreground)]">{t("auth", "verify_title")}</h3>
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">{t("auth", "verify_desc")}</p>
+        <p className="text-sm font-semibold text-[var(--foreground)] mt-0.5 break-all">{email}</p>
       </div>
+
+      <CodeInput value={code} onChange={setCode} disabled={loading} onComplete={submit} />
+
+      {error && (
+        <p className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          {error}
+        </p>
+      )}
+
       <button
         type="button"
-        onClick={appleNotYetConnected}
-        className="w-full flex items-center justify-center gap-2.5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-sm font-semibold hover:bg-[var(--muted)] transition-colors active:scale-[0.98]"
+        onClick={() => submit()}
+        disabled={code.length !== 6 || loading}
+        className={cn(
+          "w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+          code.length === 6 && !loading
+            ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md"
+            : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
+        )}
       >
-        <svg width="15" height="15" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-        </svg>
-        {t("auth", "continue_apple")}
+        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+        {loading ? t("auth", "verify_loading") : t("auth", "verify_btn")}
       </button>
-      <div className="flex items-center gap-3 py-1">
-        <div className="flex-1 h-px bg-[var(--border)]" />
-        <span className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wide">{t("auth", "or_email")}</span>
-        <div className="flex-1 h-px bg-[var(--border)]" />
-      </div>
+
+      <button
+        type="button"
+        onClick={resend}
+        disabled={cooldown > 0}
+        className="w-full text-xs font-semibold text-indigo-400 hover:text-indigo-300 disabled:text-[var(--muted-foreground)] disabled:cursor-not-allowed transition-colors"
+      >
+        {cooldown > 0 ? `${t("auth", "resend_wait")} (${cooldown})` : t("auth", "resend_btn")}
+      </button>
     </div>
   );
 }
@@ -197,6 +287,9 @@ function LoginTab({ onClose }: { onClose: () => void }) {
   const [errors, setErrors]     = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState("");
   const [loading, setLoading]   = useState(false);
+  // Set when the backend reports EMAIL_NOT_VERIFIED, which switches this
+  // tab over to the code screen rather than dead-ending on an error.
+  const [needsVerify, setNeedsVerify] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -205,6 +298,12 @@ function LoginTab({ onClose }: { onClose: () => void }) {
     if (!password)                         e.password = t("auth", "err_password_required");
     setErrors(e);
     return Object.keys(e).length === 0;
+  }
+
+  function finishLogin(user: User) {
+    login(user);
+    mergePlanOnLogin().catch(() => {});
+    onClose();
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -219,19 +318,28 @@ function LoginTab({ onClose }: { onClose: () => void }) {
         "/auth/login", { email: email.trim().toLowerCase(), password }, { timeout: 45_000 }
       );
       localStorage.setItem("trova-token", res.accessToken);
-      login(res.user);
-      mergePlanOnLogin().catch(() => {});
-      onClose();
+      finishLogin(res.user);
     } catch (err: unknown) {
+      // Correct password, unconfirmed address: send them to the code screen
+      // and re-issue a code, instead of showing an error they can't act on.
+      const code = (err as { response?: { data?: { code?: string } } })?.response?.data?.code;
+      if (code === "EMAIL_NOT_VERIFIED") {
+        apiClient.post("/auth/resend-code", { email: email.trim().toLowerCase() }).catch(() => {});
+        setNeedsVerify(true);
+        return;
+      }
       setApiError(extractAuthError(err, t("auth", "err_login"), t("auth", "err_waking_up")));
     } finally {
       setLoading(false);
     }
   }
 
+  if (needsVerify) {
+    return <VerifyStep email={email.trim().toLowerCase()} onVerified={finishLogin} />;
+  }
+
   return (
     <>
-    <SocialAuthButtons onClose={onClose} />
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       <Field label={t("auth", "email")} type="email" value={email} onChange={setEmail}
         placeholder={t("auth", "email_placeholder")} autoComplete="email" error={errors.email} />
@@ -271,7 +379,12 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
   const [loading, setLoading]   = useState(false);
   const [doneUser, setDoneUser] = useState("");
 
-  const STEPS = [t("auth", "step_lang"), t("auth", "step_info"), t("auth", "step_done")];
+  const STEPS = [
+    t("auth", "step_lang"),
+    t("auth", "step_info"),
+    t("auth", "step_verify"),
+    t("auth", "step_done"),
+  ];
 
   function computeErrors() {
     const e: Record<string, string> = {};
@@ -313,21 +426,27 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
     setLoading(true);
     setApiError("");
     try {
-      const res = await apiClient.post<{ user: User; accessToken: string }>(
+      // Register no longer returns a session — it creates the account
+      // unverified and emails a code. Step 3 collects that code, and
+      // /auth/verify-email is what actually issues the tokens.
+      await apiClient.post(
         "/auth/register",
         { name: name.trim(), surname: surname.trim(), email: email.trim().toLowerCase(), password, country, lang: selectedLang },
         { timeout: 45_000 }
       );
-      localStorage.setItem("trova-token", res.accessToken);
-      setDoneUser(res.user.name);
-      login(res.user);
-      mergePlanOnLogin().catch(() => {});
       setStep(3);
     } catch (err: unknown) {
       setApiError(extractAuthError(err, t("auth", "err_register"), t("auth", "err_waking_up")));
     } finally {
       setLoading(false);
     }
+  }
+
+  function onVerified(user: User) {
+    setDoneUser(user.name);
+    login(user);
+    mergePlanOnLogin().catch(() => {});
+    setStep(4);
   }
 
   return (
@@ -434,10 +553,23 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
         </motion.form>
       )}
 
-      {/* Step 3 — Success */}
+      {/* Step 3 — Email verification code */}
       {step === 3 && (
         <motion.div
           key="step3"
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <VerifyStep email={email.trim().toLowerCase()} onVerified={onVerified} />
+        </motion.div>
+      )}
+
+      {/* Step 4 — Success */}
+      {step === 4 && (
+        <motion.div
+          key="step4"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 320, damping: 26 }}

@@ -42,11 +42,14 @@ export interface User {
   lang: string;
   plan: Location[];
   isPremium: boolean;
-  // Set by the Google Sign-In flow; null/absent for email-password-only
-  // accounts. Backend's sanitize() passes it through (only passwordHash
-  // and refreshToken are stripped), so Profile can show the real
-  // linked-account state.
+  // Legacy: set by the Google Sign-In flow, which has since been replaced
+  // by emailed verification codes. The column is still on the User model
+  // (dropping it would be a destructive migration), so the field is kept
+  // here for type accuracy even though nothing reads it any more.
   googleId?: string | null;
+  // False until the emailed 6-digit code has been confirmed. Existing
+  // accounts predating this feature were backfilled to true.
+  emailVerified?: boolean;
 }
 
 export interface Guide {

@@ -660,38 +660,26 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* Linked accounts — reflects what's actually true for THIS user:
-          Google shows "Connected" only when the account really has a
-          linked googleId (set by the real Google Sign-In flow). Apple
-          stays "Not connected" for everyone since Apple sign-in isn't
-          wired to real credentials yet. */}
+      {/* Account — this used to list Google/Apple as "linked accounts",
+          but social sign-in was removed in favour of emailed verification
+          codes, so the only credential that exists now is the address
+          itself and whether it has been confirmed. */}
       <section className="px-4 mb-5">
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
           <Shield className="w-4 h-4 text-indigo-400" /> {t("profile", "linked_accounts_title")}
         </h3>
-        <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[var(--foreground)]">{user.email}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-semibold">
-              {t("profile", "linked_email")}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[var(--muted-foreground)]">Google</span>
-            {user.googleId ? (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-semibold">
-                {t("profile", "linked_connected")}
-              </span>
-            ) : (
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
-                {t("profile", "linked_not_connected")}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[var(--muted-foreground)]">Apple</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
-              {t("profile", "linked_not_connected")}
+        <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-[var(--foreground)] truncate">{user.email}</span>
+            <span className={cn(
+              "text-[10px] px-2 py-0.5 rounded-full font-semibold shrink-0",
+              user.emailVerified === false
+                ? "bg-[var(--muted)] text-[var(--muted-foreground)]"
+                : "bg-indigo-500/15 text-indigo-400"
+            )}>
+              {user.emailVerified === false
+                ? t("profile", "linked_not_connected")
+                : t("profile", "linked_connected")}
             </span>
           </div>
         </div>

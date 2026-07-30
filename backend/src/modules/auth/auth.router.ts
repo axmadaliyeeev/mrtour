@@ -1,6 +1,5 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { OAuth2Client } from "google-auth-library";
 import { z } from "zod";
 import * as authService from "./auth.service";
 import { prisma } from "@/lib/prisma";
@@ -9,14 +8,6 @@ import { validateBody } from "@/middleware/validate";
 import { sendSuccess, sendError } from "@/utils/response";
 import { REFRESH_TOKEN_MS } from "@/utils/jwt";
 import { env } from "@/config/env";
-
-// Verifying a Google Identity Services ID token only ever needs the
-// Client ID (as the expected `audience`) — the client SECRET is only
-// needed for the server-side authorization-code exchange flow, which
-// this app doesn't use. The frontend gets an ID token directly from
-// Google Identity Services and POSTs it here; this just verifies its
-// signature/audience/issuer against Google's public keys.
-const googleClient = env.GOOGLE_CLIENT_ID ? new OAuth2Client(env.GOOGLE_CLIENT_ID) : null;
 
 function decodeExpiredToken(token: string): JwtPayload | null {
   try {
@@ -69,20 +60,61 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-const googleSchema = z.object({
-  idToken: z.string().min(1),
-  lang:    z.string().max(5).optional(),
+const verifySchema = z.object({
+  email: z.string().email(),
+  // Exactly 6 digits — reject malformed input before it costs a bcrypt
+  // compare and an attempts increment against the user's real code.
+  code:  z.string().regex(/^\d{6}$/, "Kod 6 xonali bo'lishi kerak"),
+});
+
+const resendSchema = z.object({
+  email: z.string().email(),
 });
 
 // ── POST /api/auth/register ────────────────────────────
+// Returns NO session — the account is created unverified and a code is
+// emailed. The client then calls /verify-email, which is what actually
+// issues tokens.
 authRouter.post(
   "/register",
   validateBody(registerSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.register(req.body as z.infer<typeof registerSchema>);
+      sendSuccess(res, { email: result.email, verificationRequired: true }, "Tasdiqlash kodi yuborildi", 201);
+    } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/auth/verify-email ────────────────────────
+authRouter.post(
+  "/verify-email",
+  validateBody(verifySchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, code } = req.body as z.infer<typeof verifySchema>;
+      const result = await authService.verifyEmailCode(email, code);
       setRefreshCookie(res, result.tokens.refreshToken);
-      sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Ro'yxatdan o'tdingiz!", 201);
+      sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
+    } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/auth/resend-code ─────────────────────────
+authRouter.post(
+  "/resend-code",
+  validateBody(resendSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body as z.infer<typeof resendSchema>;
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+      // Always answer the same way regardless of whether the account exists
+      // or is already verified — a differing response here would turn this
+      // endpoint into a free "is this address registered?" oracle.
+      if (user && !user.emailVerified) {
+        await authService.issueVerificationCode(email);
+      }
+      sendSuccess(res, null, "Tasdiqlash kodi yuborildi");
     } catch (err) { next(err); }
   }
 );
@@ -94,60 +126,6 @@ authRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.login(req.body as z.infer<typeof loginSchema>);
-      setRefreshCookie(res, result.tokens.refreshToken);
-      sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
-    } catch (err) { next(err); }
-  }
-);
-
-// ── POST /api/auth/google ──────────────────────────────
-authRouter.post(
-  "/google",
-  validateBody(googleSchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      if (!googleClient) {
-        sendError(res, "Google sign-in is not configured on this server", 500);
-        return;
-      }
-      const { idToken, lang } = req.body as z.infer<typeof googleSchema>;
-
-      let ticket;
-      try {
-        ticket = await googleClient.verifyIdToken({
-          idToken,
-          audience: env.GOOGLE_CLIENT_ID,
-        });
-      } catch {
-        sendError(res, "Google token yaroqsiz", 401);
-        return;
-      }
-
-      const payload = ticket.getPayload();
-      if (!payload?.sub || !payload.email) {
-        sendError(res, "Google token yaroqsiz", 401);
-        return;
-      }
-      // Google-side flag for "is this email actually verified" — reject
-      // unverified emails rather than silently trusting whatever string
-      // came back in the token payload.
-      if (payload.email_verified === false) {
-        sendError(res, "Google email tasdiqlanmagan", 401);
-        return;
-      }
-
-      // Google doesn't guarantee given_name/family_name (some accounts
-      // only have a mononym or nothing at all) — an empty name would
-      // propagate into UI that renders name[0] avatars and greetings, so
-      // fall back to the email's local part rather than "".
-      const fallbackName = payload.email.split("@")[0] || "Traveler";
-      const result = await authService.googleAuth({
-        googleId: payload.sub,
-        email:    payload.email,
-        name:     payload.given_name ?? payload.name ?? fallbackName,
-        surname:  payload.family_name ?? "",
-        lang,
-      });
       setRefreshCookie(res, result.tokens.refreshToken);
       sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
     } catch (err) { next(err); }
