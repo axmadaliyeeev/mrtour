@@ -423,6 +423,64 @@ const CONTENT: Record<Lang, UzContent> = {
   },
 };
 
+// Four largest cities, positioned on a simplified silhouette of the
+// country (not geographically precise — a stylized diagram, in the same
+// spirit as subway-map city dots, not a GIS map). Clicking a marker jumps
+// straight to that city's locations instead of leaving the visitor to
+// find the filter themselves.
+const MAP_CITIES = [
+  { name: "Toshkent",  x: 74, y: 22 },
+  { name: "Samarqand", x: 46, y: 46 },
+  { name: "Buxoro",    x: 24, y: 52 },
+  { name: "Xiva",      x: 10, y: 40 },
+];
+
+function RegionMap({ onPick }: { onPick: (city: string) => void }) {
+  return (
+    <div className="relative rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] p-4 sm:p-6">
+      <svg viewBox="0 0 100 70" className="w-full h-auto max-h-64" aria-hidden="true">
+        {/* Loose, hand-drawn-feeling outline standing in for the country
+            border — a mood-setting backdrop for the markers, not a
+            literal atlas trace. */}
+        <path
+          d="M4 42C2 34 8 28 16 30C20 20 30 14 40 18C48 10 62 8 70 16C82 14 94 20 96 30C98 40 90 48 80 46C76 56 62 62 50 56C40 62 24 60 18 52C10 54 5 50 4 42Z"
+          fill="var(--muted)"
+          stroke="var(--border)"
+          strokeWidth="0.6"
+        />
+        {MAP_CITIES.map((city) => (
+          <g
+            key={city.name}
+            className="cursor-pointer"
+            onClick={() => onPick(city.name)}
+            role="button"
+            tabIndex={0}
+            aria-label={city.name}
+            onKeyDown={(e) => { if (e.key === "Enter") onPick(city.name); }}
+          >
+            <circle cx={city.x} cy={city.y} r="5" fill="var(--primary)" opacity="0.15">
+              <animate attributeName="r" values="5;7;5" dur="2.4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.15;0;0.15" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={city.x} cy={city.y} r="2.4" fill="var(--primary)" stroke="var(--background)" strokeWidth="0.8" />
+            <text
+              x={city.x}
+              y={city.y - 5}
+              textAnchor="middle"
+              fontSize="4.2"
+              fontWeight="700"
+              fill="var(--foreground)"
+              className="select-none"
+            >
+              {city.name}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 // The recurring brand S-curve, drawn once as a long "journey line" that
 // threads through the five region cards — a signature layout moment
 // unique to this page instead of reusing the generic grid pattern.
@@ -460,7 +518,12 @@ export default function Uzbekistan() {
             aria-hidden="true"
             className="absolute inset-0 w-full h-full object-cover object-[center_35%] opacity-90 dark:opacity-70"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[var(--background)]/75 to-[var(--background)]/10" />
+          {/* Was a flat 75%-opacity wash across the whole photo — that
+              washed out the top two-thirds for no reason, since only the
+              bottom (where the headline sits) actually needs legibility
+              help. Concentrating the scrim there keeps the photo vivid
+              up top and still gives the text a solid contrast base. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] from-0% via-[var(--background)]/55 via-45% to-transparent to-80%" />
           <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#1c140a]/25 via-[#1c140a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
           <div className="aurora-overlay absolute inset-0 opacity-40 pointer-events-none" />
 
@@ -545,6 +608,9 @@ export default function Uzbekistan() {
             {c.regionsTitle}
           </h2>
           <p className="text-sm text-[var(--muted-foreground)]">{c.regionsSubtitle}</p>
+        </div>
+        <div className="mb-4">
+          <RegionMap onPick={(city) => navigate(`/locations?city=${encodeURIComponent(city)}`)} />
         </div>
         <div className="relative">
           <JourneyCurve />

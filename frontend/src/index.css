@@ -45,6 +45,13 @@
   --shadow-card:       0 1px 2px 0 rgb(50 40 25 / 0.05), 0 6px 16px -6px rgb(50 40 25 / 0.08);
   --shadow-card-hover: 0 2px 6px 0 rgb(50 40 25 / 0.07), 0 18px 40px -10px rgb(50 40 25 / 0.18);
   --shadow-sm:         0 1px 2px 0 rgb(50 40 25 / 0.06);
+  /* Form inputs (auth modal, etc.) intentionally do NOT use --muted here —
+     --muted carries the app's warm undertone (by design, for chips/tags
+     on content pages), but a beige-tinted text field reads as an error
+     against the cool emerald/teal accent color. Neutral, zero-warmth
+     gray instead, per spec. */
+  --input-bg:          #f5f6f4;
+  --input-border:      #e0e3e0;
   --font-body:         "Manrope", system-ui, -apple-system, sans-serif;
   --font-display:      "Sora", "Manrope", system-ui, sans-serif;
   /* L2: a modal surface distinct from both the warm off-white page and
@@ -86,6 +93,8 @@
   --border-focus:      #50c878;
   --muted:             #101512; /* recessed neutral inset (inputs, chips) */
   --muted-foreground:  #93a39c;
+  --input-bg:          #161c19;
+  --input-border:      #262f2a;
   --primary:           #50c878; /* L3 — same accent as light mode, by design */
   --primary-hover:     #6ddba3;
   --ring:              #50c878;

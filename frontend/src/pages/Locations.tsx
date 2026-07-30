@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, SlidersHorizontal, X, Map as MapIcon, Landmark, Leaf, Palette, Church, Pickaxe } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,11 +23,17 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export default function Locations() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  // Deep-link support for "explore this city" entry points (the About
+  // page's region map/cards navigate here with ?city=Samarqand) — read
+  // once on mount so a direct link lands pre-filtered instead of forcing
+  // a second manual step.
+  const cityParam = searchParams.get("city");
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
-  const [activeCity, setActiveCity] = useState("Barchasi");
+  const [activeCity, setActiveCity] = useState(cityParam && CITIES.includes(cityParam) ? cityParam : "Barchasi");
   const [sortBy, setSortBy] = useState("rating");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(!!(cityParam && CITIES.includes(cityParam)));
 
   const debouncedSearch = useDebounce(search, 300);
 

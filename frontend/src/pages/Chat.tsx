@@ -273,7 +273,7 @@ export default function Chat() {
     // ChatGPT's header/composer span edge-to-edge while the text column
     // stays readable-width.
     <div
-      className="flex flex-col overflow-hidden w-full"
+      className="relative flex flex-col overflow-hidden w-full"
       style={{
         height: isDesktop
           ? "calc(100dvh - 3.5rem)"
@@ -329,11 +329,16 @@ export default function Chat() {
 
       {/* Messages area — the scroll container spans full width so its
           scrollbar sits at the true content-area edge; the message
-          column inside centers at 720px. */}
+          column inside centers at 720px. This outer wrapper is the
+          positioning context for the jump-to-latest button below —
+          scoped to just the message viewport (not the whole page), so
+          the button can only ever float at the bottom of what's
+          scrollable, never over the composer below it. */}
+      <div className="relative flex-1 overflow-hidden">
       <div
         ref={scrollAreaRef}
         onScroll={handleScroll}
-        className="relative flex-1 overflow-y-auto px-3 sm:px-4 pt-5 pb-4"
+        className="h-full overflow-y-auto px-3 sm:px-4 pt-5 pb-4"
       >
         <div className="max-w-[720px] mx-auto space-y-4">
         {/* Empty-state hero — soft pulsing orb + centered heading instead
@@ -575,28 +580,33 @@ export default function Chat() {
         )}
         </AnimatePresence>
 
-        {/* Jump-to-latest — appears once the user scrolls away from the bottom.
-            Absolutely positioned against the scroll container (not `sticky`
-            in-flow) so it always floats at the true visible bottom edge
-            instead of landing wherever it happens to fall in short/
-            non-overflowing conversations (it was overlapping the quick-
-            action cards before). */}
-        <AnimatePresence>
-          {showScrollButton && (
-            <motion.button
-              initial={{ opacity: 0, y: 8, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.9 }}
-              onClick={scrollToBottom}
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-10"
-            >
-              <ChevronDown className="w-3.5 h-3.5" />
-            </motion.button>
-          )}
-        </AnimatePresence>
-
         <div ref={messagesEndRef} />
         </div>
+      </div>
+
+      {/* Jump-to-latest — previously lived *inside* the scrollable message
+          column, absolutely positioned against it. Because that column is
+          also a `space-y-4` flex parent, the button was a flex child of
+          the same stack as the message bubbles; depending on scroll
+          position it could render visually on top of mid-conversation
+          text instead of pinned at the true bottom edge (reported as a
+          stray chevron floating mid-sentence). Anchoring it to this outer
+          container instead — a sibling of the scroll area, not a child
+          inside it — means it can only ever sit just above the composer,
+          never overlapping message content. */}
+      <AnimatePresence>
+        {showScrollButton && (
+          <motion.button
+            initial={{ opacity: 0, y: 8, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.9 }}
+            onClick={scrollToBottom}
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-20"
+          >
+            <ChevronDown className="w-3.5 h-3.5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
       </div>
 
       {/* Plan banner */}

@@ -98,10 +98,10 @@ function Field({
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-            "w-full px-3 py-2.5 rounded-xl border bg-[var(--muted)] text-[var(--foreground)] text-sm",
+            "w-full px-3 py-2.5 rounded-xl border bg-[var(--input-bg)] text-[var(--foreground)] text-sm",
             "placeholder:text-[var(--muted-foreground)] outline-none transition-all",
-            "focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30",
-            error ? "border-red-400" : "border-[var(--border)]"
+            "focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20",
+            error ? "border-red-400" : "border-[var(--input-border)]"
           )}
         />
         {isPassword && (

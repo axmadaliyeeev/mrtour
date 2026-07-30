@@ -1,4 +1,5 @@
-﻿import { useNavigate } from "react-router-dom";
+﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LogOut,
   MapPin,
@@ -26,6 +27,8 @@ import {
   Info,
   Bookmark,
   MessageSquare,
+  Compass,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
@@ -83,9 +86,12 @@ const EMERGENCY_NUMBERS_RAW = [
   { Icon: Info,          key: "emergency_tourism"   as const, number: "1219" },
 ];
 
+type ProfileTab = "itineraries" | "saved" | "reviews" | "settings";
+
 export default function Profile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [tab, setTab] = useState<ProfileTab>("saved");
   const {
     user,
     isLoggedIn,
@@ -98,6 +104,7 @@ export default function Profile() {
     toggleTheme,
     openAuthModal,
     userReviews,
+    showToast,
   } = useAppStore();
 
   // Flatten { locationId: Review[] } into a single list with the location
@@ -401,7 +408,40 @@ export default function Profile() {
         ))}
       </div>
 
-      {/* Plan list */}
+      {/* Tab bar — same solid-fill active pill language as the sidebar/
+          category filters, so this reads as one consistent design system
+          rather than a one-off segmented control. */}
+      <div className="px-4 mb-5">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+          {(
+            [
+              { key: "saved" as const,       Icon: Bookmark,      label: t("profile", "tab_saved") },
+              { key: "itineraries" as const, Icon: Compass,       label: t("profile", "tab_itineraries") },
+              { key: "reviews" as const,      Icon: MessageSquare, label: t("profile", "tab_reviews") },
+              { key: "settings" as const,     Icon: Settings,      label: t("profile", "tab_settings") },
+            ]
+          ).map(({ key, Icon, label }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all active:scale-[0.97]",
+                tab === key
+                  ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/20"
+                  : "bg-[var(--muted)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              )}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Saved Places tab — same plan data source as the dedicated /saved
+          page (both read straight from the store's `plan`, so there's one
+          source of truth rather than two copies of the same list). */}
+      {tab === "saved" && (
       <section className="px-4 mb-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
@@ -488,19 +528,39 @@ export default function Profile() {
           </>
         )}
       </section>
+      )}
 
-      {/* My Reviews */}
+      {/* My Itineraries tab — there's no backend persistence for
+          AI-generated tour plans yet (Trova AI's plans live only in the
+          chat transcript, nothing is saved as a structured itinerary), so
+          this is an honest empty state pointing at the one real path to
+          creating one, not a stub pretending data exists. */}
+      {tab === "itineraries" && (
       <section className="px-4 mb-5">
-        <h3 className="text-sm font-bold text-[var(--foreground)] mb-3 flex items-center gap-1.5">
-          <MessageSquare className="w-4 h-4 text-indigo-400" /> {t("profile", "reviews_title")}
-          {myReviews.length > 0 && (
-            <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[11px] font-bold">
-              {myReviews.length}
-            </span>
-          )}
-        </h3>
+        <div className="flex flex-col items-center gap-3 py-10 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-center">
+          <Compass className="w-9 h-9 text-indigo-400/60" strokeWidth={1.5} />
+          <p className="text-sm font-semibold text-[var(--foreground)]">
+            {t("profile", "itineraries_empty_title")}
+          </p>
+          <p className="text-xs text-[var(--muted-foreground)] max-w-[260px]">
+            {t("profile", "itineraries_empty_desc")}
+          </p>
+          <button
+            onClick={() => navigate("/chat")}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 text-white text-xs font-semibold hover:bg-indigo-600 transition-colors"
+          >
+            <Bot className="w-3.5 h-3.5" />
+            {t("profile", "plan_ai_btn")}
+          </button>
+        </div>
+      </section>
+      )}
+
+      {/* My Reviews tab */}
+      {tab === "reviews" && (
+      <section className="px-4 mb-5">
         {myReviews.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-6 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-center">
+          <div className="flex flex-col items-center gap-2 py-8 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-center">
             <MessageSquare className="w-7 h-7 text-indigo-400/50" strokeWidth={1.5} />
             <p className="text-xs text-[var(--muted-foreground)] max-w-[220px]">
               {t("profile", "reviews_empty")}
@@ -520,8 +580,11 @@ export default function Profile() {
           </div>
         )}
       </section>
+      )}
 
-      {/* Language selector */}
+      {/* Settings tab — language, theme, linked accounts, delete account */}
+      {tab === "settings" && (
+      <>
       <section className="px-4 mb-5">
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
           <Globe className="w-4 h-4 text-indigo-400" /> {t("profile", "lang_title")}
@@ -544,7 +607,6 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* Theme toggle */}
       <section className="px-4 mb-5">
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
           <Settings className="w-4 h-4 text-indigo-400" /> {t("profile", "settings_title")}
@@ -579,6 +641,49 @@ export default function Profile() {
           </div>
         </div>
       </section>
+
+      {/* Linked accounts — reflects what's actually true: this account
+          was created with email/password, and Google/Apple sign-in
+          isn't wired to real OAuth yet (see AuthModal's social buttons),
+          so showing them as "connected" would be fabricating a state
+          that doesn't exist. */}
+      <section className="px-4 mb-5">
+        <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
+          <Shield className="w-4 h-4 text-indigo-400" /> {t("profile", "linked_accounts_title")}
+        </h3>
+        <div className="p-4 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[var(--foreground)]">{user.email}</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-semibold">
+              {t("profile", "linked_email")}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[var(--muted-foreground)]">Google</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
+              {t("profile", "linked_not_connected")}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[var(--muted-foreground)]">Apple</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
+              {t("profile", "linked_not_connected")}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 mb-5">
+        <button
+          onClick={() => showToast(t("profile", "delete_account_soon"), undefined, "info")}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/8 border border-red-500/20 text-red-400 text-sm font-semibold hover:bg-red-500/15 transition-colors active:scale-[0.98]"
+        >
+          <Trash2 className="w-4 h-4" />
+          {t("profile", "delete_account")}
+        </button>
+      </section>
+      </>
+      )}
 
       {/* Emergency numbers */}
       <section className="px-4 mb-5">

@@ -223,6 +223,17 @@ export interface TranslationSchema {
     stat_reviews: string;
     reviews_title: string;
     reviews_empty: string;
+    tab_saved: string;
+    tab_itineraries: string;
+    tab_reviews: string;
+    tab_settings: string;
+    itineraries_empty_title: string;
+    itineraries_empty_desc: string;
+    linked_accounts_title: string;
+    linked_email: string;
+    linked_not_connected: string;
+    delete_account: string;
+    delete_account_soon: string;
   };
   auth: {
     login: string;
@@ -508,6 +519,17 @@ const UZ: TranslationSchema = {
     stat_reviews: "Sharhlar",
     reviews_title: "Mening sharhlarim",
     reviews_empty: "Hali sharh qoldirmadingiz. Joy sahifasida fikringizni yozing.",
+    tab_saved: "Saqlanganlar",
+    tab_itineraries: "Marshrutlar",
+    tab_reviews: "Sharhlar",
+    tab_settings: "Sozlamalar",
+    itineraries_empty_title: "Hali marshrut yo'q",
+    itineraries_empty_desc: "Trova AI bilan suhbatlashib, o'zingizga mos sayohat rejasini tuzing — hozircha marshrutlar alohida saqlanmaydi.",
+    linked_accounts_title: "Ulangan akkauntlar",
+    linked_email: "Email",
+    linked_not_connected: "Ulanmagan",
+    delete_account: "Akkauntni o'chirish",
+    delete_account_soon: "Bu funksiya hali mavjud emas — tez orada qo'shiladi.",
   },
   auth: {
     login: "Kirish",
@@ -795,6 +817,17 @@ const RU: TranslationSchema = {
     stat_reviews: "Отзывы",
     reviews_title: "Мои отзывы",
     reviews_empty: "Вы ещё не оставили отзывов. Напишите его на странице места.",
+    tab_saved: "Сохранённое",
+    tab_itineraries: "Маршруты",
+    tab_reviews: "Отзывы",
+    tab_settings: "Настройки",
+    itineraries_empty_title: "Пока нет маршрутов",
+    itineraries_empty_desc: "Составьте маршрут вместе с Trova AI — пока что маршруты отдельно не сохраняются.",
+    linked_accounts_title: "Привязанные аккаунты",
+    linked_email: "Email",
+    linked_not_connected: "Не подключено",
+    delete_account: "Удалить аккаунт",
+    delete_account_soon: "Эта функция пока недоступна — скоро появится.",
   },
   auth: {
     login: "Вход",
@@ -1081,6 +1114,17 @@ const EN: TranslationSchema = {
     stat_reviews: "Reviews",
     reviews_title: "My Reviews",
     reviews_empty: "You haven't written a review yet. Leave one on a place's page.",
+    tab_saved: "Saved",
+    tab_itineraries: "Itineraries",
+    tab_reviews: "Reviews",
+    tab_settings: "Settings",
+    itineraries_empty_title: "No itineraries yet",
+    itineraries_empty_desc: "Build a trip plan with Trova AI — itineraries aren't saved separately just yet.",
+    linked_accounts_title: "Linked accounts",
+    linked_email: "Email",
+    linked_not_connected: "Not connected",
+    delete_account: "Delete account",
+    delete_account_soon: "This feature isn't available yet — coming soon.",
   },
   auth: {
     login: "Sign In",
@@ -1365,6 +1409,17 @@ const ZH: TranslationSchema = {
     stat_reviews: "评价",
     reviews_title: "我的评价",
     reviews_empty: "您还没有发表评价。可在地点页面留下您的看法。",
+    tab_saved: "已保存",
+    tab_itineraries: "行程",
+    tab_reviews: "评价",
+    tab_settings: "设置",
+    itineraries_empty_title: "暂无行程",
+    itineraries_empty_desc: "与 Trova AI 一起规划您的行程——目前行程尚不能单独保存。",
+    linked_accounts_title: "关联账户",
+    linked_email: "邮箱",
+    linked_not_connected: "未连接",
+    delete_account: "删除账户",
+    delete_account_soon: "此功能暂未开放，敬请期待。",
   },
   auth: {
     login: "登录",
@@ -1653,6 +1708,17 @@ const DE: TranslationSchema = {
     stat_reviews: "Bewertungen",
     reviews_title: "Meine Bewertungen",
     reviews_empty: "Sie haben noch keine Bewertung geschrieben. Tun Sie dies auf der Seite eines Ortes.",
+    tab_saved: "Gespeichert",
+    tab_itineraries: "Routen",
+    tab_reviews: "Bewertungen",
+    tab_settings: "Einstellungen",
+    itineraries_empty_title: "Noch keine Route",
+    itineraries_empty_desc: "Planen Sie eine Reise mit Trova AI — Routen werden derzeit noch nicht separat gespeichert.",
+    linked_accounts_title: "Verknüpfte Konten",
+    linked_email: "E-Mail",
+    linked_not_connected: "Nicht verbunden",
+    delete_account: "Konto löschen",
+    delete_account_soon: "Diese Funktion ist noch nicht verfügbar — bald verfügbar.",
   },
   auth: {
     login: "Anmelden",
@@ -1942,6 +2008,17 @@ const FR: TranslationSchema = {
     stat_reviews: "Avis",
     reviews_title: "Mes avis",
     reviews_empty: "Vous n'avez pas encore laissé d'avis. Faites-le sur la page d'un lieu.",
+    tab_saved: "Enregistrés",
+    tab_itineraries: "Itinéraires",
+    tab_reviews: "Avis",
+    tab_settings: "Paramètres",
+    itineraries_empty_title: "Aucun itinéraire pour le moment",
+    itineraries_empty_desc: "Créez un itinéraire avec Trova AI — les itinéraires ne sont pas encore enregistrés séparément.",
+    linked_accounts_title: "Comptes liés",
+    linked_email: "Email",
+    linked_not_connected: "Non connecté",
+    delete_account: "Supprimer le compte",
+    delete_account_soon: "Cette fonctionnalité n'est pas encore disponible — bientôt.",
   },
   auth: {
     login: "Connexion",
