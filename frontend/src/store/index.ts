@@ -35,8 +35,11 @@ interface AppStore {
 
   // UI
   authModalOpen: boolean;
-  openAuthModal: () => void;
+  authModalTab: "login" | "register";
+  openAuthModal: (tab?: "login" | "register") => void;
   closeAuthModal: () => void;
+  hasEnteredApp: boolean;
+  enterAsGuest: () => void;
   searchOpen: boolean;
   setSearchOpen: (open: boolean) => void;
 
@@ -104,8 +107,16 @@ export const useAppStore = create<AppStore>()(
 
       // ── UI ────────────────────────────────────────────
       authModalOpen: false,
-      openAuthModal: () => set({ authModalOpen: true }),
+      authModalTab: "login",
+      openAuthModal: (tab = "login") => set({ authModalOpen: true, authModalTab: tab }),
       closeAuthModal: () => set({ authModalOpen: false }),
+
+      // Guests who pick "Continue as Guest" on the landing page shouldn't
+      // be routed back to it on every subsequent visit — this flag (like
+      // auth) is part of the persisted slice below, so it survives a
+      // refresh the same way a logged-in session would.
+      hasEnteredApp: false,
+      enterAsGuest: () => set({ hasEnteredApp: true }),
 
       searchOpen: false,
       setSearchOpen: (open) => set({ searchOpen: open }),
@@ -114,6 +125,15 @@ export const useAppStore = create<AppStore>()(
       toasts: [],
 
       showToast: (message, icon, type = "success") => {
+        // A rapid run of clicks that each call showToast with the SAME
+        // message (thumbs-up spam being the reported case) used to stack
+        // an unbounded pile, since every call unconditionally pushed a
+        // new entry with its own independent 3s timer. If an identical
+        // message is already showing, just no-op instead of adding a
+        // twin — the user already sees the feedback they need.
+        const alreadyShowing = get().toasts.some((t) => t.message === message);
+        if (alreadyShowing) return;
+
         // Date.now() alone collides when two toasts fire in the same
         // millisecond (e.g. two quick "added to plan" taps) — both would
         // share a key, so dismissing one via its timeout silently killed
@@ -121,7 +141,14 @@ export const useAppStore = create<AppStore>()(
         // guarantees uniqueness without needing crypto.randomUUID (not
         // available in non-secure/older WebView contexts).
         const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        set((state) => ({ toasts: [...state.toasts, { id, message, icon, type }] }));
+        set((state) => {
+          // Defensive cap: even with de-duping above, distinct messages
+          // firing back-to-back (e.g. several different "added to plan"
+          // taps) shouldn't be able to bury the screen — keep at most 3
+          // visible, dropping the oldest first.
+          const next = [...state.toasts, { id, message, icon, type }];
+          return { toasts: next.length > 3 ? next.slice(next.length - 3) : next };
+        });
         setTimeout(() => {
           set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
         }, 3000);
@@ -157,6 +184,7 @@ export const useAppStore = create<AppStore>()(
         theme: state.theme,
         lang: state.lang,
         userReviews: state.userReviews,
+        hasEnteredApp: state.hasEnteredApp,
       }),
       // Bumping this forces a one-time migration: browsers that already
       // persisted "uz" from before the default changed to English get

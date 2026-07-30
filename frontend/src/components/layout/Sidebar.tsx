@@ -195,7 +195,7 @@ export function Sidebar() {
                 {t("profile", "sidebar_login_hint")}
               </p>
               <button
-                onClick={openAuthModal}
+                onClick={() => openAuthModal()}
                 className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-colors active:scale-[0.97]"
               >
                 <LogIn className="w-3.5 h-3.5 text-gold-200" />

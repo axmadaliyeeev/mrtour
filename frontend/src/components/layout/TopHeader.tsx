@@ -133,7 +133,7 @@ export function TopHeader() {
           </button>
         ) : (
           <button
-            onClick={openAuthModal}
+            onClick={() => openAuthModal()}
             className="flex items-center gap-1.5 px-3 h-8 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-all active:scale-95 shadow-sm hover:-translate-y-px"
           >
             <LogIn className="w-3.5 h-3.5" />

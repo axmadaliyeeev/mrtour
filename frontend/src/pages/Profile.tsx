@@ -181,13 +181,13 @@ export default function Profile() {
           </div>
           <div className="flex gap-2 w-full">
             <button
-              onClick={openAuthModal}
+              onClick={() => openAuthModal()}
               className="btn-shine ripple flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white text-sm font-semibold shadow-sm transition-all active:scale-[0.98]"
             >
               {t("profile", "login_btn")}
             </button>
             <button
-              onClick={openAuthModal}
+              onClick={() => openAuthModal()}
               className="flex-1 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm font-semibold hover:border-indigo-500/40 transition-colors"
             >
               {t("profile", "register_btn")}
@@ -256,7 +256,7 @@ export default function Profile() {
                   {t("profile", "guest_plan_save_hint")}
                   {" "}
                   <button
-                    onClick={openAuthModal}
+                    onClick={() => openAuthModal()}
                     className="text-indigo-400 font-semibold hover:underline"
                   >
                     {t("profile", "login_btn")}

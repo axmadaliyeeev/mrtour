@@ -117,6 +117,22 @@
 /* ── Base reset ─────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Chromium/WebKit paint autofilled inputs with their own opaque
+   light-blue fill (~#E8F0FE) that ignores background-color entirely —
+   the only way to override it is this box-shadow inset trick forcing
+   the app's own input surface color back in, plus a huge transition
+   delay so it doesn't flash blue for a moment before settling. This
+   was very likely the "light-blue input" bug reported on the auth
+   modal — those fields never had a mismatched style rule of their own,
+   the browser was painting over whatever we set once autofill kicked in. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--input-bg, var(--card)) inset !important;
+  -webkit-text-fill-color: var(--foreground) !important;
+  transition: background-color 600000s ease-in-out 0s;
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;

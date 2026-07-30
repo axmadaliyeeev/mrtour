@@ -1,7 +1,7 @@
-﻿import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2 } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -9,6 +9,20 @@ import { mergePlanOnLogin } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { User } from "@/types";
+import { CountrySelect } from "./CountrySelect";
+
+// 4-tier heuristic (length + character-class variety) — not trying to be
+// a real entropy calculator, just enough signal to nudge users away from
+// "password1" without being preachy about it.
+function passwordStrength(pw: string): 0 | 1 | 2 | 3 {
+  if (!pw) return 0;
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw) || /[^A-Za-z0-9]/.test(pw)) score++;
+  return Math.min(score, 3) as 0 | 1 | 2 | 3;
+}
 
 // A timed-out/network-level failure (no response at all — most often a
 // free-tier backend cold-booting) reads very differently to a user than a
@@ -80,16 +94,18 @@ function SocialAuthButtons() {
 
 // ── Shared input ──────────────────────────────────────────────────────────────
 function Field({
-  label, error, type = "text", value, onChange, placeholder, autoComplete,
+  label, error, type = "text", value, onChange, placeholder, autoComplete, required,
 }: {
   label: string; error?: string; type?: string; value: string;
-  onChange: (v: string) => void; placeholder?: string; autoComplete?: string;
+  onChange: (v: string) => void; placeholder?: string; autoComplete?: string; required?: boolean;
 }) {
   const [show, setShow] = useState(false);
   const isPassword = type === "password";
   return (
     <div className="space-y-1">
-      <label className="text-xs font-medium text-[var(--muted-foreground)]">{label}</label>
+      <label className="text-xs font-medium text-[var(--muted-foreground)]">
+        {label}{required && <span className="text-red-400 ml-0.5">*</span>}
+      </label>
       <div className="relative">
         <input
           type={isPassword ? (show ? "text" : "password") : type}
@@ -112,6 +128,29 @@ function Field({
         )}
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
+
+// ── Password strength meter ────────────────────────────────────────────────
+function PasswordStrengthMeter({ password, t }: { password: string; t: ReturnType<typeof useTranslation>["t"] }) {
+  if (!password) return null;
+  const score = passwordStrength(password);
+  const labels = [t("auth", "pw_weak"), t("auth", "pw_weak"), t("auth", "pw_medium"), t("auth", "pw_strong")];
+  const colors = ["bg-red-400", "bg-red-400", "bg-gold-500", "bg-indigo-500"];
+  return (
+    <div className="flex items-center gap-2 -mt-1">
+      <div className="flex-1 flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={cn("h-1 flex-1 rounded-full transition-colors", i < score ? colors[score] : "bg-[var(--border)]")} />
+        ))}
+      </div>
+      <span className={cn(
+        "text-[10px] font-semibold shrink-0",
+        score >= 3 ? "text-indigo-400" : score === 2 ? "text-gold-600" : "text-red-400"
+      )}>
+        {labels[score]}
+      </span>
     </div>
   );
 }
@@ -172,9 +211,10 @@ function LoginTab({ onClose }: { onClose: () => void }) {
         </p>
       )}
       <button type="submit" disabled={loading}
-        className={cn("w-full py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+        className={cn("w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
           loading ? "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
             : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md")}>
+        {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         {loading ? t("auth", "loading_login") : t("auth", "login_btn")}
       </button>
     </form>
@@ -200,15 +240,38 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
 
   const STEPS = [t("auth", "step_lang"), t("auth", "step_info"), t("auth", "step_done")];
 
-  function validate() {
+  function computeErrors() {
     const e: Record<string, string> = {};
     if (name.trim().length < 2)            e.name     = t("auth", "err_name_short");
     if (surname.trim().length < 2)         e.surname  = t("auth", "err_surname_short");
     if (!email.trim())                     e.email    = t("auth", "err_email_required");
     else if (!/\S+@\S+\.\S+/.test(email))  e.email    = t("auth", "err_email_invalid");
     if (password.length < 8)               e.password = t("auth", "err_password_short");
-    setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
+  }
+
+  // Live validity for the submit-button gate — recomputed on every
+  // keystroke but only actually SHOWN (via `errors`) once the user has
+  // tried to submit once, so it doesn't flag empty required fields
+  // as "errors" before they've had a chance to type anything.
+  const liveErrors = useMemo(computeErrors, [name, surname, email, password]);
+  const isValid = Object.keys(liveErrors).length === 0;
+  const [attempted, setAttempted] = useState(false);
+
+  // Once the user has tried to submit at least once, keep error messages
+  // live as they correct each field — re-validating silently before that
+  // point would flag untouched required fields as "wrong" the instant
+  // the form opens, which reads as the form yelling at you before you've
+  // done anything.
+  useEffect(() => {
+    if (attempted) setErrors(liveErrors);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attempted, name, surname, email, password]);
+
+  function validate() {
+    setAttempted(true);
+    setErrors(liveErrors);
+    return Object.keys(liveErrors).length === 0;
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -290,18 +353,33 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
           className="space-y-3"
         >
           <div className="grid grid-cols-2 gap-3">
-            <Field label={t("auth", "name")} value={name} onChange={setName}
+            <Field label={t("auth", "name")} value={name} onChange={setName} required
               placeholder={t("auth", "name_placeholder")} autoComplete="given-name" error={errors.name} />
-            <Field label={t("auth", "surname")} value={surname} onChange={setSurname}
+            <Field label={t("auth", "surname")} value={surname} onChange={setSurname} required
               placeholder={t("auth", "surname_placeholder")} autoComplete="family-name" error={errors.surname} />
           </div>
-          <Field label={t("auth", "email")} type="email" value={email} onChange={setEmail}
+          <Field label={t("auth", "email")} type="email" value={email} onChange={setEmail} required
             placeholder={t("auth", "email_placeholder")} autoComplete="email" error={errors.email} />
-          <Field label={t("auth", "password")} type="password" value={password} onChange={setPassword}
-            placeholder={t("auth", "new_password_placeholder")} autoComplete="new-password" error={errors.password} />
-          <Field label={t("auth", "country")} value={country} onChange={setCountry}
-            placeholder={t("auth", "country_placeholder")} autoComplete="country-name" />
+          <div className="space-y-1.5">
+            <Field label={t("auth", "password")} type="password" value={password} onChange={setPassword} required
+              placeholder={t("auth", "new_password_placeholder")} autoComplete="new-password" error={errors.password} />
+            <PasswordStrengthMeter password={password} t={t} />
+          </div>
+          <CountrySelect
+            value={country}
+            onChange={setCountry}
+            label={t("auth", "country")}
+            placeholder={t("auth", "country_placeholder")}
+            searchPlaceholder={t("auth", "country_search")}
+            skipLabel={t("auth", "country_clear")}
+          />
 
+          {attempted && !isValid && (
+            <p className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              {t("auth", "form_errors_summary")}
+            </p>
+          )}
           {apiError && (
             <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
               {apiError}
@@ -312,10 +390,11 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
               className="px-4 py-2.5 rounded-xl border border-[var(--border)] text-[var(--muted-foreground)] text-sm hover:bg-[var(--muted)] transition-colors">
               {t("auth", "back")}
             </button>
-            <button type="submit" disabled={loading}
-              className={cn("flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
-                loading ? "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
+            <button type="submit" disabled={loading || (attempted && !isValid)}
+              className={cn("flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+                loading || (attempted && !isValid) ? "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
                   : "bg-indigo-500 hover:bg-indigo-600 text-white")}>
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {loading ? t("auth", "loading_register") : t("auth", "register_btn")}
             </button>
           </div>
@@ -364,12 +443,19 @@ function RegisterTab({ onClose }: { onClose: () => void }) {
 
 // ── Main modal ────────────────────────────────────────────────────────────────
 export function AuthModal() {
-  const { authModalOpen, closeAuthModal } = useAppStore();
+  const { authModalOpen, authModalTab, closeAuthModal } = useAppStore();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const tabResetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => { if (tabResetTimer.current) clearTimeout(tabResetTimer.current); }, []);
+
+  // Whichever tab the caller asked for (openAuthModal("register") from
+  // the landing page's "Get Started" CTA, vs the plain "Sign In" link)
+  // becomes the tab shown when the modal opens.
+  useEffect(() => {
+    if (authModalOpen) setActiveTab(authModalTab);
+  }, [authModalOpen, authModalTab]);
 
   function handleClose() {
     closeAuthModal();

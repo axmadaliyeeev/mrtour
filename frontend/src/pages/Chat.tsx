@@ -213,10 +213,21 @@ export default function Chat() {
   }
 
   function setMessageReaction(id: string, reaction: "up" | "down") {
+    let didSet = false;
     setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, reaction: m.reaction === reaction ? null : reaction } : m))
+      prev.map((m) => {
+        if (m.id !== id) return m;
+        const cleared = m.reaction === reaction;
+        didSet = !cleared;
+        return { ...m, reaction: cleared ? null : reaction };
+      })
     );
-    showToast(t("chat", "reaction_thanks"), undefined, "info");
+    // Only thank the user for an actual new reaction — re-clicking the
+    // same button clears it (no feedback was just given), so toasting
+    // there was both wrong and, combined with no de-dupe in the toast
+    // store, the actual cause of the reported spam: rapid clicks toggled
+    // on/off repeatedly, firing a toast on every single one.
+    if (didSet) showToast(t("chat", "reaction_thanks"), undefined, "info");
   }
 
   function sendPlanTourRequest() {

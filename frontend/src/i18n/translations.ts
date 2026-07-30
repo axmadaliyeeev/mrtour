@@ -253,6 +253,8 @@ export interface TranslationSchema {
     name_placeholder: string;
     surname_placeholder: string;
     country_placeholder: string;
+    country_search: string;
+    country_clear: string;
     new_password_placeholder: string;
     login_btn: string;
     loading_login: string;
@@ -275,6 +277,11 @@ export interface TranslationSchema {
     err_email_required: string;
     err_email_invalid: string;
     err_password_short: string;
+    pw_weak: string;
+    pw_medium: string;
+    pw_strong: string;
+    required: string;
+    form_errors_summary: string;
     err_login: string;
     err_register: string;
     err_waking_up: string;
@@ -289,6 +296,35 @@ export interface TranslationSchema {
     ai_btn: string;
     cities_suffix: string;
     ai_banner: string;
+  };
+  landing: {
+    hero_title: string;
+    hero_subtitle: string;
+    cta_signup: string;
+    cta_guest: string;
+    sign_in: string;
+    features_title: string;
+    feature1_title: string;
+    feature1_desc: string;
+    feature2_title: string;
+    feature2_desc: string;
+    feature3_title: string;
+    feature3_desc: string;
+    feature4_title: string;
+    feature4_desc: string;
+    how_title: string;
+    how1_title: string;
+    how1_desc: string;
+    how2_title: string;
+    how2_desc: string;
+    how3_title: string;
+    how3_desc: string;
+    destinations_title: string;
+    destinations_subtitle: string;
+    see_all: string;
+    final_cta_title: string;
+    final_cta_desc: string;
+    footer_tagline: string;
   };
 }
 
@@ -550,6 +586,8 @@ const UZ: TranslationSchema = {
     name_placeholder: "Ali",
     surname_placeholder: "Valiyev",
     country_placeholder: "O'zbekiston",
+    country_search: "Mamlakat qidirish...",
+    country_clear: "Tozalash",
     new_password_placeholder: "Kamida 8 belgi",
     login_btn: "Kirish",
     loading_login: "Kirilmoqda...",
@@ -572,6 +610,11 @@ const UZ: TranslationSchema = {
     err_email_required: "Email kiritilishi shart",
     err_email_invalid: "Yaroqli email kiriting",
     err_password_short: "Parol kamida 8 ta belgi bo'lishi kerak",
+    pw_weak: "Zaif",
+    pw_medium: "O'rtacha",
+    pw_strong: "Kuchli",
+    required: "majburiy",
+    form_errors_summary: "Iltimos, quyidagi xatolarni tuzating",
     err_login: "Email yoki parol noto'g'ri",
     err_register: "Ro'yxatdan o'tishda xato yuz berdi",
     err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring.",
@@ -586,6 +629,35 @@ const UZ: TranslationSchema = {
     ai_btn: "AI bilan reja tuzish",
     cities_suffix: "shahar",
     ai_banner: "Saqlangan joylar asosida Trova AI'dan marshrut so'rang",
+  },
+  landing: {
+    hero_title: "O'zbekistonni sun'iy intellekt yordamchingiz bilan kashf eting",
+    hero_subtitle: "AI tomonidan tuzilgan marshrutlar, tanlab olingan 200+ joy va mahalliy maslahatlar — barchasi bir ilovada.",
+    cta_signup: "Boshlash — Ro'yxatdan o'tish",
+    cta_guest: "Mehmon sifatida davom etish",
+    sign_in: "Kirish",
+    features_title: "Trova nima uchun boshqacha",
+    feature1_title: "AI sayohat rejasi",
+    feature1_desc: "Trova AI bilan suhbatlashib, sizga mos individual marshrut tuzing.",
+    feature2_title: "Tanlab olingan joylar",
+    feature2_desc: "Haqiqiy sharhlar bilan 200+ tasdiqlangan sayohat manzili.",
+    feature3_title: "Aqlli sharhlar",
+    feature3_desc: "Har bir sharh AI tomonidan tahlil qilinib, ishonch balli beriladi.",
+    feature4_title: "6 til",
+    feature4_desc: "Sayohatingizni o'zingizga qulay tilda rejalashtiring.",
+    how_title: "Qanday ishlaydi",
+    how1_title: "Trova AI'ga rejangizni ayting",
+    how1_desc: "Necha kun, kim bilan va qayerga borishni yozing.",
+    how2_title: "Shaxsiy marshrut oling",
+    how2_desc: "AI soniyalar ichida sizga mos reja tuzadi.",
+    how3_title: "Ishonch bilan sayohat qiling",
+    how3_desc: "Tasdiqlangan joylar va sharhlar bilan yo'lga chiqing.",
+    destinations_title: "Mashhur manzillar",
+    destinations_subtitle: "Eng yuqori baholangan joylardan ba'zilari",
+    see_all: "Barcha joylarni ko'rish",
+    final_cta_title: "Sayohatga tayyormisiz?",
+    final_cta_desc: "Bepul hisob oching yoki mehmon sifatida davom eting — tanlov sizniki.",
+    footer_tagline: "Sun'iy intellekt yordamida O'zbekiston bo'ylab sayohat",
   },
 };
 
@@ -849,6 +921,8 @@ const RU: TranslationSchema = {
     name_placeholder: "Иван",
     surname_placeholder: "Иванов",
     country_placeholder: "Россия",
+    country_search: "Поиск страны...",
+    country_clear: "Очистить",
     new_password_placeholder: "Не менее 8 символов",
     login_btn: "Войти",
     loading_login: "Вход...",
@@ -871,6 +945,11 @@ const RU: TranslationSchema = {
     err_email_required: "Введите email",
     err_email_invalid: "Введите корректный email",
     err_password_short: "Пароль должен содержать не менее 8 символов",
+    pw_weak: "Слабый",
+    pw_medium: "Средний",
+    pw_strong: "Сильный",
+    required: "обязательно",
+    form_errors_summary: "Пожалуйста, исправьте ошибки ниже",
     err_login: "Неверный email или пароль",
     err_register: "Ошибка при регистрации",
     err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова.",
@@ -885,6 +964,35 @@ const RU: TranslationSchema = {
     ai_btn: "Составить план с AI",
     cities_suffix: "город(ов)",
     ai_banner: "Попросите Trova AI составить маршрут по сохранённым местам",
+  },
+  landing: {
+    hero_title: "Откройте Узбекистан с вашим AI-гидом",
+    hero_subtitle: "Маршруты, составленные ИИ, более 200 подобранных мест и местные советы — всё в одном приложении.",
+    cta_signup: "Начать — создать аккаунт",
+    cta_guest: "Продолжить как гость",
+    sign_in: "Войти",
+    features_title: "Почему Trova особенный",
+    feature1_title: "AI-планирование поездки",
+    feature1_desc: "Общайтесь с Trova AI, чтобы составить индивидуальный маршрут.",
+    feature2_title: "Подобранные места",
+    feature2_desc: "Более 200 проверенных мест с настоящими отзывами.",
+    feature3_title: "Умные отзывы",
+    feature3_desc: "Каждый отзыв анализируется ИИ и получает оценку доверия.",
+    feature4_title: "6 языков",
+    feature4_desc: "Планируйте поездку на удобном для вас языке.",
+    how_title: "Как это работает",
+    how1_title: "Расскажите Trova AI о своих планах",
+    how1_desc: "Укажите сколько дней, с кем и куда вы хотите поехать.",
+    how2_title: "Получите персональный маршрут",
+    how2_desc: "ИИ за секунды составит план, подходящий именно вам.",
+    how3_title: "Путешествуйте с уверенностью",
+    how3_desc: "Отправляйтесь в путь с проверенными местами и отзывами.",
+    destinations_title: "Популярные направления",
+    destinations_subtitle: "Некоторые из наиболее высоко оценённых мест",
+    see_all: "Смотреть все места",
+    final_cta_title: "Готовы к путешествию?",
+    final_cta_desc: "Создайте бесплатный аккаунт или продолжите как гость — выбор за вами.",
+    footer_tagline: "Путешествие по Узбекистану с помощью ИИ",
   },
 };
 
@@ -1147,6 +1255,8 @@ const EN: TranslationSchema = {
     name_placeholder: "Alex",
     surname_placeholder: "Smith",
     country_placeholder: "United States",
+    country_search: "Search country...",
+    country_clear: "Clear",
     new_password_placeholder: "At least 8 characters",
     login_btn: "Sign In",
     loading_login: "Signing in...",
@@ -1169,6 +1279,11 @@ const EN: TranslationSchema = {
     err_email_required: "Please enter your email",
     err_email_invalid: "Please enter a valid email address",
     err_password_short: "Password must be at least 8 characters",
+    pw_weak: "Weak",
+    pw_medium: "Medium",
+    pw_strong: "Strong",
+    required: "required",
+    form_errors_summary: "Please fix the errors below",
     err_login: "Incorrect email or password",
     err_register: "Something went wrong during registration",
     err_waking_up: "Server is waking up — please wait a moment and try again.",
@@ -1183,6 +1298,35 @@ const EN: TranslationSchema = {
     ai_btn: "Plan with AI",
     cities_suffix: "cities",
     ai_banner: "Ask Trova AI to build a route from your saved places",
+  },
+  landing: {
+    hero_title: "Discover Uzbekistan with your AI travel guide",
+    hero_subtitle: "AI-planned itineraries, 200+ curated places and local insights — all in one app.",
+    cta_signup: "Get Started — Create Account",
+    cta_guest: "Continue as Guest",
+    sign_in: "Sign In",
+    features_title: "Why Trova is different",
+    feature1_title: "AI Trip Planning",
+    feature1_desc: "Chat with Trova AI to build a custom itinerary just for you.",
+    feature2_title: "Curated Places",
+    feature2_desc: "200+ verified locations with real, trustworthy reviews.",
+    feature3_title: "Smart Reviews",
+    feature3_desc: "Every review is AI-analyzed with a real trust score.",
+    feature4_title: "6 Languages",
+    feature4_desc: "Plan your trip in whichever language you're comfortable in.",
+    how_title: "How it works",
+    how1_title: "Tell Trova AI your plans",
+    how1_desc: "Share how many days, who's coming, and where you want to go.",
+    how2_title: "Get a personalized itinerary",
+    how2_desc: "The AI builds a plan tailored to you in seconds.",
+    how3_title: "Explore with confidence",
+    how3_desc: "Head out with verified places and trustworthy reviews.",
+    destinations_title: "Featured destinations",
+    destinations_subtitle: "Some of our highest-rated places",
+    see_all: "Explore all places",
+    final_cta_title: "Ready to start planning?",
+    final_cta_desc: "Create a free account or continue as a guest — the choice is yours.",
+    footer_tagline: "AI-powered travel across Uzbekistan",
   },
 };
 
@@ -1443,6 +1587,8 @@ const ZH: TranslationSchema = {
     name_placeholder: "张",
     surname_placeholder: "伟",
     country_placeholder: "中国",
+    country_search: "搜索国家...",
+    country_clear: "清除",
     new_password_placeholder: "至少 8 个字符",
     login_btn: "登录",
     loading_login: "登录中...",
@@ -1465,6 +1611,11 @@ const ZH: TranslationSchema = {
     err_email_required: "请输入邮箱",
     err_email_invalid: "请输入有效的邮箱地址",
     err_password_short: "密码至少需要 8 个字符",
+    pw_weak: "弱",
+    pw_medium: "中等",
+    pw_strong: "强",
+    required: "必填",
+    form_errors_summary: "请修正以下错误",
     err_login: "邮箱或密码错误",
     err_register: "注册过程中出现错误",
     err_waking_up: "服务器正在唤醒，请稍等片刻后重试。",
@@ -1479,6 +1630,35 @@ const ZH: TranslationSchema = {
     ai_btn: "使用 AI 规划",
     cities_suffix: "个城市",
     ai_banner: "让 Trova AI 根据收藏的地点规划路线",
+  },
+  landing: {
+    hero_title: "与您的 AI 旅行向导一起探索乌兹别克斯坦",
+    hero_subtitle: "AI 规划的行程、200+ 精选地点和本地建议——全部在一个应用中。",
+    cta_signup: "开始使用 — 创建账户",
+    cta_guest: "以访客身份继续",
+    sign_in: "登录",
+    features_title: "Trova 的与众不同之处",
+    feature1_title: "AI 行程规划",
+    feature1_desc: "与 Trova AI 对话，为您定制专属行程。",
+    feature2_title: "精选地点",
+    feature2_desc: "200+ 经过验证的地点，配有真实评价。",
+    feature3_title: "智能评价",
+    feature3_desc: "每条评价都经过 AI 分析并给出真实的信任评分。",
+    feature4_title: "支持 6 种语言",
+    feature4_desc: "用您习惯的语言规划旅程。",
+    how_title: "使用方法",
+    how1_title: "告诉 Trova AI 您的计划",
+    how1_desc: "说明天数、同行人数以及想去的地方。",
+    how2_title: "获取个性化行程",
+    how2_desc: "AI 会在几秒钟内为您生成合适的计划。",
+    how3_title: "放心探索",
+    how3_desc: "凭借经过验证的地点和真实评价出发旅行。",
+    destinations_title: "热门目的地",
+    destinations_subtitle: "部分评分最高的地点",
+    see_all: "查看所有地点",
+    final_cta_title: "准备好开始规划了吗？",
+    final_cta_desc: "创建免费账户，或以访客身份继续——由您决定。",
+    footer_tagline: "AI 驱动的乌兹别克斯坦旅行",
   },
 };
 
@@ -1743,6 +1923,8 @@ const DE: TranslationSchema = {
     name_placeholder: "Hans",
     surname_placeholder: "Müller",
     country_placeholder: "Deutschland",
+    country_search: "Land suchen...",
+    country_clear: "Löschen",
     new_password_placeholder: "Mindestens 8 Zeichen",
     login_btn: "Anmelden",
     loading_login: "Anmeldung läuft...",
@@ -1765,6 +1947,11 @@ const DE: TranslationSchema = {
     err_email_required: "Bitte geben Sie Ihre E-Mail-Adresse ein",
     err_email_invalid: "Bitte geben Sie eine gültige E-Mail-Adresse ein",
     err_password_short: "Das Passwort muss mindestens 8 Zeichen lang sein",
+    pw_weak: "Schwach",
+    pw_medium: "Mittel",
+    pw_strong: "Stark",
+    required: "erforderlich",
+    form_errors_summary: "Bitte korrigieren Sie die folgenden Fehler",
     err_login: "Falsche E-Mail-Adresse oder falsches Passwort",
     err_register: "Bei der Registrierung ist ein Fehler aufgetreten",
     err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut.",
@@ -1779,6 +1966,35 @@ const DE: TranslationSchema = {
     ai_btn: "Mit KI planen",
     cities_suffix: "Städte",
     ai_banner: "Lassen Sie Trova AI eine Route aus Ihren gespeicherten Orten erstellen",
+  },
+  landing: {
+    hero_title: "Entdecken Sie Usbekistan mit Ihrem KI-Reiseführer",
+    hero_subtitle: "KI-geplante Routen, 200+ ausgewählte Orte und lokale Tipps — alles in einer App.",
+    cta_signup: "Loslegen — Konto erstellen",
+    cta_guest: "Als Gast fortfahren",
+    sign_in: "Anmelden",
+    features_title: "Warum Trova anders ist",
+    feature1_title: "KI-Reiseplanung",
+    feature1_desc: "Chatten Sie mit Trova AI, um eine individuelle Route zu erstellen.",
+    feature2_title: "Ausgewählte Orte",
+    feature2_desc: "200+ geprüfte Orte mit echten Bewertungen.",
+    feature3_title: "Intelligente Bewertungen",
+    feature3_desc: "Jede Bewertung wird von der KI analysiert und erhält einen echten Vertrauenswert.",
+    feature4_title: "6 Sprachen",
+    feature4_desc: "Planen Sie Ihre Reise in der Sprache Ihrer Wahl.",
+    how_title: "So funktioniert's",
+    how1_title: "Erzählen Sie Trova AI Ihre Pläne",
+    how1_desc: "Geben Sie an, wie viele Tage, mit wem und wohin Sie reisen möchten.",
+    how2_title: "Erhalten Sie eine persönliche Route",
+    how2_desc: "Die KI erstellt in Sekunden einen passenden Plan für Sie.",
+    how3_title: "Reisen Sie mit Zuversicht",
+    how3_desc: "Brechen Sie auf mit geprüften Orten und echten Bewertungen.",
+    destinations_title: "Beliebte Reiseziele",
+    destinations_subtitle: "Einige unserer bestbewerteten Orte",
+    see_all: "Alle Orte entdecken",
+    final_cta_title: "Bereit für Ihre Reiseplanung?",
+    final_cta_desc: "Erstellen Sie ein kostenloses Konto oder fahren Sie als Gast fort — die Wahl liegt bei Ihnen.",
+    footer_tagline: "KI-gestütztes Reisen durch Usbekistan",
   },
 };
 
@@ -2044,6 +2260,8 @@ const FR: TranslationSchema = {
     name_placeholder: "Jean",
     surname_placeholder: "Dupont",
     country_placeholder: "France",
+    country_search: "Rechercher un pays...",
+    country_clear: "Effacer",
     new_password_placeholder: "Au moins 8 caractères",
     login_btn: "Se connecter",
     loading_login: "Connexion...",
@@ -2067,6 +2285,11 @@ const FR: TranslationSchema = {
     err_email_required: "Veuillez saisir votre adresse e-mail",
     err_email_invalid: "Veuillez saisir une adresse e-mail valide",
     err_password_short: "Le mot de passe doit comporter au moins 8 caractères",
+    pw_weak: "Faible",
+    pw_medium: "Moyen",
+    pw_strong: "Fort",
+    required: "obligatoire",
+    form_errors_summary: "Veuillez corriger les erreurs ci-dessous",
     err_login: "Adresse e-mail ou mot de passe incorrect",
     err_register: "Une erreur est survenue lors de l'inscription",
     err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer.",
@@ -2081,6 +2304,35 @@ const FR: TranslationSchema = {
     ai_btn: "Planifier avec l'IA",
     cities_suffix: "villes",
     ai_banner: "Demandez à Trova AI de créer un itinéraire à partir de vos lieux enregistrés",
+  },
+  landing: {
+    hero_title: "Découvrez l'Ouzbékistan avec votre guide de voyage IA",
+    hero_subtitle: "Itinéraires planifiés par IA, plus de 200 lieux sélectionnés et conseils locaux — le tout dans une seule application.",
+    cta_signup: "Commencer — Créer un compte",
+    cta_guest: "Continuer en tant qu'invité",
+    sign_in: "Se connecter",
+    features_title: "Pourquoi Trova est différent",
+    feature1_title: "Planification de voyage IA",
+    feature1_desc: "Discutez avec Trova AI pour créer un itinéraire personnalisé.",
+    feature2_title: "Lieux sélectionnés",
+    feature2_desc: "Plus de 200 lieux vérifiés avec de véritables avis.",
+    feature3_title: "Avis intelligents",
+    feature3_desc: "Chaque avis est analysé par l'IA et reçoit un véritable score de confiance.",
+    feature4_title: "6 langues",
+    feature4_desc: "Planifiez votre voyage dans la langue de votre choix.",
+    how_title: "Comment ça marche",
+    how1_title: "Dites à Trova AI vos projets",
+    how1_desc: "Indiquez le nombre de jours, avec qui et où vous souhaitez aller.",
+    how2_title: "Obtenez un itinéraire personnalisé",
+    how2_desc: "L'IA crée un plan adapté à vos besoins en quelques secondes.",
+    how3_title: "Explorez en toute confiance",
+    how3_desc: "Partez avec des lieux vérifiés et des avis fiables.",
+    destinations_title: "Destinations populaires",
+    destinations_subtitle: "Quelques-uns de nos lieux les mieux notés",
+    see_all: "Explorer tous les lieux",
+    final_cta_title: "Prêt à planifier votre voyage ?",
+    final_cta_desc: "Créez un compte gratuit ou continuez en tant qu'invité — le choix vous appartient.",
+    footer_tagline: "Voyager en Ouzbékistan grâce à l'IA",
   },
 };
 
