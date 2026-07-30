@@ -12,13 +12,17 @@ import { env } from "@/config/env";
  * the building.
  */
 
-export const isMailConfigured = Boolean(env.SMTP_USER && env.SMTP_PASS);
+const useHttpApi = Boolean(env.BREVO_API_KEY);
+
+export const isMailConfigured = useHttpApi || Boolean(env.SMTP_USER && env.SMTP_PASS);
 
 const isConfigured = isMailConfigured;
 
 let transporter: Transporter | null = null;
 
-if (isConfigured) {
+if (useHttpApi) {
+  console.info("📧 Mail transport: Brevo HTTP API (port 443)");
+} else if (isConfigured) {
   transporter = nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT,
@@ -54,7 +58,63 @@ function codeEmailHtml(code: string): string {
   </div>`;
 }
 
+/** Parses `Name <addr@host>` or a bare address into Brevo's sender shape. */
+function parseSender(): { name: string; email: string } {
+  const raw = env.MAIL_FROM ?? env.SMTP_USER ?? "";
+  const m = raw.match(/^\s*(.*?)\s*<\s*(.+?)\s*>\s*$/);
+  if (m) return { name: m[1] || "trova", email: m[2] };
+  return { name: "trova", email: raw };
+}
+
+async function sendViaHttpApi(to: string, code: string): Promise<void> {
+  const sender = parseSender();
+  // AbortSignal.timeout so a stalled call fails fast instead of holding the
+  // request open — the exact failure mode that made the SMTP path look like
+  // a hung server rather than a misconfiguration.
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": env.BREVO_API_KEY!,
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender,
+      to: [{ email: to }],
+      subject: `${code} — your trova verification code`,
+      textContent: `Your trova verification code is ${code}. It expires in 10 minutes.`,
+      htmlContent: codeEmailHtml(code),
+    }),
+    signal: AbortSignal.timeout(20_000),
+  });
+
+  if (!res.ok) {
+    // Brevo returns a JSON body describing the problem (bad key, unverified
+    // sender, quota) — surface it in the log, since the generic message the
+    // user sees deliberately says nothing about our infrastructure.
+    const body = await res.text().catch(() => "");
+    throw new Error(`Brevo API ${res.status}: ${body.slice(0, 300)}`);
+  }
+}
+
 export async function sendVerificationCode(to: string, code: string): Promise<void> {
+  if (useHttpApi) {
+    try {
+      await sendViaHttpApi(to, code);
+      return;
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      console.error(`[mail] Brevo API delivery to ${to} failed: ${detail}`);
+      const wrapped = new Error(
+        "Tasdiqlash kodini yuborib bo'lmadi — keyinroq urinib ko'ring"
+      ) as Error & { statusCode?: number; isOperational?: boolean; code?: string };
+      wrapped.statusCode = 502;
+      wrapped.isOperational = true;
+      wrapped.code = "MAIL_SEND_FAILED";
+      throw wrapped;
+    }
+  }
+
   if (!transporter) {
     // Printing the code is a development convenience only. In production
     // it would write a live credential into the host's log stream (Render,

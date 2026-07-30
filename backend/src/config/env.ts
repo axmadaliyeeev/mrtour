@@ -22,6 +22,11 @@ const envSchema = z.object({
   // back to logging the code to the console instead of sending, and says
   // so loudly at startup. Registration therefore still works end-to-end
   // in development without real credentials.
+  // Preferred over SMTP when set. Many PaaS hosts (Render among them)
+  // block or blackhole outbound SMTP ports, which shows up as a request
+  // that hangs for minutes rather than a clean error. The HTTP API rides
+  // on 443 and can't be blocked that way.
+  BREVO_API_KEY: z.string().optional(),
   SMTP_HOST: z.string().default("smtp.gmail.com"),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_USER: z.string().optional(),
