@@ -22,8 +22,15 @@ import { useAppStore } from "@/store";
 // the landing page) flips this and redirects immediately without the
 // user needing to navigate manually.
 function LandingGate() {
-  const { isLoggedIn, hasEnteredApp } = useAppStore();
-  if (isLoggedIn || hasEnteredApp) return <Navigate to="/home" replace />;
+  // `isLoggedIn` alone isn't enough here: it only gets confirmed by
+  // checkAuth(), which runs inside MainLayout — a route this one never
+  // mounts. On a fresh load, a real returning user would have their
+  // persisted `user` object but isLoggedIn still defaults to false until
+  // they reach a route that runs checkAuth, so this route would show
+  // them the guest landing page forever with no way back in. `user`
+  // itself IS persisted across reloads, so check that directly instead.
+  const { isLoggedIn, user, hasEnteredApp } = useAppStore();
+  if (isLoggedIn || user || hasEnteredApp) return <Navigate to="/home" replace />;
   return <Landing />;
 }
 

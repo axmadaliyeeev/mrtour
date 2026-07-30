@@ -178,13 +178,20 @@ export const useAppStore = create<AppStore>()(
     {
       name: "trova-v1",
       storage: createJSONStorage(() => localStorage),
+      // hasEnteredApp is deliberately NOT persisted here — it used to be,
+      // which meant clicking "Continue as Guest" just once permanently
+      // skipped the landing page on every future visit to this browser,
+      // even weeks later after closing it entirely. It should only skip
+      // the landing for the rest of THIS session (so SPA navigation back
+      // to "/" after entering doesn't re-show it), not forever — a fresh
+      // page load/new visit is exactly when the landing is supposed to
+      // greet the visitor.
       partialize: (state) => ({
         user: state.user,
         plan: state.plan,
         theme: state.theme,
         lang: state.lang,
         userReviews: state.userReviews,
-        hasEnteredApp: state.hasEnteredApp,
       }),
       // Bumping this forces a one-time migration: browsers that already
       // persisted "uz" from before the default changed to English get
