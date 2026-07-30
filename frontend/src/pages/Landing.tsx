@@ -51,7 +51,7 @@ function Reveal({
 // row of 4 identical-shape cards doesn't read as visually monotone.
 const CHIP_STYLES = [
   "bg-indigo-500/12 border-indigo-500/25 text-indigo-500",
-  "bg-[#3fb896]/12 border-[#3fb896]/25 text-[#2f9a7d]",
+  "bg-[#0d9488]/12 border-[#0d9488]/25 text-[#0f766e]",
   "bg-gold-500/12 border-gold-500/25 text-gold-600",
   "bg-indigo-600/12 border-indigo-600/25 text-indigo-700",
 ];
@@ -338,7 +338,7 @@ export default function Landing() {
 
       {/* ── Final CTA ──────────────────────────────────────────── */}
       <Reveal className="px-4 sm:px-8 mb-16">
-        <div className="max-w-4xl mx-auto relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-[#1c7a64] p-8 sm:p-12 text-center">
+        <div className="max-w-4xl mx-auto relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-[#0d9488] p-8 sm:p-12 text-center">
           <motion.div
             className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full pointer-events-none"
             animate={{ scale: [1, 1.08, 1] }}

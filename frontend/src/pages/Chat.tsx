@@ -300,7 +300,7 @@ export default function Chat() {
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <div
             className={cn(
-              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center text-white shadow-sm shrink-0 transition-shadow",
+              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#10b981] to-[#a7f3d0] flex items-center justify-center text-white shadow-sm shrink-0 transition-shadow",
               // The spinning ring is meaningful, not decorative — it only
               // runs while Trova AI is actually composing a reply, so an
               // always-on animation isn't idling for no reason at rest.
@@ -361,8 +361,8 @@ export default function Chat() {
               {/* A soft, diffused halo — not a hard-edged green glow — sized
                   well past the orb itself so the falloff reads as ambient
                   light, not a ring. */}
-              <div className="absolute -inset-4 rounded-full bg-[#50C878] opacity-[0.07] blur-2xl" />
-              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#50C878] to-[#D1F2EB] flex items-center justify-center shadow-md animate-orb-breathe">
+              <div className="absolute -inset-4 rounded-full bg-[#10b981] opacity-[0.07] blur-2xl" />
+              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#10b981] to-[#a7f3d0] flex items-center justify-center shadow-md animate-orb-breathe">
                 <RouteOrb className="w-10 h-10" />
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function Chat() {
                       // (numbered lists, bold labels) to have a clear
                       // boundary instead of floating on the page. Dark
                       // mode uses the exact surface color from spec
-                      // (#151C19), one clear step up from the #0A0F0D
+                      // (#141b2b), one clear step up from the #0a0e1a
                       // page background.
                       : "px-6 py-5 rounded-2xl max-w-[720px] bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
                     : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-indigo-500 text-white shadow-sm"
@@ -484,12 +484,12 @@ export default function Chat() {
                 {msg.role === "assistant" && !msg.isError && msg.id !== "welcome" && (
                   <>
                     {/* Bumped to a real 18px icon in a 28px hit target, with
-                        an explicit dark-mode color floor (#8A9490) — these
+                        an explicit dark-mode color floor (#94a3b8) — these
                         were reading as near-invisible at 14px/opacity-50
                         against the dark background. */}
                     <button
                       onClick={() => copyMessage(msg)}
-                      className="flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-indigo-400 hover:bg-[var(--muted)] transition-all active:scale-90"
+                      className="flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 text-[var(--muted-foreground)] dark:text-[#94a3b8] hover:text-indigo-400 hover:bg-[var(--muted)] transition-all active:scale-90"
                       aria-label="Copy"
                     >
                       <AnimatePresence mode="wait" initial={false}>
@@ -508,7 +508,7 @@ export default function Chat() {
                       onClick={() => setMessageReaction(msg.id, "up")}
                       className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
-                        msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-indigo-400"
+                        msg.reaction === "up" ? "text-indigo-500 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#94a3b8] hover:text-indigo-400"
                       )}
                       aria-label="Good reply"
                     >
@@ -518,7 +518,7 @@ export default function Chat() {
                       onClick={() => setMessageReaction(msg.id, "down")}
                       className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-lg opacity-90 sm:opacity-70 sm:group-hover:opacity-100 transition-all active:scale-90 hover:bg-[var(--muted)]",
-                        msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#8A9490] hover:text-red-400"
+                        msg.reaction === "down" ? "text-red-400 opacity-100" : "text-[var(--muted-foreground)] dark:text-[#94a3b8] hover:text-red-400"
                       )}
                       aria-label="Bad reply"
                     >
@@ -685,7 +685,7 @@ export default function Chat() {
             // glow ring respond to the field being focused, not just to
             // whether it has text in it.
             "flex items-end gap-2 p-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] shadow-[var(--shadow-card)] transition-all duration-200",
-            "focus-within:border-[#50C878] focus-within:ring-4 focus-within:ring-[#50C878]/15 focus-within:shadow-none"
+            "focus-within:border-[#10b981] focus-within:ring-4 focus-within:ring-[#10b981]/15 focus-within:shadow-none"
           )}
         >
           <textarea

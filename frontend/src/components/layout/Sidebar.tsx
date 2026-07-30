@@ -94,7 +94,7 @@ export function Sidebar() {
                 className={cn(
                   "w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 relative active:scale-[0.98]",
                   active
-                    ? "bg-gradient-to-r from-indigo-500 to-[#3fb896] shadow-md shadow-indigo-500/25"
+                    ? "bg-gradient-to-r from-indigo-500 to-[#0d9488] shadow-md shadow-indigo-500/25"
                     : "hover:bg-indigo-500/6"
                 )}
               >

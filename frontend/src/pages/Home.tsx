@@ -104,7 +104,7 @@ export default function Home() {
           {/* A second, warmer scrim hugging just the bottom edge (where the
               CTA row and trust indicators sit) — keeps that text legible
               without darkening/flattening the rest of the photo. */}
-          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#1c140a]/25 via-[#1c140a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
+          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0f172a]/25 via-[#0f172a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
           <div className="aurora-overlay absolute inset-0 opacity-40 pointer-events-none" />
 
           <div className="relative px-5 sm:px-8 pt-10 pb-10 max-w-3xl">
@@ -151,7 +151,7 @@ export default function Home() {
             {/* Trust indicators */}
             <div className="animate-fade-up delay-300 flex items-center gap-4 mt-6">
               <div className="flex -space-x-1.5">
-                {["#50c878","#7fe0ae","#218f76","#93d7c5","#38a860"].map((c, i) => (
+                {["#10b981","#6ee7b7","#14b8a6","#99f6e4","#059669"].map((c, i) => (
                   <div key={i} className="w-6 h-6 rounded-full border-2 border-[var(--background)]" style={{ backgroundColor: c }} />
                 ))}
               </div>

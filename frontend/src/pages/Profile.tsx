@@ -161,7 +161,7 @@ export default function Profile() {
               as a deliberate placeholder treatment rather than a flat
               filled circle; the thinner stroke keeps it feeling refined
               instead of a generic bold person glyph. */}
-          <div className="relative w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-indigo-500 to-[#7fe0ae] shadow-md animate-pop-in">
+          <div className="relative w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-indigo-500 to-[#6ee7b7] shadow-md animate-pop-in">
             <div className="w-full h-full rounded-full bg-[var(--card)] flex items-center justify-center">
               <UserIcon className="w-8 h-8 text-indigo-400" strokeWidth={1.5} />
             </div>

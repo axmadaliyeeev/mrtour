@@ -524,7 +524,7 @@ export default function Uzbekistan() {
               help. Concentrating the scrim there keeps the photo vivid
               up top and still gives the text a solid contrast base. */}
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] from-0% via-[var(--background)]/55 via-45% to-transparent to-80%" />
-          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#1c140a]/25 via-[#1c140a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
+          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0f172a]/25 via-[#0f172a]/5 to-transparent dark:from-black/40 dark:via-black/10" />
           <div className="aurora-overlay absolute inset-0 opacity-40 pointer-events-none" />
 
           <div className="relative px-5 sm:px-8 pb-8 sm:pb-10 max-w-2xl">
