@@ -399,7 +399,7 @@ export default function Profile() {
         ].map((s) => (
           <div
             key={s.label}
-            className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]"
+            className="flex flex-col items-center gap-1 py-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]"
           >
             <s.Icon className="w-4 h-4 text-indigo-500" strokeWidth={2} />
             <span className="text-lg font-extrabold text-[var(--foreground)] tabular-nums">{s.value}</span>

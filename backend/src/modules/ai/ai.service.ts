@@ -230,7 +230,7 @@ Oxirida "### Umumiy xulosa" (kirish biletlari / turar joy / ovqat / transport / 
 }
 
 // ── 4. generateInsight ─────────────────────────────────
-export async function generateInsight(locationName: string, reviews: ReviewForInsight[]): Promise<string> {
+export async function generateInsight(locationName: string, reviews: ReviewForInsight[], lang?: string): Promise<string> {
   if (!reviews.length) {
     return `${locationName} haqida hali yetarli sharhlar yo'q.\nBirinchi bo'lib sharh qoldiring!`;
   }
@@ -240,6 +240,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     .slice(0, 15)
     .map((r) => `[${r.stars}★, ishonch:${r.trustScore}%] "${r.text.slice(0, 120)}"`)
     .join("\n");
+  const interfaceLang = LANG_NAMES[lang ?? ""] ?? "English";
 
   const response = await callGroq(() => client.chat.completions.create({
     model: MODEL,
@@ -247,7 +248,7 @@ export async function generateInsight(locationName: string, reviews: ReviewForIn
     messages: [
       {
         role: "user",
-        content: `"${locationName}" joyi haqida ${reviews.length} ta sharh (o'rtacha: ${avg}★) asosida 4-5 ta insight yozing. Har birini "- " bilan boshlang (markdown ro'yxat), emoji ishlatma:\n\n${summary}`,
+        content: `"${locationName}" joyi haqida ${reviews.length} ta sharh (o'rtacha: ${avg}★) asosida 4-5 ta insight yozing. Har birini "- " bilan boshlang (markdown ro'yxat), emoji ishlatma. Javobni albatta ${interfaceLang} tilida yoz:\n\n${summary}`,
       },
     ],
   }));

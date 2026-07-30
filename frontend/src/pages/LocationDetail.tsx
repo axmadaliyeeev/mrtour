@@ -88,11 +88,13 @@ function ReviewCard({ review, t }: { review: Review; t: TFn }) {
 // ── SmartReview ───────────────────────────────────────────────────────────────
 function SmartReview({
   reviews,
-  locationName,
+  locationId,
+  lang,
   t,
 }: {
   reviews: Review[];
-  locationName: string;
+  locationId: string;
+  lang: string;
   t: TFn;
 }) {
   const [insight, setInsight] = useState<string | null>(null);
@@ -110,21 +112,18 @@ function SmartReview({
     setLoading(true);
     setError(false);
     try {
-      const reviewText = reviews
-        .slice(0, 15)
-        .map((r) => `${r.author} (${r.stars}★): "${r.text}"`)
-        .join("\n");
-
-      const prompt = `"${locationName}" joyi uchun ${reviews.length} ta sharh bor. Quyida sharhlar:\n\n${reviewText}\n\nBu sharhlarni qisqacha tahlil qil: asosiy ijobiy va salbiy tomonlar, umumiy kayfiyat, va sayohatchilarga maslahat. 3-4 qisqa paragrafda.`;
-
-      // Same cold-start-tolerant timeout as the main chat — this hits the
-      // same AI endpoint and was failing on a cold backend just like it was.
-      const res = await apiClient.post<{ reply: string }>(
-        "/ai/chat",
-        { messages: [{ role: "user", content: prompt }] },
+      // Was hand-rolling a hardcoded Uzbek-only prompt over whatever
+      // reviews happened to be loaded client-side (mock data, ignoring
+      // the interface language entirely) — the backend already has a
+      // dedicated endpoint that reads the real review rows for this
+      // location straight from the database and prompts the model
+      // properly, so use that instead of reinventing it here.
+      const res = await apiClient.post<{ insight: string }>(
+        "/ai/analyze-reviews",
+        { locationId, lang },
         { timeout: 45_000 }
       );
-      setInsight(res.reply ?? t("detail", "insight_error"));
+      setInsight(res.insight ?? t("detail", "insight_error"));
       setOpen(true);
     } catch {
       setError(true);
@@ -191,21 +190,69 @@ function SmartReview({
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
+// Shape returned by GET/POST /api/reviews — differs from the frontend's
+// own Review type only in `createdAt` (a real timestamp) vs `time` (a
+// pre-formatted display string), so it needs a small adapter below.
+interface BackendReview {
+  id: string;
+  locationId: string;
+  author: string;
+  country: string;
+  stars: number;
+  text: string;
+  trustScore: number;
+  aiTags: string[];
+  verified: boolean;
+  createdAt: string;
+}
+
+function adaptBackendReview(r: BackendReview): Review {
+  return {
+    id: r.id,
+    locationId: r.locationId,
+    author: r.author,
+    country: r.country,
+    stars: r.stars,
+    text: r.text,
+    trustScore: r.trustScore,
+    aiTags: r.aiTags,
+    verified: r.verified,
+    time: new Date(r.createdAt).toLocaleDateString(),
+  };
+}
+
 export default function LocationDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToPlan, removeFromPlan, isInPlan, showToast, user, addUserReview, userReviews } = useAppStore();
-  const { t } = useTranslation();
+  const { addToPlan, removeFromPlan, isInPlan, showToast, user } = useAppStore();
+  const { t, lang } = useTranslation();
 
   const location = LOCATIONS.find((l) => l.id === id);
   const initReviews = id ? (INIT_REVIEWS[id] ?? []) : [];
-  const localReviews = id ? (userReviews[id] ?? []) : [];
-  const allReviews = useMemo(() => [...localReviews, ...initReviews], [localReviews, initReviews]);
+
+  // Reviews written through this page previously only ever lived in the
+  // local Zustand store — they looked like they'd saved, but a refresh
+  // (or opening the same location on another device) silently lost them,
+  // and they were invisible to Smart Review's analysis too, since that
+  // now reads straight from the same table. Fetch the real, persisted
+  // reviews for this location instead.
+  const [backendReviews, setBackendReviews] = useState<Review[]>([]);
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    apiClient.get<BackendReview[]>(`/reviews/${id}`)
+      .then((rows) => { if (!cancelled) setBackendReviews(rows.map(adaptBackendReview)); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [id]);
+
+  const allReviews = useMemo(() => [...backendReviews, ...initReviews], [backendReviews, initReviews]);
 
   // Review form state
   const [reviewOpen, setReviewOpen] = useState(false);
   const [stars, setStars] = useState(0);
   const [text, setText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   // Sticky plan bar — visible when inline action buttons scroll out of view
@@ -272,22 +319,30 @@ export default function LocationDetail() {
   const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); }, []);
 
-  function submitReview() {
-    if (!stars || !text.trim()) return;
-    addUserReview(loc.id, {
-      author: user?.name ?? t("profile", "guest"),
-      country: user?.country ?? "—",
-      stars,
-      text: text.trim(),
-      time: new Date().toLocaleDateString(),
-      trustScore: 0,
-      aiTags: [],
-      verified: !!user,
-    });
-    setStars(0);
-    setText("");
-    setSubmitted(true);
-    reviewTimerRef.current = setTimeout(() => { setSubmitted(false); setReviewOpen(false); }, 2500);
+  async function submitReview() {
+    if (!stars || !text.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      // Actually persist it — this previously only wrote to local
+      // in-memory state, so the review looked submitted but vanished on
+      // refresh and never reached the database Smart Review reads from.
+      const saved = await apiClient.post<BackendReview>("/reviews", {
+        locationId: loc.id,
+        text: text.trim(),
+        stars,
+        author: user?.name ?? t("profile", "guest"),
+        country: user?.country,
+      });
+      setBackendReviews((prev) => [adaptBackendReview(saved), ...prev]);
+      setStars(0);
+      setText("");
+      setSubmitted(true);
+      reviewTimerRef.current = setTimeout(() => { setSubmitted(false); setReviewOpen(false); }, 2500);
+    } catch {
+      showToast(t("detail", "review_submit_error"), undefined, "error");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -348,7 +403,7 @@ export default function LocationDetail() {
               <MapPin className="w-3.5 h-3.5" />
               {loc.city}, {loc.region}
             </span>
-            <Stars rating={loc.rating} size="sm" showNumber showCount count={loc.reviewCount + localReviews.length} />
+            <Stars rating={loc.rating} size="sm" showNumber showCount count={loc.reviewCount + backendReviews.length} />
           </div>
         </div>
       </div>
@@ -358,19 +413,19 @@ export default function LocationDetail() {
           (not border alone) so these read as distinct lifted panels
           against the page, not a same-toned rectangle. */}
       <div className="px-4 mt-4 grid grid-cols-3 gap-2 mb-5">
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <DollarSign className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.priceUSD === 0 ? t("detail", "free") : loc.price}
           </span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "price_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <Clock className="w-4 h-4 text-purple-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">{loc.duration}</span>
           <span className="text-[10px] text-[var(--muted-foreground)]">{t("detail", "duration_label")}</span>
         </div>
-        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
+        <div className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
           <Calendar className="w-4 h-4 text-indigo-400" />
           <span className="text-xs font-bold text-[var(--foreground)] text-center leading-tight">
             {loc.bestSeason.split(",")[0] ?? loc.bestSeason}
@@ -450,7 +505,7 @@ export default function LocationDetail() {
 
         {/* SmartReview AI panel */}
         <div className="mb-3">
-          <SmartReview reviews={allReviews} locationName={loc.name} t={t} />
+          <SmartReview reviews={allReviews} locationId={loc.id} lang={lang} t={t} />
         </div>
 
         {/* Review form */}
@@ -490,15 +545,19 @@ export default function LocationDetail() {
                 <div className="flex gap-2">
                   <button
                     onClick={submitReview}
-                    disabled={!stars || !text.trim()}
+                    disabled={!stars || !text.trim() || submitting}
                     className={cn(
                       "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all",
-                      stars && text.trim()
+                      stars && text.trim() && !submitting
                         ? "bg-indigo-500 hover:bg-indigo-600 text-white active:scale-[0.97]"
                         : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
                     )}
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    {submitting ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
                     {t("detail", "submit_review")}
                   </button>
                   <button

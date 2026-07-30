@@ -92,6 +92,7 @@ export interface TranslationSchema {
     your_rating: string;
     insight_title: string;
     review_success: string;
+    review_submit_error: string;
     add_first_review: string;
     insight_loading: string;
     insight_error: string;
@@ -386,6 +387,7 @@ const UZ: TranslationSchema = {
     your_rating: "Bahoyingiz",
     insight_title: "AI xulosasi",
     review_success: "Sharh qo'shildi!",
+    review_submit_error: "Sharhni yuborib bo'lmadi. Qayta urinib ko'ring.",
     add_first_review: "Birinchi sharh qoldiring",
     insight_loading: "Tahlil qilinmoqda...",
     insight_error: "Tahlil qilishda xato yuz berdi",
@@ -683,6 +685,7 @@ const RU: TranslationSchema = {
     your_rating: "Ваша оценка",
     insight_title: "ИИ-анализ",
     review_success: "Отзыв добавлен!",
+    review_submit_error: "Не удалось отправить отзыв. Попробуйте ещё раз.",
     add_first_review: "Оставьте первый отзыв",
     insight_loading: "Анализируем...",
     insight_error: "Ошибка при анализе",
@@ -980,6 +983,7 @@ const EN: TranslationSchema = {
     your_rating: "Your Rating",
     insight_title: "AI Insights",
     review_success: "Review added!",
+    review_submit_error: "Couldn't submit your review. Please try again.",
     add_first_review: "Be the first to review",
     insight_loading: "Analyzing...",
     insight_error: "Analysis failed",
@@ -1277,6 +1281,7 @@ const ZH: TranslationSchema = {
     your_rating: "您的评分",
     insight_title: "AI 分析",
     review_success: "评价已添加！",
+    review_submit_error: "评价提交失败，请重试。",
     add_first_review: "成为第一个评价者",
     insight_loading: "分析中...",
     insight_error: "分析失败",
@@ -1574,6 +1579,7 @@ const DE: TranslationSchema = {
     your_rating: "Ihre Bewertung",
     insight_title: "KI-Analyse",
     review_success: "Bewertung hinzugefügt!",
+    review_submit_error: "Bewertung konnte nicht gesendet werden. Bitte erneut versuchen.",
     add_first_review: "Erste Bewertung schreiben",
     insight_loading: "Analysiere...",
     insight_error: "Analyse fehlgeschlagen",
@@ -1873,6 +1879,7 @@ const FR: TranslationSchema = {
     your_rating: "Votre note",
     insight_title: "Analyse IA",
     review_success: "Avis ajouté !",
+    review_submit_error: "Impossible d'envoyer l'avis. Veuillez réessayer.",
     add_first_review: "Soyez le premier à noter",
     insight_loading: "Analyse en cours...",
     insight_error: "Échec de l'analyse",

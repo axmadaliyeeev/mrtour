@@ -22,7 +22,7 @@ const chatSchema = z.object({
 });
 
 const analyzeSchema  = z.object({ text: z.string().min(5).max(1000), stars: z.number().int().min(1).max(5) });
-const insightSchema  = z.object({ locationId: z.string().min(1) });
+const insightSchema  = z.object({ locationId: z.string().min(1), lang: z.string().optional() });
 const tourPlanSchema = z.object({
   tourData: z.object({
     days:    z.string().min(1),
@@ -93,7 +93,7 @@ aiRouter.post("/tour-plan", authenticate, validateBody(tourPlanSchema),
 aiRouter.post("/analyze-reviews", optionalAuth, validateBody(insightSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { locationId } = req.body as z.infer<typeof insightSchema>;
+      const { locationId, lang } = req.body as z.infer<typeof insightSchema>;
 
       const location = await prisma.location.findUnique({ where: { id: locationId } });
       if (!location) { sendError(res, "Location not found", 404); return; }
@@ -104,7 +104,7 @@ aiRouter.post("/analyze-reviews", optionalAuth, validateBody(insightSchema),
         take:    20,
       });
 
-      const insight = await aiService.generateInsight(location.name, reviews);
+      const insight = await aiService.generateInsight(location.name, reviews, lang);
       sendSuccess(res, { insight });
     } catch (err) { next(err); }
   }

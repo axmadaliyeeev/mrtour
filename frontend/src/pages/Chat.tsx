@@ -569,7 +569,7 @@ export default function Chat() {
             <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm">
               <RouteOrb className="w-4 h-4" />
             </div>
-            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-[var(--shadow-card)]">
+            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
               <div className="flex items-center gap-1">
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
