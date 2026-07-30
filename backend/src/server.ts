@@ -22,15 +22,35 @@ app.set("trust proxy", 1);
 app.use(helmet());
 
 // ── CORS ─────────────────────────────────────────────
-// Browsers compare Origin byte-for-byte — a trailing slash in FRONTEND_URL
-// (e.g. "https://app.vercel.app/" vs the real "https://app.vercel.app")
-// is enough to fail every cross-origin request. Normalize it so a stray
-// slash in the env var can't silently break the whole API.
-const allowedOrigin = env.FRONTEND_URL.replace(/\/+$/, "");
+// FRONTEND_URL accepts a COMMA-SEPARATED list, not just one origin.
+//
+// It used to allow exactly one, which made a single wrong character in
+// that env var fail every cross-origin request with an opaque browser
+// error — exactly what happened in production, where it was set to
+// "karvontour.vercel.app" while the deployed frontend is
+// "trovatour.vercel.app". A list also covers the normal cases that
+// single-origin can't: Vercel preview deployments and a custom domain
+// alongside the .vercel.app one.
+//
+// Browsers compare Origin byte-for-byte, so each entry is trimmed and
+// stripped of a trailing slash — a stray "/" is enough to fail the match.
+const allowedOrigins = env.FRONTEND_URL
+  .split(",")
+  .map((o) => o.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin(origin, callback) {
+      // No Origin header at all = same-origin, curl, or a server-to-server
+      // call. Those aren't subject to CORS, so don't reject them.
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Log the rejection: a silent CORS failure surfaces to the user as a
+      // generic network error with nothing in the server logs to explain it.
+      console.warn(`[cors] blocked origin: ${origin} (allowed: ${allowedOrigins.join(", ")})`);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
