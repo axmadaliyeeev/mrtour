@@ -71,6 +71,7 @@ const loginSchema = z.object({
 
 const googleSchema = z.object({
   idToken: z.string().min(1),
+  lang:    z.string().max(5).optional(),
 });
 
 // ── POST /api/auth/register ────────────────────────────
@@ -109,7 +110,7 @@ authRouter.post(
         sendError(res, "Google sign-in is not configured on this server", 500);
         return;
       }
-      const { idToken } = req.body as z.infer<typeof googleSchema>;
+      const { idToken, lang } = req.body as z.infer<typeof googleSchema>;
 
       let ticket;
       try {
@@ -135,11 +136,17 @@ authRouter.post(
         return;
       }
 
+      // Google doesn't guarantee given_name/family_name (some accounts
+      // only have a mononym or nothing at all) — an empty name would
+      // propagate into UI that renders name[0] avatars and greetings, so
+      // fall back to the email's local part rather than "".
+      const fallbackName = payload.email.split("@")[0] || "Traveler";
       const result = await authService.googleAuth({
         googleId: payload.sub,
         email:    payload.email,
-        name:     payload.given_name ?? payload.name ?? "",
+        name:     payload.given_name ?? payload.name ?? fallbackName,
         surname:  payload.family_name ?? "",
+        lang,
       });
       setRefreshCookie(res, result.tokens.refreshToken);
       sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");

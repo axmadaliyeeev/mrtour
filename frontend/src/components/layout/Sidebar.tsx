@@ -174,7 +174,10 @@ export function Sidebar() {
             >
               {/* Avatar */}
               <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm">
-                {user.name[0].toUpperCase()}
+                {/* charAt, not [0] — [0] on an empty string is undefined
+                    and .toUpperCase() on it crashes the whole sidebar;
+                    charAt just returns "". */}
+                {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-[var(--foreground)] truncate leading-tight">

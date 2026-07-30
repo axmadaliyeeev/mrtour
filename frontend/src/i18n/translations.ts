@@ -233,6 +233,7 @@ export interface TranslationSchema {
     linked_accounts_title: string;
     linked_email: string;
     linked_not_connected: string;
+    linked_connected: string;
     delete_account: string;
     delete_account_soon: string;
   };
@@ -568,6 +569,7 @@ const UZ: TranslationSchema = {
     linked_accounts_title: "Ulangan akkauntlar",
     linked_email: "Email",
     linked_not_connected: "Ulanmagan",
+    linked_connected: "Ulangan",
     delete_account: "Akkauntni o'chirish",
     delete_account_soon: "Bu funksiya hali mavjud emas — tez orada qo'shiladi.",
   },
@@ -905,6 +907,7 @@ const RU: TranslationSchema = {
     linked_accounts_title: "Привязанные аккаунты",
     linked_email: "Email",
     linked_not_connected: "Не подключено",
+    linked_connected: "Подключено",
     delete_account: "Удалить аккаунт",
     delete_account_soon: "Эта функция пока недоступна — скоро появится.",
   },
@@ -1241,6 +1244,7 @@ const EN: TranslationSchema = {
     linked_accounts_title: "Linked accounts",
     linked_email: "Email",
     linked_not_connected: "Not connected",
+    linked_connected: "Connected",
     delete_account: "Delete account",
     delete_account_soon: "This feature isn't available yet — coming soon.",
   },
@@ -1575,6 +1579,7 @@ const ZH: TranslationSchema = {
     linked_accounts_title: "关联账户",
     linked_email: "邮箱",
     linked_not_connected: "未连接",
+    linked_connected: "已连接",
     delete_account: "删除账户",
     delete_account_soon: "此功能暂未开放，敬请期待。",
   },
@@ -1913,6 +1918,7 @@ const DE: TranslationSchema = {
     linked_accounts_title: "Verknüpfte Konten",
     linked_email: "E-Mail",
     linked_not_connected: "Nicht verbunden",
+    linked_connected: "Verbunden",
     delete_account: "Konto löschen",
     delete_account_soon: "Diese Funktion ist noch nicht verfügbar — bald verfügbar.",
   },
@@ -2252,6 +2258,7 @@ const FR: TranslationSchema = {
     linked_accounts_title: "Comptes liés",
     linked_email: "Email",
     linked_not_connected: "Non connecté",
+    linked_connected: "Connecté",
     delete_account: "Supprimer le compte",
     delete_account_soon: "Cette fonctionnalité n'est pas encore disponible — bientôt.",
   },

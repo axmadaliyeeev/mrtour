@@ -133,6 +133,12 @@ export interface GoogleProfile {
   email:    string;
   name:     string;
   surname:  string;
+  // Interface language the visitor was already using when they signed
+  // in. Without this, a newly-created Google account fell back to the
+  // Prisma column default ("uz") — and since the frontend store adopts
+  // user.lang on login, signing in with Google silently switched an
+  // English/Russian visitor's whole interface to Uzbek.
+  lang?:    string;
 }
 
 // ── googleAuth ───────────────────────────────────────
@@ -165,6 +171,7 @@ export async function googleAuth(
           surname:  profile.surname,
           email,
           googleId: profile.googleId,
+          ...(profile.lang && { lang: profile.lang }),
           // passwordHash intentionally omitted — null for a Google-only
           // account. See the schema comment on User.passwordHash.
         },

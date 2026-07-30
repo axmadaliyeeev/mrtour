@@ -42,6 +42,11 @@ export interface User {
   lang: string;
   plan: Location[];
   isPremium: boolean;
+  // Set by the Google Sign-In flow; null/absent for email-password-only
+  // accounts. Backend's sanitize() passes it through (only passwordHash
+  // and refreshToken are stripped), so Profile can show the real
+  // linked-account state.
+  googleId?: string | null;
 }
 
 export interface Guide {

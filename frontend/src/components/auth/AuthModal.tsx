@@ -54,7 +54,7 @@ const LANGUAGES: { code: Lang; label: string }[] = [
 // be actively misleading, so it stays an honest "not connected yet"
 // placeholder until real credentials exist.
 function SocialAuthButtons({ onClose }: { onClose: () => void }) {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const { login, showToast } = useAppStore();
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -65,8 +65,12 @@ function SocialAuthButtons({ onClose }: { onClose: () => void }) {
   async function handleGoogleSuccess(idToken: string) {
     setGoogleLoading(true);
     try {
+      // `lang` rides along so a brand-new Google account is created with
+      // the language the visitor is already browsing in — without it the
+      // DB default ("uz") won and login() silently switched the whole
+      // interface to Uzbek for non-Uzbek visitors.
       const res = await apiClient.post<{ user: User; accessToken: string }>(
-        "/auth/google", { idToken }, { timeout: 45_000 }
+        "/auth/google", { idToken, lang }, { timeout: 45_000 }
       );
       localStorage.setItem("trova-token", res.accessToken);
       login(res.user);

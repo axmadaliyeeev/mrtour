@@ -642,11 +642,11 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* Linked accounts — reflects what's actually true: this account
-          was created with email/password, and Google/Apple sign-in
-          isn't wired to real OAuth yet (see AuthModal's social buttons),
-          so showing them as "connected" would be fabricating a state
-          that doesn't exist. */}
+      {/* Linked accounts — reflects what's actually true for THIS user:
+          Google shows "Connected" only when the account really has a
+          linked googleId (set by the real Google Sign-In flow). Apple
+          stays "Not connected" for everyone since Apple sign-in isn't
+          wired to real credentials yet. */}
       <section className="px-4 mb-5">
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-[var(--foreground)] mb-3">
           <Shield className="w-4 h-4 text-indigo-400" /> {t("profile", "linked_accounts_title")}
@@ -660,9 +660,15 @@ export default function Profile() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-[var(--muted-foreground)]">Google</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
-              {t("profile", "linked_not_connected")}
-            </span>
+            {user.googleId ? (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-semibold">
+                {t("profile", "linked_connected")}
+              </span>
+            ) : (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-semibold">
+                {t("profile", "linked_not_connected")}
+              </span>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-[var(--muted-foreground)]">Apple</span>
