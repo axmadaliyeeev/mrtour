@@ -71,6 +71,18 @@ const resendSchema = z.object({
   email: z.string().email(),
 });
 
+const forgotSchema = z.object({
+  email: z.string().email(),
+});
+
+const resetSchema = z.object({
+  email:       z.string().email(),
+  code:        z.string().regex(/^\d{6}$/, "Kod 6 xonali bo'lishi kerak"),
+  // Same minimum as registration — a reset must not become a way to set a
+  // weaker password than signup would have allowed.
+  newPassword: z.string().min(8).max(100),
+});
+
 // ── POST /api/auth/register ────────────────────────────
 // Returns NO session — the account is created unverified and a code is
 // emailed. The client then calls /verify-email, which is what actually
@@ -137,6 +149,42 @@ authRouter.post(
       const result = await authService.login(req.body as z.infer<typeof loginSchema>);
       setRefreshCookie(res, result.tokens.refreshToken);
       sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Xush kelibsiz!");
+    } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/auth/forgot-password ─────────────────────
+authRouter.post(
+  "/forgot-password",
+  validateBody(forgotSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body as z.infer<typeof forgotSchema>;
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+
+      let devCode: string | null = null;
+      // A password-less account (legacy Google sign-in) has nothing to
+      // reset, so it's skipped — but the response below stays identical
+      // either way. Revealing "no account here" would let anyone probe
+      // which addresses are registered.
+      if (user?.passwordHash) {
+        devCode = await authService.issueVerificationCode(email, "PASSWORD_RESET");
+      }
+      sendSuccess(res, devCode ? { devCode } : null, "Agar bunday akkaunt mavjud bo'lsa, kod yuborildi");
+    } catch (err) { next(err); }
+  }
+);
+
+// ── POST /api/auth/reset-password ──────────────────────
+authRouter.post(
+  "/reset-password",
+  validateBody(resetSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, code, newPassword } = req.body as z.infer<typeof resetSchema>;
+      const result = await authService.resetPassword(email, code, newPassword);
+      setRefreshCookie(res, result.tokens.refreshToken);
+      sendSuccess(res, { user: result.user, accessToken: result.tokens.accessToken }, "Parol yangilandi");
     } catch (err) { next(err); }
   }
 );

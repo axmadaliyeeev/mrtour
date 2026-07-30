@@ -39,21 +39,44 @@ if (useHttpApi) {
   );
 }
 
-function codeEmailHtml(code: string): string {
+export type MailPurpose = "EMAIL_VERIFY" | "PASSWORD_RESET";
+
+// Copy differs per purpose on purpose. A password-reset mail that says
+// "confirm your address" trains people to type codes into whatever asked
+// for them, which is exactly the habit phishing relies on — the message
+// has to state plainly what the code will do, and what to do if the
+// request wasn't theirs.
+const COPY: Record<MailPurpose, { subject: (c: string) => string; lead: string; footer: string }> = {
+  EMAIL_VERIFY: {
+    subject: (c) => `${c} — your trova verification code`,
+    lead: "Here is your verification code. It expires in 10 minutes.",
+    footer: "If you didn't try to create a trova account, you can ignore this email.",
+  },
+  PASSWORD_RESET: {
+    subject: (c) => `${c} — reset your trova password`,
+    lead: "Use this code to set a new password. It expires in 10 minutes.",
+    footer:
+      "If you didn't ask to reset your password, ignore this email — your " +
+      "current password stays active and unchanged.",
+  },
+};
+
+function codeEmailHtml(code: string, purpose: MailPurpose): string {
   // Deliberately plain, table-free, inline-styled markup: email clients
   // strip <style> blocks and mangle modern CSS, so anything cleverer than
   // this renders unpredictably across Gmail/Outlook/Apple Mail.
+  const copy = COPY[purpose];
   return `
   <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#0f172a">
     <h1 style="font-size:20px;font-weight:700;margin:0 0 8px">trova</h1>
     <p style="font-size:15px;line-height:1.6;margin:0 0 24px;color:#475569">
-      Here is your verification code. It expires in 10 minutes.
+      ${copy.lead}
     </p>
     <div style="font-size:32px;font-weight:700;letter-spacing:8px;text-align:center;padding:20px;background:#f1f5f9;border-radius:12px;color:#059669">
       ${code}
     </div>
     <p style="font-size:13px;line-height:1.6;margin:24px 0 0;color:#64748b">
-      If you didn't try to create a trova account, you can ignore this email.
+      ${copy.footer}
     </p>
   </div>`;
 }
@@ -66,7 +89,7 @@ function parseSender(): { name: string; email: string } {
   return { name: "trova", email: raw };
 }
 
-async function sendViaHttpApi(to: string, code: string): Promise<void> {
+async function sendViaHttpApi(to: string, code: string, purpose: MailPurpose): Promise<void> {
   const sender = parseSender();
   // AbortSignal.timeout so a stalled call fails fast instead of holding the
   // request open — the exact failure mode that made the SMTP path look like
@@ -81,9 +104,9 @@ async function sendViaHttpApi(to: string, code: string): Promise<void> {
     body: JSON.stringify({
       sender,
       to: [{ email: to }],
-      subject: `${code} — your trova verification code`,
-      textContent: `Your trova verification code is ${code}. It expires in 10 minutes.`,
-      htmlContent: codeEmailHtml(code),
+      subject: COPY[purpose].subject(code),
+      textContent: `${COPY[purpose].lead} Code: ${code}`,
+      htmlContent: codeEmailHtml(code, purpose),
     }),
     signal: AbortSignal.timeout(20_000),
   });
@@ -97,10 +120,14 @@ async function sendViaHttpApi(to: string, code: string): Promise<void> {
   }
 }
 
-export async function sendVerificationCode(to: string, code: string): Promise<void> {
+export async function sendVerificationCode(
+  to: string,
+  code: string,
+  purpose: MailPurpose = "EMAIL_VERIFY"
+): Promise<void> {
   if (useHttpApi) {
     try {
-      await sendViaHttpApi(to, code);
+      await sendViaHttpApi(to, code, purpose);
       return;
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
@@ -136,11 +163,11 @@ export async function sendVerificationCode(to: string, code: string): Promise<vo
     await transporter.sendMail({
       from: env.MAIL_FROM ?? `trova <${env.SMTP_USER}>`,
       to,
-      subject: `${code} — your trova verification code`,
+      subject: COPY[purpose].subject(code),
       // Always ship a text/plain alternative: some clients (and most spam
       // filters) treat HTML-only mail as a negative signal.
-      text: `Your trova verification code is ${code}. It expires in 10 minutes.`,
-      html: codeEmailHtml(code),
+      text: `${COPY[purpose].lead} Code: ${code}`,
+      html: codeEmailHtml(code, purpose),
     });
   } catch (err) {
     // A refused send is an operational condition (bad credentials, an

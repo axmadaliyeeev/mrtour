@@ -1,7 +1,7 @@
 ﻿import { useState, useRef, useEffect, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2, MailCheck } from "lucide-react";
+import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2, MailCheck, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
@@ -310,6 +310,188 @@ function PasswordStrengthMeter({ password, t }: { password: string; t: ReturnTyp
   );
 }
 
+// ── Forgot / reset password ──────────────────────────────────────────────────
+// Three stages in one component (ask for email → code + new password → done)
+// rather than three screens, because the email is carried between them and
+// splitting it up would mean threading that state back through the parent
+// for no user-visible benefit.
+function ForgotPassword({
+  onDone,
+  onCancel,
+  initialEmail,
+}: {
+  onDone: (user: User) => void;
+  onCancel: () => void;
+  initialEmail?: string;
+}) {
+  const { t } = useTranslation();
+  const [stage, setStage] = useState<"email" | "reset" | "done">("email");
+  const [email, setEmail] = useState(initialEmail ?? "");
+  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [devCode, setDevCode] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const emailValid = /\S+@\S+\.\S+/.test(email);
+  const canReset = code.length === 6 && password.length >= 8;
+
+  async function requestCode() {
+    if (!emailValid || loading) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await apiClient.post<{ devCode?: string } | null>(
+        "/auth/forgot-password", { email: email.trim().toLowerCase() }, { timeout: 45_000 }
+      );
+      if (res?.devCode) setDevCode(res.devCode);
+      setStage("reset");
+    } catch (err: unknown) {
+      setError(extractAuthError(err, t("auth", "err_reset"), t("auth", "err_waking_up")));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function submitReset() {
+    if (!canReset || loading) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await apiClient.post<{ user: User; accessToken: string }>(
+        "/auth/reset-password",
+        { email: email.trim().toLowerCase(), code, newPassword: password },
+        { timeout: 45_000 }
+      );
+      localStorage.setItem("trova-token", res.accessToken);
+      setStage("done");
+      // Brief pause so the success state is actually seen rather than the
+      // modal vanishing the instant the request resolves.
+      setTimeout(() => onDone(res.user), 1100);
+    } catch (err: unknown) {
+      setError(extractAuthError(err, t("auth", "err_reset"), t("auth", "err_waking_up")));
+      setCode("");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (stage === "done") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 320, damping: 26 }}
+        className="text-center py-8 space-y-3"
+      >
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <CheckCircle2 className="w-6 h-6 text-indigo-500" strokeWidth={1.5} />
+        </div>
+        <p className="text-base font-bold text-[var(--foreground)]">{t("auth", "reset_done")}</p>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="text-center">
+        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <KeyRound className="w-5 h-5 text-indigo-500" strokeWidth={2} />
+        </div>
+        <h3 className="text-base font-bold text-[var(--foreground)]">
+          {stage === "email" ? t("auth", "forgot_title") : t("auth", "reset_title")}
+        </h3>
+        <p className="text-xs text-[var(--muted-foreground)] mt-1">
+          {stage === "email" ? t("auth", "forgot_desc") : t("auth", "reset_desc")}
+        </p>
+        {stage === "reset" && (
+          <p className="text-sm font-semibold text-[var(--foreground)] mt-0.5 break-all">{email}</p>
+        )}
+      </div>
+
+      {stage === "email" ? (
+        <>
+          <Field
+            label={t("auth", "email")} type="email" value={email} onChange={setEmail}
+            placeholder={t("auth", "email_placeholder")} autoComplete="email"
+          />
+          <button
+            type="button"
+            onClick={requestCode}
+            disabled={!emailValid || loading}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+              emailValid && !loading
+                ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md"
+                : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
+            )}
+          >
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {t("auth", "forgot_send")}
+          </button>
+        </>
+      ) : (
+        <>
+          {devCode && (
+            <div className="rounded-xl border border-gold-500/40 bg-gold-500/10 px-3 py-2.5 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-gold-600 dark:text-gold-300">
+                Dev — SMTP not configured
+              </p>
+              <button
+                type="button"
+                onClick={() => setCode(devCode)}
+                className="text-xl font-extrabold tracking-[6px] tabular-nums text-[var(--foreground)] hover:text-indigo-500 transition-colors"
+              >
+                {devCode}
+              </button>
+            </div>
+          )}
+
+          <CodeInput value={code} onChange={setCode} disabled={loading} />
+
+          <div className="space-y-1.5">
+            <Field
+              label={t("auth", "new_password")} type="password" value={password} onChange={setPassword}
+              placeholder={t("auth", "new_password_ph")} autoComplete="new-password" required
+            />
+            <PasswordStrengthMeter password={password} t={t} />
+          </div>
+
+          <button
+            type="button"
+            onClick={submitReset}
+            disabled={!canReset || loading}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+              canReset && !loading
+                ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md"
+                : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
+            )}
+          >
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {loading ? t("auth", "reset_loading") : t("auth", "reset_btn")}
+          </button>
+        </>
+      )}
+
+      {error && (
+        <p className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          {error}
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={onCancel}
+        className="w-full text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+      >
+        {t("auth", "back_to_login")}
+      </button>
+    </div>
+  );
+}
+
 // ── Login tab ─────────────────────────────────────────────────────────────────
 function LoginTab({ onClose }: { onClose: () => void }) {
   const { login } = useAppStore();
@@ -322,6 +504,7 @@ function LoginTab({ onClose }: { onClose: () => void }) {
   // Set when the backend reports EMAIL_NOT_VERIFIED, which switches this
   // tab over to the code screen rather than dead-ending on an error.
   const [needsVerify, setNeedsVerify] = useState(false);
+  const [forgot, setForgot] = useState(false);
 
   function validate() {
     const e: Record<string, string> = {};
@@ -370,6 +553,18 @@ function LoginTab({ onClose }: { onClose: () => void }) {
     return <VerifyStep email={email.trim().toLowerCase()} onVerified={finishLogin} />;
   }
 
+  if (forgot) {
+    return (
+      <ForgotPassword
+        // Carry over whatever they already typed, so someone who tried to
+        // sign in and failed doesn't retype their address.
+        initialEmail={email}
+        onDone={finishLogin}
+        onCancel={() => setForgot(false)}
+      />
+    );
+  }
+
   return (
     <>
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
@@ -389,6 +584,14 @@ function LoginTab({ onClose }: { onClose: () => void }) {
             : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-md")}>
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         {loading ? t("auth", "loading_login") : t("auth", "login_btn")}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setForgot(true)}
+        className="w-full text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+      >
+        {t("auth", "forgot_link")}
       </button>
     </form>
     </>

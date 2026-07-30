@@ -89,6 +89,25 @@ const aiLimiter = rateLimit({
 });
 app.use("/api/ai", aiLimiter);
 
+// ── Strict rate limit for code-sending: 5 req / 15 min ─
+// The per-email cooldown in issueVerificationCode already stops one
+// address being bombarded, but nothing stopped a caller cycling through
+// many different addresses — each one a real email sent from our quota
+// and charged against our sending reputation. This caps it per client IP.
+// Applied only to the endpoints that trigger mail, so ordinary
+// login/refresh traffic is untouched.
+const mailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) =>
+    sendError(res, "Juda ko'p so'rov — keyinroq urinib ko'ring.", 429),
+});
+app.use("/api/auth/register", mailLimiter);
+app.use("/api/auth/resend-code", mailLimiter);
+app.use("/api/auth/forgot-password", mailLimiter);
+
 // ── Health check ──────────────────────────────────────
 app.get("/health", (_req, res) => {
   res.json({

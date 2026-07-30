@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { type User } from "@prisma/client";
+import { type User, type CodePurpose } from "@prisma/client";
 import { prisma, withRetry } from "@/lib/prisma";
 import { generateTokens, verifyRefreshToken, type TokenPair } from "@/utils/jwt";
 import { createError } from "@/middleware/error-handler";
@@ -33,12 +33,17 @@ function generateCode(): string {
  * below is what makes that safe: a production deployment can never reach
  * the branch that returns it, regardless of how SMTP is configured.
  */
-export async function issueVerificationCode(email: string): Promise<string | null> {
+export async function issueVerificationCode(
+  email: string,
+  purpose: CodePurpose = "EMAIL_VERIFY"
+): Promise<string | null> {
   const normalized = email.toLowerCase().trim();
 
+  // Cooldown is per purpose: asking to reset a password shouldn't be
+  // refused just because a verification code was sent a moment ago.
   const recent = await withRetry(() =>
     prisma.verificationCode.findFirst({
-      where: { email: normalized },
+      where: { email: normalized, purpose },
       orderBy: { createdAt: "desc" },
     })
   );
@@ -50,16 +55,16 @@ export async function issueVerificationCode(email: string): Promise<string | nul
   const code = generateCode();
   const codeHash = await bcrypt.hash(code, SALT_ROUNDS);
 
-  await withRetry(() => prisma.verificationCode.deleteMany({ where: { email: normalized } }));
+  await withRetry(() => prisma.verificationCode.deleteMany({ where: { email: normalized, purpose } }));
   await withRetry(() =>
     prisma.verificationCode.create({
-      data: { email: normalized, codeHash, expiresAt: new Date(Date.now() + CODE_TTL_MS) },
+      data: { email: normalized, codeHash, purpose, expiresAt: new Date(Date.now() + CODE_TTL_MS) },
     })
   );
 
   // Deliberately NOT swallowed: if the mail fails to send, the caller must
   // know, otherwise the user sits waiting for a code that will never arrive.
-  await sendVerificationCode(normalized, code);
+  await sendVerificationCode(normalized, code, purpose);
 
   // Both conditions required. NODE_ENV is validated by zod as a strict enum,
   // so "development" can't be spoofed by a stray value, and a real
@@ -70,19 +75,19 @@ export async function issueVerificationCode(email: string): Promise<string | nul
 }
 
 /**
- * Checks a submitted code and, on success, marks the account verified and
- * returns a normal session — verifying is the final step of registration,
- * so the user lands logged in rather than being bounced to a login form.
+ * Validates a submitted code for one specific purpose and burns it.
+ *
+ * Shared by both flows so they can't drift apart — an expiry or attempt
+ * rule enforced in one but not the other would be a silent hole. The
+ * `purpose` filter is what stops a code emailed for one flow being
+ * replayed against the other.
+ *
+ * Throws on every failure path; returns only when the code was valid.
  */
-export async function verifyEmailCode(
-  email: string,
-  code: string
-): Promise<{ user: SafeUser; tokens: TokenPair }> {
-  const normalized = email.toLowerCase().trim();
-
+async function consumeCode(email: string, code: string, purpose: CodePurpose): Promise<void> {
   const record = await withRetry(() =>
     prisma.verificationCode.findFirst({
-      where: { email: normalized },
+      where: { email, purpose },
       orderBy: { createdAt: "desc" },
     })
   );
@@ -109,6 +114,22 @@ export async function verifyEmailCode(
     throw createError("Kod noto'g'ri", 400);
   }
 
+  await withRetry(() => prisma.verificationCode.delete({ where: { id: record.id } }));
+}
+
+/**
+ * Checks a submitted code and, on success, marks the account verified and
+ * returns a normal session — verifying is the final step of registration,
+ * so the user lands logged in rather than being bounced to a login form.
+ */
+export async function verifyEmailCode(
+  email: string,
+  code: string
+): Promise<{ user: SafeUser; tokens: TokenPair }> {
+  const normalized = email.toLowerCase().trim();
+
+  await consumeCode(normalized, code, "EMAIL_VERIFY");
+
   const user = await withRetry(() => prisma.user.findUnique({ where: { email: normalized } }));
   if (!user) throw createError("Foydalanuvchi topilmadi", 404);
 
@@ -119,9 +140,48 @@ export async function verifyEmailCode(
       data: { emailVerified: true, refreshToken: tokens.refreshToken },
     })
   );
-  await withRetry(() => prisma.verificationCode.delete({ where: { id: record.id } }));
 
   return { user: sanitize(verified), tokens };
+}
+
+/**
+ * Completes a password reset: validates the emailed code, sets the new
+ * password, and returns a fresh session.
+ */
+export async function resetPassword(
+  email: string,
+  code: string,
+  newPassword: string
+): Promise<{ user: SafeUser; tokens: TokenPair }> {
+  const normalized = email.toLowerCase().trim();
+
+  await consumeCode(normalized, code, "PASSWORD_RESET");
+
+  const user = await withRetry(() => prisma.user.findUnique({ where: { email: normalized } }));
+  if (!user) throw createError("Foydalanuvchi topilmadi", 404);
+
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  const tokens = buildTokens(user);
+
+  const updated = await withRetry(() =>
+    prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        // Overwriting refreshToken invalidates every other signed-in
+        // device. If the reset happened because someone else had access,
+        // leaving their session alive would defeat the whole point.
+        refreshToken: tokens.refreshToken,
+        // Receiving the code proves control of the mailbox, which is
+        // exactly what verification attests to — so an unverified account
+        // that resets its password becomes verified rather than being
+        // stuck needing a second, redundant round of confirmation.
+        emailVerified: true,
+      },
+    })
+  );
+
+  return { user: sanitize(updated), tokens };
 }
 
 export interface RegisterDto {
