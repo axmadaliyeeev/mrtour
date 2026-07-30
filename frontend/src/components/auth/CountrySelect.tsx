@@ -2,14 +2,12 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ISO 3166-1 alpha-2 code + English name. A flag emoji is derived from the
-// code at render time (regional indicator symbols), so this list doesn't
-// need to carry flag assets. English names only, not per-interface-
-// language translations — translating ~190 country names accurately
-// across all 6 app languages is its own dedicated dataset/maintenance
-// burden, not something to improvise inline here; English is what every
-// major booking/travel app defaults to regardless of UI language for
-// exactly that reason.
+// ISO 3166-1 alpha-2 code + English name. English names only, not per-
+// interface-language translations — translating ~190 country names
+// accurately across all 6 app languages is its own dedicated dataset/
+// maintenance burden, not something to improvise inline here; English is
+// what every major booking/travel app defaults to regardless of UI
+// language for exactly that reason.
 const COUNTRIES: { code: string; name: string }[] = [
   ["UZ","Uzbekistan"],["KZ","Kazakhstan"],["KG","Kyrgyzstan"],["TJ","Tajikistan"],["TM","Turkmenistan"],
   ["RU","Russia"],["US","United States"],["GB","United Kingdom"],["DE","Germany"],["FR","France"],
@@ -32,10 +30,18 @@ const COUNTRIES: { code: string; name: string }[] = [
   ["BA","Bosnia and Herzegovina"],["ME","Montenegro"],["XK","Kosovo"],
 ].map(([code, name]) => ({ code, name }));
 
-function flagEmoji(code: string): string {
-  return code
-    .toUpperCase()
-    .replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)));
+// Regional-indicator flag emoji were tried here initially, but Windows
+// without color-emoji font support renders them as literal two-letter
+// text ("US", "ES"...) instead of a flag — the exact same failure mode
+// already documented and avoided in Profile.tsx's language list. A
+// deliberate monoline code chip instead: it never has a "did this render
+// or not" ambiguity, and matches the rest of the app's icon language.
+function CountryCode({ code }: { code: string }) {
+  return (
+    <span className="shrink-0 text-[10px] font-bold tracking-wide text-[var(--muted-foreground)] bg-[var(--muted)] rounded px-1.5 py-0.5">
+      {code}
+    </span>
+  );
 }
 
 export function CountrySelect({
@@ -89,13 +95,17 @@ export function CountrySelect({
           onClick={() => setOpen((o) => !o)}
           className={cn(
             "w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border bg-[var(--input-bg)] text-sm text-left",
-            "border-[var(--input-border)] outline-none transition-all",
-            open && "border-indigo-500 ring-2 ring-indigo-500/20"
+            "border-[var(--input-border)] outline-none transition-colors",
+            // The search input right below already carries its own focus
+            // ring once open — highlighting this trigger too stacked two
+            // green boxes on top of each other. The chevron flip already
+            // communicates "open" on its own.
+            open && "border-indigo-500/40"
           )}
         >
           {selected ? (
             <>
-              <span className="text-base leading-none">{flagEmoji(selected.code)}</span>
+              <CountryCode code={selected.code} />
               <span className="flex-1 text-[var(--foreground)]">{selected.name}</span>
             </>
           ) : (
@@ -143,7 +153,7 @@ export function CountrySelect({
                       value === c.name ? "text-indigo-400 font-semibold" : "text-[var(--foreground)]"
                     )}
                   >
-                    <span className="text-base leading-none">{flagEmoji(c.code)}</span>
+                    <CountryCode code={c.code} />
                     {c.name}
                   </button>
                 ))
