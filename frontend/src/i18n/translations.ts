@@ -334,6 +334,7 @@ export interface TranslationSchema {
     back: string;
     done: string;
     skip: string;
+    restart: string;
     ai_title: string;
     ai_body: string;
     loc_title: string;
@@ -684,6 +685,7 @@ const UZ: TranslationSchema = {
     back: "Orqaga",
     done: "Tugatish",
     skip: "O'tkazib yuborish",
+    restart: "Qo'llanmani qayta ko'rish",
     ai_title: "Trova AI",
     ai_body: "Sayohat rejasini AI bilan tuzing — qayerga, necha kunga va kim bilan borishingizni ayting.",
     loc_title: "Joylar",
@@ -1036,6 +1038,7 @@ const RU: TranslationSchema = {
     back: "Назад",
     done: "Готово",
     skip: "Пропустить",
+    restart: "Пройти обучение заново",
     ai_title: "Trova AI",
     ai_body: "Составьте маршрут с помощью ИИ — расскажите, куда, на сколько дней и с кем едете.",
     loc_title: "Места",
@@ -1387,6 +1390,7 @@ const EN: TranslationSchema = {
     back: "Back",
     done: "Done",
     skip: "Skip",
+    restart: "Replay the tour",
     ai_title: "Trova AI",
     ai_body: "Plan a trip with AI — tell it where, how long, and who is coming.",
     loc_title: "Places",
@@ -1736,6 +1740,7 @@ const ZH: TranslationSchema = {
     back: "上一步",
     done: "完成",
     skip: "跳过",
+    restart: "重新查看引导",
     ai_title: "Trova AI",
     ai_body: "用 AI 规划行程——告诉它去哪里、几天、和谁同行。",
     loc_title: "地点",
@@ -2089,6 +2094,7 @@ const DE: TranslationSchema = {
     back: "Zurück",
     done: "Fertig",
     skip: "Überspringen",
+    restart: "Tour erneut ansehen",
     ai_title: "Trova AI",
     ai_body: "Planen Sie mit KI — sagen Sie wohin, wie lange und mit wem.",
     loc_title: "Orte",
@@ -2444,6 +2450,7 @@ const FR: TranslationSchema = {
     back: "Retour",
     done: "Terminé",
     skip: "Passer",
+    restart: "Revoir la visite",
     ai_title: "Trova AI",
     ai_body: "Planifiez avec l'IA — indiquez où, combien de jours et avec qui.",
     loc_title: "Lieux",

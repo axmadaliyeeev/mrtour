@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -97,6 +98,10 @@ export function TourProvider({
   }, [currentStep, steps]);
 
   useEffect(() => {
+    // Only listen while the tour is actually running. These were previously
+    // attached for the app's whole lifetime, so every scroll anywhere paid
+    // for a capturing handler that immediately returned.
+    if (!isActive) return;
     sync();
     // `true` captures scrolls inside nested containers too — the app's main
     // content is its own scroll area, not the window.
@@ -106,7 +111,7 @@ export function TourProvider({
       window.removeEventListener("resize", sync);
       window.removeEventListener("scroll", sync, true);
     };
-  }, [sync]);
+  }, [sync, isActive]);
 
   // Escape should always be able to dismiss an overlay that covers the page.
   useEffect(() => {
@@ -134,6 +139,13 @@ export function TourProvider({
     });
   }, [steps.length, onComplete]);
 
+  // Memoised: without this a new object identity on every render forced
+  // every consumer of useTour() to re-render alongside the provider.
+  const ctx = useMemo(
+    () => ({ steps, setSteps, currentStep, isActive, startTour, nextStep, previousStep, endTour }),
+    [steps, currentStep, isActive, startTour, nextStep, previousStep, endTour]
+  );
+
   const step = isActive ? steps[currentStep] : null;
 
   // Tooltip placement, clamped so it can never render off-screen — the
@@ -154,9 +166,7 @@ export function TourProvider({
   }
 
   return (
-    <TourContext.Provider
-      value={{ steps, setSteps, currentStep, isActive, startTour, nextStep, previousStep, endTour }}
-    >
+    <TourContext.Provider value={ctx}>
       {children}
 
       <AnimatePresence>

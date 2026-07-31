@@ -37,6 +37,7 @@ import { apiClient } from "@/lib/api-client";
 import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { Stars } from "@/components/ui/stars";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { useTour } from "@/components/ui/Tour";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { Location } from "@/types";
@@ -94,6 +95,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [tab, setTab] = useState<ProfileTab>("saved");
+  const { startTour } = useTour();
   const {
     user,
     isLoggedIn,
@@ -683,6 +685,18 @@ export default function Profile() {
             </span>
           </div>
         </div>
+      </section>
+
+      {/* Replay the onboarding tour. Without this, skipping it once meant
+          never being able to see it again — the "seen" flag is persisted. */}
+      <section className="px-4 mb-5">
+        <button
+          onClick={startTour}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] text-[var(--foreground)] text-sm font-semibold hover:border-indigo-500/40 transition-all active:scale-[0.98]"
+        >
+          <Compass className="w-4 h-4 text-indigo-500" />
+          {t("tour", "restart")}
+        </button>
       </section>
 
       <section className="px-4 mb-5">

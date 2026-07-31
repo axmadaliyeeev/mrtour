@@ -14,9 +14,14 @@ import { useTranslation } from "@/i18n";
 export function TourRunner() {
   const { setSteps, startTour } = useTour();
   const { isDesktop } = useBreakpoint();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const tourSeen = useAppStore((s) => s.tourSeen);
 
+  // Depends on `lang`, NOT on `t`. useTranslation builds a fresh `t` closure
+  // on every render, so listing it here re-ran this effect each time, and
+  // setSteps always stores a new array — that is an infinite render loop
+  // that hangs the page. `lang` is a primitive and only changes when the
+  // translations actually need rebuilding.
   useEffect(() => {
     setSteps([
       { selectorId: TOUR_IDS.AI,        position: "right", title: t("tour", "ai_title"),      body: t("tour", "ai_body") },
@@ -24,7 +29,8 @@ export function TourRunner() {
       { selectorId: TOUR_IDS.SAVED,     position: "right", title: t("tour", "saved_title"),   body: t("tour", "saved_body") },
       { selectorId: TOUR_IDS.PROFILE,   position: "right", title: t("tour", "profile_title"), body: t("tour", "profile_body") },
     ]);
-  }, [setSteps, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setSteps, lang]);
 
   useEffect(() => {
     if (tourSeen || !isDesktop) return;
