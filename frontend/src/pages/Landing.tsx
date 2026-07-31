@@ -94,7 +94,7 @@ export default function Landing() {
   ];
 
   return (
-    <div className="app-bg min-h-screen overflow-x-hidden">
+    <div className="app-bg min-h-dvh overflow-x-hidden">
       {/* ── Header ─────────────────────────────────────────────── */}
       <header className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-5 sm:px-8 py-5">
         <div>
@@ -110,7 +110,7 @@ export default function Landing() {
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex items-end overflow-hidden">
+      <section className="relative min-h-[92dvh] flex items-end overflow-hidden">
         <motion.img
           src={heroImg}
           alt=""

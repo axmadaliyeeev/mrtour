@@ -748,7 +748,10 @@ export function RegisterTab({ onClose }: { onClose: () => void }) {
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="space-y-3"
         >
-          <div className="grid grid-cols-2 gap-3">
+          {/* Stacked on the narrowest phones. Side by side these two are
+              ~130px each at 320px wide, which truncates both the placeholder
+              and any validation message under them. */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
             <Field label={t("auth", "name")} value={name} onChange={setName} required
               placeholder={t("auth", "name_placeholder")} autoComplete="given-name" error={errors.name} />
             <Field label={t("auth", "surname")} value={surname} onChange={setSurname} required

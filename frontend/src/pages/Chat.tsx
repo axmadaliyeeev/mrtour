@@ -426,7 +426,7 @@ export default function Chat() {
                       // mode uses the exact surface color from spec
                       // (#141b2b), one clear step up from the #0a0e1a
                       // page background.
-                      : "px-6 py-5 rounded-2xl max-w-[720px] bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)]"
+                      : "px-4 py-4 sm:px-6 sm:py-5 rounded-2xl max-w-[720px] bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)] break-words"
                     : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-indigo-500 text-white shadow-sm"
                 )}
               >

@@ -17,7 +17,7 @@ export function LegalLayout({
   const navigate = useNavigate();
 
   return (
-    <div className="app-bg min-h-screen">
+    <div className="app-bg min-h-dvh">
       <header className="flex items-center justify-between px-5 sm:px-8 py-5 border-b border-[var(--border)]">
         <button onClick={() => navigate("/")} className="active:opacity-70 transition-opacity">
           <img src="/img/logo-l.svg" alt="trova" className="h-7 w-auto dark:hidden" />

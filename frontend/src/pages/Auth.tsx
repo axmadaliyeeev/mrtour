@@ -70,8 +70,8 @@ export default function Auth() {
   }
 
   return (
-    <div className="app-bg min-h-screen p-3">
-      <div className="grid min-h-[calc(100vh-1.5rem)] gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+    <div className="app-bg min-h-dvh p-3">
+      <div className="grid min-h-[calc(100dvh-1.5rem)] gap-4 lg:grid-cols-[0.95fr_1.05fr]">
 
         {/* ── Showcase (desktop only) ────────────────────────────
             Hidden below lg rather than stacked: on a phone it would push

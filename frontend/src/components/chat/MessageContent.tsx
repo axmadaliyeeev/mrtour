@@ -17,7 +17,10 @@ function linkify(text: string, keyPrefix: string): React.ReactNode[] {
         href={part}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline decoration-dotted underline-offset-2 text-indigo-500 dark:text-indigo-400 hover:text-indigo-400"
+        // A bare URL from the model can be far wider than a phone screen.
+        // Without an explicit break it forces the whole message column to
+        // scroll sideways, which drags the entire chat layout with it.
+        className="underline decoration-dotted underline-offset-2 text-indigo-500 dark:text-indigo-400 hover:text-indigo-400 break-all"
       >
         {part}
       </a>

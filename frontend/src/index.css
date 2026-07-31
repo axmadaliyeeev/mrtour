@@ -613,3 +613,42 @@ img { display: block; max-width: 100%; }
   .gen-btn-letter,
   .gen-btn-spark { animation: none; }
 }
+
+/* ── Mobile input zoom ────────────────────────────────
+   iOS Safari auto-zooms the whole page whenever a focused form control has
+   a computed font-size below 16px, and it does NOT zoom back out on blur —
+   the viewport stays magnified and the layout reads as broken from then on.
+   Several fields here are text-sm (14px) by design, so rather than bumping
+   every call site and coarsening the type scale on desktop too, force the
+   threshold only where the bug exists. 16px is the exact cutoff Safari
+   uses; anything at or above it is left alone. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────
+   Only two of this file's animations previously honoured the OS
+   "reduce motion" setting, and framer-motion's transitions honoured
+   none of them. For users who set this because motion triggers nausea
+   or vestibular symptoms, a partial opt-out is not an opt-out.
+
+   Motion is collapsed rather than removed: 0.01ms still fires
+   transitionend/animationend, so any JS waiting on those events keeps
+   working instead of hanging a half-finished UI. Opacity fades are
+   left alone deliberately — cross-fades don't cause the symptoms this
+   setting exists to prevent, and killing them makes state changes
+   register as jarring pops. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
