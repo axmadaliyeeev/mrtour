@@ -27,29 +27,3 @@ export const staggerItem: Variants = {
   },
 };
 
-/** Standalone fade-up for a single element (no parent stagger). */
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-/**
- * Reveal-on-scroll props for a stagger parent. `once: true` matches the
- * existing useInView hook's behaviour (it disconnects after firing) — content
- * that re-animates every time it scrolls back into view is distracting.
- */
-export const revealOnScroll = {
-  initial: "hidden",
-  whileInView: "show",
-  viewport: { once: true, amount: 0.15 },
-} as const;
-
-/** Same, but for content already on screen at mount (above the fold). */
-export const revealOnMount = {
-  initial: "hidden",
-  animate: "show",
-} as const;

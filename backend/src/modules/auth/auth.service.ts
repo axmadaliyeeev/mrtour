@@ -55,6 +55,15 @@ export async function issueVerificationCode(
   const code = generateCode();
   const codeHash = await bcrypt.hash(code, SALT_ROUNDS);
 
+  // Opportunistic purge of every expired row, not just this address's.
+  // Codes were previously only deleted when someone actually tried to use
+  // one, so an abandoned registration left its row behind permanently and
+  // the table grew without bound. Doing it here costs one extra indexed
+  // delete on a write we're already making, and needs no scheduler.
+  await withRetry(() =>
+    prisma.verificationCode.deleteMany({ where: { expiresAt: { lt: new Date() } } })
+  );
+
   await withRetry(() => prisma.verificationCode.deleteMany({ where: { email: normalized, purpose } }));
   await withRetry(() =>
     prisma.verificationCode.create({

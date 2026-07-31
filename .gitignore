@@ -55,3 +55,6 @@ coverage/
 .cache/
 .turbo/
 .claude/worktrees/
+
+# Presentations / design docs — kept locally, not in the code repo
+*.pdf

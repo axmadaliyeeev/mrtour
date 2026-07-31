@@ -60,11 +60,8 @@ export interface TranslationSchema {
   };
   detail: {
     hours: string;
-    price: string;
     transport: string;
     best_season: string;
-    duration: string;
-    region: string;
     reviews: string;
     no_reviews: string;
     write_review: string;
@@ -75,8 +72,6 @@ export interface TranslationSchema {
     free: string;
     review_placeholder: string;
     submit_review: string;
-    login_to_review: string;
-    tag_all: string;
     description: string;
     practical_info: string;
     tags_section: string;
@@ -94,10 +89,8 @@ export interface TranslationSchema {
     review_success: string;
     review_submit_error: string;
     add_first_review: string;
-    insight_loading: string;
     insight_error: string;
     smart_review_label: string;
-    avg_rating: string;
     total_reviews: string;
   };
   chat: {
@@ -115,11 +108,8 @@ export interface TranslationSchema {
     plan_banner_more: string;
     plan_btn: string;
     plan_view: string;
-    quick_label: string;
     input_placeholder: string;
     hint: string;
-    typing: string;
-    plan_quick: string;
     places: string;
     error: string;
     waking_up: string;
@@ -161,11 +151,8 @@ export interface TranslationSchema {
     busy: string;
     per_night: string;
     per_day: string;
-    cuisine: string;
-    languages: string;
     currency_calc_title: string;
     currency_calc_desc: string;
-    currency_result_label: string;
     currency_table_title: string;
     currency_table_unit: string;
     train_type: string;
@@ -201,7 +188,6 @@ export interface TranslationSchema {
     benefit4_title: string;
     benefit4_desc: string;
     guest_plan_save_hint: string;
-    theme_title: string;
     theme_dark: string;
     theme_light: string;
     plan_title: string;
@@ -213,16 +199,13 @@ export interface TranslationSchema {
     lang_title: string;
     settings_title: string;
     logout: string;
-    logout_confirm: string;
     guest: string;
     sidebar_login_hint: string;
     plan_count_suffix: string;
-    theme_label: string;
     emergency_label: string;
     stat_trips: string;
     stat_saved: string;
     stat_reviews: string;
-    reviews_title: string;
     reviews_empty: string;
     tab_saved: string;
     tab_itineraries: string;
@@ -231,7 +214,6 @@ export interface TranslationSchema {
     itineraries_empty_title: string;
     itineraries_empty_desc: string;
     linked_accounts_title: string;
-    linked_email: string;
     linked_not_connected: string;
     linked_connected: string;
     delete_account: string;
@@ -240,10 +222,6 @@ export interface TranslationSchema {
   auth: {
     login: string;
     register: string;
-    continue_google: string;
-    continue_apple: string;
-    or_email: string;
-    social_soon: string;
     email: string;
     password: string;
     name: string;
@@ -284,23 +262,19 @@ export interface TranslationSchema {
     required: string;
     form_errors_summary: string;
     err_login: string;
-    err_google: string;
     step_verify: string;
     verify_title: string;
     verify_desc: string;
     verify_btn: string;
     verify_loading: string;
-    code_label: string;
     resend_btn: string;
     resend_sent: string;
     resend_wait: string;
-    err_code_invalid: string;
     err_verify: string;
     forgot_link: string;
     forgot_title: string;
     forgot_desc: string;
     forgot_send: string;
-    forgot_sent: string;
     reset_title: string;
     reset_desc: string;
     new_password: string;
@@ -310,7 +284,6 @@ export interface TranslationSchema {
     reset_done: string;
     back_to_login: string;
     err_reset: string;
-    not_verified_hint: string;
     err_register: string;
     err_waking_up: string;
     err_password_required: string;
@@ -420,11 +393,8 @@ const UZ: TranslationSchema = {
   },
   detail: {
     hours: "Ish vaqti",
-    price: "Kirish narxi",
     transport: "Transport",
     best_season: "Eng yaxshi mavsum",
-    duration: "Tavsiya vaqti",
-    region: "Viloyat",
     reviews: "Sharhlar",
     no_reviews: "Hali sharh yo'q. Birinchi bo'lib sharh qoldiring!",
     write_review: "Sharh yozish",
@@ -435,8 +405,6 @@ const UZ: TranslationSchema = {
     free: "Bepul",
     review_placeholder: "Fikringizni yozing...",
     submit_review: "Yuborish",
-    login_to_review: "Sharh qoldirish uchun kiring",
-    tag_all: "Barchasi",
     description: "Tavsif",
     practical_info: "Amaliy ma'lumot",
     tags_section: "Teglar",
@@ -454,10 +422,8 @@ const UZ: TranslationSchema = {
     review_success: "Sharh qo'shildi!",
     review_submit_error: "Sharhni yuborib bo'lmadi. Qayta urinib ko'ring.",
     add_first_review: "Birinchi sharh qoldiring",
-    insight_loading: "Tahlil qilinmoqda...",
     insight_error: "Tahlil qilishda xato yuz berdi",
     smart_review_label: "SmartReview",
-    avg_rating: "O'rtacha baho",
     total_reviews: "ta sharh",
   },
   chat: {
@@ -476,11 +442,8 @@ const UZ: TranslationSchema = {
     plan_banner_more: "ta — AI savollar berib, shaxsiy tur rejasi tuzadi",
     plan_btn: "Tur rejasi tuzish",
     plan_view: "Rejani ko'r",
-    quick_label: "Tezkor savollar:",
     input_placeholder: "Xabar yozing... (Enter — yuborish)",
     hint: "Shift+Enter — yangi qator",
-    typing: "Yozmoqda...",
-    plan_quick: "Rejam",
     places: "joy",
     error:
       "Kechirasiz, hozirda server bilan bog'lanishda muammo bor. Iltimos, bir ozdan so'ng qayta urinib ko'ring.",
@@ -523,11 +486,8 @@ const UZ: TranslationSchema = {
     busy: "Band",
     per_night: "/kecha",
     per_day: "/kun",
-    cuisine: "Taom",
-    languages: "Tillar",
     currency_calc_title: "Valyuta kalkulyatori",
     currency_calc_desc: "Real vaqt kurslari",
-    currency_result_label: "Natija (UZS):",
     currency_table_title: "Kurslar jadvali",
     currency_table_unit: "(1 valyuta = so'm)",
     train_type: "Tez poyezd",
@@ -563,7 +523,6 @@ const UZ: TranslationSchema = {
     benefit4_title: "Ma'lumotlarni saqlash",
     benefit4_desc: "Reja va sozlamalar bulutda saqlanadi",
     guest_plan_save_hint: "Rejaingizni saqlash uchun",
-    theme_title: "Sozlamalar",
     theme_dark: "Tungi rejim",
     theme_light: "Kunduzgi rejim",
     plan_title: "Mening rejam",
@@ -575,16 +534,13 @@ const UZ: TranslationSchema = {
     lang_title: "Til",
     settings_title: "Sozlamalar",
     logout: "Chiqish",
-    logout_confirm: "Chiqish",
     guest: "Mehmon",
     sidebar_login_hint: "Kirish uchun bosing",
     plan_count_suffix: "joy rejada",
-    theme_label: "Mavzu",
     emergency_label: "Favqulodda",
     stat_trips: "Shaharlar",
     stat_saved: "Saqlangan",
     stat_reviews: "Sharhlar",
-    reviews_title: "Mening sharhlarim",
     reviews_empty: "Hali sharh qoldirmadingiz. Joy sahifasida fikringizni yozing.",
     tab_saved: "Saqlanganlar",
     tab_itineraries: "Marshrutlar",
@@ -593,7 +549,6 @@ const UZ: TranslationSchema = {
     itineraries_empty_title: "Hali marshrut yo'q",
     itineraries_empty_desc: "Trova AI bilan suhbatlashib, o'zingizga mos sayohat rejasini tuzing — hozircha marshrutlar alohida saqlanmaydi.",
     linked_accounts_title: "Ulangan akkauntlar",
-    linked_email: "Email",
     linked_not_connected: "Ulanmagan",
     linked_connected: "Ulangan",
     delete_account: "Akkauntni o'chirish",
@@ -601,10 +556,6 @@ const UZ: TranslationSchema = {
   },
   auth: {
     login: "Kirish",
-    continue_google: "Google orqali davom etish",
-    continue_apple: "Apple orqali davom etish",
-    or_email: "yoki email orqali",
-    social_soon: "Google/Apple orqali kirish tez orada qo'shiladi",
     register: "Ro'yxatdan o'tish",
     email: "Email",
     password: "Parol",
@@ -646,23 +597,19 @@ const UZ: TranslationSchema = {
     required: "majburiy",
     form_errors_summary: "Iltimos, quyidagi xatolarni tuzating",
     err_login: "Email yoki parol noto'g'ri",
-    err_google: "Google orqali kirishda xatolik yuz berdi",
     step_verify: "Tasdiqlash",
     verify_title: "Emailingizni tasdiqlang",
     verify_desc: "6 xonali kodni yubordik:",
     verify_btn: "Tasdiqlash",
     verify_loading: "Tekshirilmoqda...",
-    code_label: "Tasdiqlash kodi",
     resend_btn: "Kodni qayta yuborish",
     resend_sent: "Yangi kod yuborildi",
     resend_wait: "Qayta yuborish",
-    err_code_invalid: "Kod 6 xonali bo'lishi kerak",
     err_verify: "Kod noto'g'ri yoki muddati tugagan",
     forgot_link: "Parolni unutdingizmi?",
     forgot_title: "Parolni tiklash",
     forgot_desc: "Emailingizni kiriting — tiklash kodini yuboramiz",
     forgot_send: "Kod yuborish",
-    forgot_sent: "Agar bunday akkaunt mavjud bo'lsa, kod yuborildi",
     reset_title: "Yangi parol",
     reset_desc: "Kodni kiriting va yangi parol o'ylab toping",
     new_password: "Yangi parol",
@@ -672,7 +619,6 @@ const UZ: TranslationSchema = {
     reset_done: "Parol yangilandi!",
     back_to_login: "Kirishga qaytish",
     err_reset: "Parolni yangilab bo'lmadi",
-    not_verified_hint: "Email tasdiqlanmagan — kodni kiriting",
     err_register: "Ro'yxatdan o'tishda xato yuz berdi",
     err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring.",
     err_password_required: "Parol kiritilishi shart",
@@ -783,11 +729,8 @@ const RU: TranslationSchema = {
   },
   detail: {
     hours: "Часы работы",
-    price: "Стоимость входа",
     transport: "Транспорт",
     best_season: "Лучшее время для посещения",
-    duration: "Рекомендуемое время",
-    region: "Область",
     reviews: "Отзывы",
     no_reviews: "Отзывов пока нет. Станьте первым!",
     write_review: "Написать отзыв",
@@ -798,8 +741,6 @@ const RU: TranslationSchema = {
     free: "Бесплатно",
     review_placeholder: "Поделитесь своими впечатлениями...",
     submit_review: "Отправить",
-    login_to_review: "Войдите, чтобы оставить отзыв",
-    tag_all: "Все",
     description: "Описание",
     practical_info: "Практическая информация",
     tags_section: "Теги",
@@ -817,10 +758,8 @@ const RU: TranslationSchema = {
     review_success: "Отзыв добавлен!",
     review_submit_error: "Не удалось отправить отзыв. Попробуйте ещё раз.",
     add_first_review: "Оставьте первый отзыв",
-    insight_loading: "Анализируем...",
     insight_error: "Ошибка при анализе",
     smart_review_label: "SmartReview",
-    avg_rating: "Средняя оценка",
     total_reviews: "отзывов",
   },
   chat: {
@@ -840,11 +779,8 @@ const RU: TranslationSchema = {
       "мест — ИИ задаст вопросы и составит персональный маршрут",
     plan_btn: "Составить маршрут",
     plan_view: "Открыть план",
-    quick_label: "Быстрые вопросы:",
     input_placeholder: "Напишите сообщение... (Enter — отправить)",
     hint: "Shift+Enter — новая строка",
-    typing: "Печатает...",
-    plan_quick: "Мой план",
     places: "мест",
     error:
       "Извините, в данный момент возникла проблема с подключением к серверу. Пожалуйста, попробуйте ещё раз чуть позже.",
@@ -887,11 +823,8 @@ const RU: TranslationSchema = {
     busy: "Занят",
     per_night: "/ночь",
     per_day: "/день",
-    cuisine: "Кухня",
-    languages: "Языки",
     currency_calc_title: "Валютный калькулятор",
     currency_calc_desc: "Курсы в режиме реального времени",
-    currency_result_label: "Результат (UZS):",
     currency_table_title: "Таблица курсов",
     currency_table_unit: "(1 единица валюты = сум)",
     train_type: "Скоростной поезд",
@@ -927,7 +860,6 @@ const RU: TranslationSchema = {
     benefit4_title: "Сохранение данных",
     benefit4_desc: "Маршруты и настройки хранятся в облаке",
     guest_plan_save_hint: "Чтобы сохранить маршрут,",
-    theme_title: "Настройки",
     theme_dark: "Тёмная тема",
     theme_light: "Светлая тема",
     plan_title: "Мой план",
@@ -939,16 +871,13 @@ const RU: TranslationSchema = {
     lang_title: "Язык",
     settings_title: "Настройки",
     logout: "Выйти",
-    logout_confirm: "Выйти",
     guest: "Гость",
     sidebar_login_hint: "Нажмите для входа",
     plan_count_suffix: "мест в плане",
-    theme_label: "Тема",
     emergency_label: "Экстренные",
     stat_trips: "Города",
     stat_saved: "Сохранено",
     stat_reviews: "Отзывы",
-    reviews_title: "Мои отзывы",
     reviews_empty: "Вы ещё не оставили отзывов. Напишите его на странице места.",
     tab_saved: "Сохранённое",
     tab_itineraries: "Маршруты",
@@ -957,7 +886,6 @@ const RU: TranslationSchema = {
     itineraries_empty_title: "Пока нет маршрутов",
     itineraries_empty_desc: "Составьте маршрут вместе с Trova AI — пока что маршруты отдельно не сохраняются.",
     linked_accounts_title: "Привязанные аккаунты",
-    linked_email: "Email",
     linked_not_connected: "Не подключено",
     linked_connected: "Подключено",
     delete_account: "Удалить аккаунт",
@@ -965,10 +893,6 @@ const RU: TranslationSchema = {
   },
   auth: {
     login: "Вход",
-    continue_google: "Продолжить через Google",
-    continue_apple: "Продолжить через Apple",
-    or_email: "или через email",
-    social_soon: "Вход через Google/Apple скоро появится",
     register: "Регистрация",
     email: "Email",
     password: "Пароль",
@@ -1010,23 +934,19 @@ const RU: TranslationSchema = {
     required: "обязательно",
     form_errors_summary: "Пожалуйста, исправьте ошибки ниже",
     err_login: "Неверный email или пароль",
-    err_google: "Ошибка при входе через Google",
     step_verify: "Подтверждение",
     verify_title: "Подтвердите email",
     verify_desc: "Мы отправили 6-значный код на:",
     verify_btn: "Подтвердить",
     verify_loading: "Проверяем...",
-    code_label: "Код подтверждения",
     resend_btn: "Отправить код повторно",
     resend_sent: "Новый код отправлен",
     resend_wait: "Повторно",
-    err_code_invalid: "Код должен состоять из 6 цифр",
     err_verify: "Неверный код или истёк срок действия",
     forgot_link: "Забыли пароль?",
     forgot_title: "Восстановление пароля",
     forgot_desc: "Введите email — отправим код для сброса",
     forgot_send: "Отправить код",
-    forgot_sent: "Если такой аккаунт существует, код отправлен",
     reset_title: "Новый пароль",
     reset_desc: "Введите код и придумайте новый пароль",
     new_password: "Новый пароль",
@@ -1036,7 +956,6 @@ const RU: TranslationSchema = {
     reset_done: "Пароль обновлён!",
     back_to_login: "Вернуться ко входу",
     err_reset: "Не удалось обновить пароль",
-    not_verified_hint: "Email не подтверждён — введите код",
     err_register: "Ошибка при регистрации",
     err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова.",
     err_password_required: "Введите пароль",
@@ -1146,11 +1065,8 @@ const EN: TranslationSchema = {
   },
   detail: {
     hours: "Opening Hours",
-    price: "Admission",
     transport: "Getting There",
     best_season: "Best Time to Visit",
-    duration: "Recommended Duration",
-    region: "Region",
     reviews: "Reviews",
     no_reviews: "No reviews yet. Be the first to share your experience!",
     write_review: "Write a Review",
@@ -1161,8 +1077,6 @@ const EN: TranslationSchema = {
     free: "Free",
     review_placeholder: "Share your thoughts...",
     submit_review: "Submit",
-    login_to_review: "Sign in to leave a review",
-    tag_all: "All",
     description: "Description",
     practical_info: "Practical Info",
     tags_section: "Tags",
@@ -1180,10 +1094,8 @@ const EN: TranslationSchema = {
     review_success: "Review added!",
     review_submit_error: "Couldn't submit your review. Please try again.",
     add_first_review: "Be the first to review",
-    insight_loading: "Analyzing...",
     insight_error: "Analysis failed",
     smart_review_label: "SmartReview",
-    avg_rating: "Average rating",
     total_reviews: "reviews",
   },
   chat: {
@@ -1203,11 +1115,8 @@ const EN: TranslationSchema = {
       "more — AI will ask a few questions and craft your personal itinerary",
     plan_btn: "Build Itinerary",
     plan_view: "View Plan",
-    quick_label: "Quick questions:",
     input_placeholder: "Type a message... (Enter to send)",
     hint: "Shift+Enter for a new line",
-    typing: "Typing...",
-    plan_quick: "My Plan",
     places: "places",
     error:
       "Sorry, we're having trouble connecting to the server right now. Please try again in a moment.",
@@ -1250,11 +1159,8 @@ const EN: TranslationSchema = {
     busy: "Busy",
     per_night: "/night",
     per_day: "/day",
-    cuisine: "Cuisine",
-    languages: "Languages",
     currency_calc_title: "Currency Calculator",
     currency_calc_desc: "Live exchange rates",
-    currency_result_label: "Result (UZS):",
     currency_table_title: "Exchange Rate Table",
     currency_table_unit: "(1 unit = soum)",
     train_type: "High-Speed Train",
@@ -1290,7 +1196,6 @@ const EN: TranslationSchema = {
     benefit4_title: "Save Your Data",
     benefit4_desc: "Plans and settings are stored in the cloud",
     guest_plan_save_hint: "To save your plan,",
-    theme_title: "Settings",
     theme_dark: "Dark Mode",
     theme_light: "Light Mode",
     plan_title: "My Plan",
@@ -1302,16 +1207,13 @@ const EN: TranslationSchema = {
     lang_title: "Language",
     settings_title: "Settings",
     logout: "Sign Out",
-    logout_confirm: "Sign Out",
     guest: "Guest",
     sidebar_login_hint: "Click to sign in",
     plan_count_suffix: "places in plan",
-    theme_label: "Theme",
     emergency_label: "Emergency",
     stat_trips: "Cities",
     stat_saved: "Saved",
     stat_reviews: "Reviews",
-    reviews_title: "My Reviews",
     reviews_empty: "You haven't written a review yet. Leave one on a place's page.",
     tab_saved: "Saved",
     tab_itineraries: "Itineraries",
@@ -1320,7 +1222,6 @@ const EN: TranslationSchema = {
     itineraries_empty_title: "No itineraries yet",
     itineraries_empty_desc: "Build a trip plan with Trova AI — itineraries aren't saved separately just yet.",
     linked_accounts_title: "Linked accounts",
-    linked_email: "Email",
     linked_not_connected: "Not connected",
     linked_connected: "Connected",
     delete_account: "Delete account",
@@ -1328,10 +1229,6 @@ const EN: TranslationSchema = {
   },
   auth: {
     login: "Sign In",
-    continue_google: "Continue with Google",
-    continue_apple: "Continue with Apple",
-    or_email: "or continue with email",
-    social_soon: "Google/Apple sign-in is coming soon",
     register: "Create Account",
     email: "Email",
     password: "Password",
@@ -1373,23 +1270,19 @@ const EN: TranslationSchema = {
     required: "required",
     form_errors_summary: "Please fix the errors below",
     err_login: "Incorrect email or password",
-    err_google: "Something went wrong signing in with Google",
     step_verify: "Verify",
     verify_title: "Verify your email",
     verify_desc: "We sent a 6-digit code to:",
     verify_btn: "Verify",
     verify_loading: "Checking...",
-    code_label: "Verification code",
     resend_btn: "Resend code",
     resend_sent: "New code sent",
     resend_wait: "Resend",
-    err_code_invalid: "The code must be 6 digits",
     err_verify: "Incorrect or expired code",
     forgot_link: "Forgot password?",
     forgot_title: "Reset your password",
     forgot_desc: "Enter your email — we'll send a reset code",
     forgot_send: "Send code",
-    forgot_sent: "If an account exists, a code has been sent",
     reset_title: "New password",
     reset_desc: "Enter the code and choose a new password",
     new_password: "New password",
@@ -1399,7 +1292,6 @@ const EN: TranslationSchema = {
     reset_done: "Password updated!",
     back_to_login: "Back to sign in",
     err_reset: "Could not update the password",
-    not_verified_hint: "Email not verified — enter your code",
     err_register: "Something went wrong during registration",
     err_waking_up: "Server is waking up — please wait a moment and try again.",
     err_password_required: "Please enter your password",
@@ -1509,11 +1401,8 @@ const ZH: TranslationSchema = {
   },
   detail: {
     hours: "开放时间",
-    price: "门票价格",
     transport: "交通方式",
     best_season: "最佳游览时节",
-    duration: "建议游览时长",
-    region: "所在地区",
     reviews: "评价",
     no_reviews: "暂无评价，快来留下第一条评价吧！",
     write_review: "撰写评价",
@@ -1524,8 +1413,6 @@ const ZH: TranslationSchema = {
     free: "免费",
     review_placeholder: "分享您的感受...",
     submit_review: "提交",
-    login_to_review: "登录后即可留下评价",
-    tag_all: "全部",
     description: "景点介绍",
     practical_info: "实用信息",
     tags_section: "标签",
@@ -1543,10 +1430,8 @@ const ZH: TranslationSchema = {
     review_success: "评价已添加！",
     review_submit_error: "评价提交失败，请重试。",
     add_first_review: "成为第一个评价者",
-    insight_loading: "分析中...",
     insight_error: "分析失败",
     smart_review_label: "SmartReview",
-    avg_rating: "平均评分",
     total_reviews: "条评价",
   },
   chat: {
@@ -1565,11 +1450,8 @@ const ZH: TranslationSchema = {
     plan_banner_more: "个——AI 将提问并为您量身定制专属行程",
     plan_btn: "生成行程",
     plan_view: "查看行程",
-    quick_label: "快速提问：",
     input_placeholder: "输入消息...（按 Enter 发送）",
     hint: "Shift+Enter 换行",
-    typing: "正在输入...",
-    plan_quick: "我的行程",
     places: "个景点",
     error: "抱歉，当前无法连接到服务器，请稍后再试。",
     waking_up: "服务器正在唤醒，请几秒后重新发送。",
@@ -1611,11 +1493,8 @@ const ZH: TranslationSchema = {
     busy: "已约满",
     per_night: "/晚",
     per_day: "/天",
-    cuisine: "菜系",
-    languages: "语言",
     currency_calc_title: "货币计算器",
     currency_calc_desc: "实时汇率",
-    currency_result_label: "结果（UZS）：",
     currency_table_title: "汇率表",
     currency_table_unit: "（1单位外币 = 苏姆）",
     train_type: "高速列车",
@@ -1651,7 +1530,6 @@ const ZH: TranslationSchema = {
     benefit4_title: "数据云端保存",
     benefit4_desc: "行程与设置同步保存至云端",
     guest_plan_save_hint: "要保存您的行程，请",
-    theme_title: "设置",
     theme_dark: "深色模式",
     theme_light: "浅色模式",
     plan_title: "我的行程",
@@ -1663,16 +1541,13 @@ const ZH: TranslationSchema = {
     lang_title: "语言",
     settings_title: "设置",
     logout: "退出登录",
-    logout_confirm: "退出登录",
     guest: "游客",
     sidebar_login_hint: "点击登录",
     plan_count_suffix: "个地点",
-    theme_label: "主题",
     emergency_label: "紧急",
     stat_trips: "城市",
     stat_saved: "收藏",
     stat_reviews: "评价",
-    reviews_title: "我的评价",
     reviews_empty: "您还没有发表评价。可在地点页面留下您的看法。",
     tab_saved: "已保存",
     tab_itineraries: "行程",
@@ -1681,7 +1556,6 @@ const ZH: TranslationSchema = {
     itineraries_empty_title: "暂无行程",
     itineraries_empty_desc: "与 Trova AI 一起规划您的行程——目前行程尚不能单独保存。",
     linked_accounts_title: "关联账户",
-    linked_email: "邮箱",
     linked_not_connected: "未连接",
     linked_connected: "已连接",
     delete_account: "删除账户",
@@ -1689,10 +1563,6 @@ const ZH: TranslationSchema = {
   },
   auth: {
     login: "登录",
-    continue_google: "使用 Google 继续",
-    continue_apple: "使用 Apple 继续",
-    or_email: "或使用邮箱",
-    social_soon: "Google/Apple 登录即将上线",
     register: "注册",
     email: "邮箱",
     password: "密码",
@@ -1734,23 +1604,19 @@ const ZH: TranslationSchema = {
     required: "必填",
     form_errors_summary: "请修正以下错误",
     err_login: "邮箱或密码错误",
-    err_google: "使用 Google 登录时出错",
     step_verify: "验证",
     verify_title: "验证您的邮箱",
     verify_desc: "我们已将 6 位验证码发送至：",
     verify_btn: "验证",
     verify_loading: "验证中...",
-    code_label: "验证码",
     resend_btn: "重新发送验证码",
     resend_sent: "新验证码已发送",
     resend_wait: "重新发送",
-    err_code_invalid: "验证码必须为 6 位数字",
     err_verify: "验证码错误或已过期",
     forgot_link: "忘记密码？",
     forgot_title: "重置密码",
     forgot_desc: "输入您的邮箱，我们将发送重置验证码",
     forgot_send: "发送验证码",
-    forgot_sent: "如果该账户存在，验证码已发送",
     reset_title: "新密码",
     reset_desc: "输入验证码并设置新密码",
     new_password: "新密码",
@@ -1760,7 +1626,6 @@ const ZH: TranslationSchema = {
     reset_done: "密码已更新！",
     back_to_login: "返回登录",
     err_reset: "无法更新密码",
-    not_verified_hint: "邮箱未验证 — 请输入验证码",
     err_register: "注册过程中出现错误",
     err_waking_up: "服务器正在唤醒，请稍等片刻后重试。",
     err_password_required: "请输入密码",
@@ -1871,11 +1736,8 @@ const DE: TranslationSchema = {
   },
   detail: {
     hours: "Öffnungszeiten",
-    price: "Eintrittspreise",
     transport: "Anreise",
     best_season: "Beste Reisezeit",
-    duration: "Empfohlene Besuchsdauer",
-    region: "Region",
     reviews: "Bewertungen",
     no_reviews:
       "Noch keine Bewertungen. Schreiben Sie die erste Rezension!",
@@ -1887,8 +1749,6 @@ const DE: TranslationSchema = {
     free: "Kostenlos",
     review_placeholder: "Teilen Sie Ihre Erfahrungen...",
     submit_review: "Absenden",
-    login_to_review: "Melden Sie sich an, um eine Bewertung zu schreiben",
-    tag_all: "Alle",
     description: "Beschreibung",
     practical_info: "Praktische Infos",
     tags_section: "Stichworte",
@@ -1906,10 +1766,8 @@ const DE: TranslationSchema = {
     review_success: "Bewertung hinzugefügt!",
     review_submit_error: "Bewertung konnte nicht gesendet werden. Bitte erneut versuchen.",
     add_first_review: "Erste Bewertung schreiben",
-    insight_loading: "Analysiere...",
     insight_error: "Analyse fehlgeschlagen",
     smart_review_label: "SmartReview",
-    avg_rating: "Ø Bewertung",
     total_reviews: "Bewertungen",
   },
   chat: {
@@ -1929,11 +1787,8 @@ const DE: TranslationSchema = {
       "weitere — die KI stellt einige Fragen und erstellt Ihre persönliche Reiseroute",
     plan_btn: "Reiseroute erstellen",
     plan_view: "Plan anzeigen",
-    quick_label: "Schnellfragen:",
     input_placeholder: "Nachricht eingeben... (Enter zum Senden)",
     hint: "Shift+Enter für einen Zeilenumbruch",
-    typing: "Schreibt...",
-    plan_quick: "Mein Plan",
     places: "Orte",
     error:
       "Entschuldigung, es gibt derzeit ein Problem mit der Serververbindung. Bitte versuchen Sie es in Kürze erneut.",
@@ -1976,11 +1831,8 @@ const DE: TranslationSchema = {
     busy: "Belegt",
     per_night: "/Nacht",
     per_day: "/Tag",
-    cuisine: "Küche",
-    languages: "Sprachen",
     currency_calc_title: "Währungsrechner",
     currency_calc_desc: "Live-Wechselkurse",
-    currency_result_label: "Ergebnis (UZS):",
     currency_table_title: "Wechselkurstabelle",
     currency_table_unit: "(1 Einheit = Sum)",
     train_type: "Hochgeschwindigkeitszug",
@@ -2016,7 +1868,6 @@ const DE: TranslationSchema = {
     benefit4_title: "Daten sichern",
     benefit4_desc: "Pläne und Einstellungen werden in der Cloud gespeichert",
     guest_plan_save_hint: "Um Ihren Plan zu speichern,",
-    theme_title: "Einstellungen",
     theme_dark: "Dunkles Design",
     theme_light: "Helles Design",
     plan_title: "Mein Plan",
@@ -2028,16 +1879,13 @@ const DE: TranslationSchema = {
     lang_title: "Sprache",
     settings_title: "Einstellungen",
     logout: "Abmelden",
-    logout_confirm: "Abmelden",
     guest: "Gast",
     sidebar_login_hint: "Zum Anmelden tippen",
     plan_count_suffix: "Orte im Plan",
-    theme_label: "Thema",
     emergency_label: "Notfall",
     stat_trips: "Städte",
     stat_saved: "Gespeichert",
     stat_reviews: "Bewertungen",
-    reviews_title: "Meine Bewertungen",
     reviews_empty: "Sie haben noch keine Bewertung geschrieben. Tun Sie dies auf der Seite eines Ortes.",
     tab_saved: "Gespeichert",
     tab_itineraries: "Routen",
@@ -2046,7 +1894,6 @@ const DE: TranslationSchema = {
     itineraries_empty_title: "Noch keine Route",
     itineraries_empty_desc: "Planen Sie eine Reise mit Trova AI — Routen werden derzeit noch nicht separat gespeichert.",
     linked_accounts_title: "Verknüpfte Konten",
-    linked_email: "E-Mail",
     linked_not_connected: "Nicht verbunden",
     linked_connected: "Verbunden",
     delete_account: "Konto löschen",
@@ -2054,10 +1901,6 @@ const DE: TranslationSchema = {
   },
   auth: {
     login: "Anmelden",
-    continue_google: "Mit Google fortfahren",
-    continue_apple: "Mit Apple fortfahren",
-    or_email: "oder mit E-Mail",
-    social_soon: "Anmeldung über Google/Apple folgt in Kürze",
     register: "Registrieren",
     email: "E-Mail",
     password: "Passwort",
@@ -2099,23 +1942,19 @@ const DE: TranslationSchema = {
     required: "erforderlich",
     form_errors_summary: "Bitte korrigieren Sie die folgenden Fehler",
     err_login: "Falsche E-Mail-Adresse oder falsches Passwort",
-    err_google: "Fehler bei der Anmeldung mit Google",
     step_verify: "Bestätigen",
     verify_title: "E-Mail bestätigen",
     verify_desc: "Wir haben einen 6-stelligen Code gesendet an:",
     verify_btn: "Bestätigen",
     verify_loading: "Wird geprüft...",
-    code_label: "Bestätigungscode",
     resend_btn: "Code erneut senden",
     resend_sent: "Neuer Code gesendet",
     resend_wait: "Erneut senden",
-    err_code_invalid: "Der Code muss 6 Ziffern haben",
     err_verify: "Code ungültig oder abgelaufen",
     forgot_link: "Passwort vergessen?",
     forgot_title: "Passwort zurücksetzen",
     forgot_desc: "E-Mail eingeben — wir senden einen Code",
     forgot_send: "Code senden",
-    forgot_sent: "Falls ein Konto existiert, wurde ein Code gesendet",
     reset_title: "Neues Passwort",
     reset_desc: "Code eingeben und neues Passwort wählen",
     new_password: "Neues Passwort",
@@ -2125,7 +1964,6 @@ const DE: TranslationSchema = {
     reset_done: "Passwort aktualisiert!",
     back_to_login: "Zurück zur Anmeldung",
     err_reset: "Passwort konnte nicht aktualisiert werden",
-    not_verified_hint: "E-Mail nicht bestätigt — Code eingeben",
     err_register: "Bei der Registrierung ist ein Fehler aufgetreten",
     err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut.",
     err_password_required: "Bitte geben Sie Ihr Passwort ein",
@@ -2236,11 +2074,8 @@ const FR: TranslationSchema = {
   },
   detail: {
     hours: "Horaires d'ouverture",
-    price: "Tarifs d'entrée",
     transport: "Comment y aller",
     best_season: "Meilleure période",
-    duration: "Durée recommandée",
-    region: "Région",
     reviews: "Avis",
     no_reviews:
       "Aucun avis pour l'instant. Soyez le premier à partager votre expérience !",
@@ -2252,8 +2087,6 @@ const FR: TranslationSchema = {
     free: "Gratuit",
     review_placeholder: "Partagez vos impressions...",
     submit_review: "Envoyer",
-    login_to_review: "Connectez-vous pour laisser un avis",
-    tag_all: "Tout",
     description: "Description",
     practical_info: "Informations pratiques",
     tags_section: "Tags",
@@ -2271,10 +2104,8 @@ const FR: TranslationSchema = {
     review_success: "Avis ajouté !",
     review_submit_error: "Impossible d'envoyer l'avis. Veuillez réessayer.",
     add_first_review: "Soyez le premier à noter",
-    insight_loading: "Analyse en cours...",
     insight_error: "Échec de l'analyse",
     smart_review_label: "SmartReview",
-    avg_rating: "Note moyenne",
     total_reviews: "avis",
   },
   chat: {
@@ -2294,11 +2125,8 @@ const FR: TranslationSchema = {
       "— l'IA vous posera quelques questions pour concevoir votre itinéraire personnalisé",
     plan_btn: "Créer un itinéraire",
     plan_view: "Voir le plan",
-    quick_label: "Questions rapides :",
     input_placeholder: "Écrivez un message… (Entrée pour envoyer)",
     hint: "Shift+Entrée pour un saut de ligne",
-    typing: "En train d'écrire...",
-    plan_quick: "Mon plan",
     places: "lieux",
     error:
       "Désolé, nous rencontrons un problème de connexion avec le serveur. Veuillez réessayer dans quelques instants.",
@@ -2341,11 +2169,8 @@ const FR: TranslationSchema = {
     busy: "Occupé",
     per_night: "/nuit",
     per_day: "/jour",
-    cuisine: "Cuisine",
-    languages: "Langues",
     currency_calc_title: "Calculateur de devises",
     currency_calc_desc: "Taux de change en direct",
-    currency_result_label: "Résultat (UZS) :",
     currency_table_title: "Tableau des taux",
     currency_table_unit: "(1 unité = soum)",
     train_type: "Train à grande vitesse",
@@ -2381,7 +2206,6 @@ const FR: TranslationSchema = {
     benefit4_title: "Sauvegarder vos données",
     benefit4_desc: "Plans et paramètres synchronisés dans le cloud",
     guest_plan_save_hint: "Pour sauvegarder votre plan,",
-    theme_title: "Paramètres",
     theme_dark: "Mode sombre",
     theme_light: "Mode clair",
     plan_title: "Mon plan",
@@ -2394,16 +2218,13 @@ const FR: TranslationSchema = {
     lang_title: "Langue",
     settings_title: "Paramètres",
     logout: "Se déconnecter",
-    logout_confirm: "Se déconnecter",
     guest: "Invité",
     sidebar_login_hint: "Cliquez pour vous connecter",
     plan_count_suffix: "lieux dans le plan",
-    theme_label: "Thème",
     emergency_label: "Urgences",
     stat_trips: "Villes",
     stat_saved: "Enregistrés",
     stat_reviews: "Avis",
-    reviews_title: "Mes avis",
     reviews_empty: "Vous n'avez pas encore laissé d'avis. Faites-le sur la page d'un lieu.",
     tab_saved: "Enregistrés",
     tab_itineraries: "Itinéraires",
@@ -2412,7 +2233,6 @@ const FR: TranslationSchema = {
     itineraries_empty_title: "Aucun itinéraire pour le moment",
     itineraries_empty_desc: "Créez un itinéraire avec Trova AI — les itinéraires ne sont pas encore enregistrés séparément.",
     linked_accounts_title: "Comptes liés",
-    linked_email: "Email",
     linked_not_connected: "Non connecté",
     linked_connected: "Connecté",
     delete_account: "Supprimer le compte",
@@ -2420,10 +2240,6 @@ const FR: TranslationSchema = {
   },
   auth: {
     login: "Connexion",
-    continue_google: "Continuer avec Google",
-    continue_apple: "Continuer avec Apple",
-    or_email: "ou avec e-mail",
-    social_soon: "La connexion via Google/Apple arrive bientôt",
     register: "Inscription",
     email: "E-mail",
     password: "Mot de passe",
@@ -2466,23 +2282,19 @@ const FR: TranslationSchema = {
     required: "obligatoire",
     form_errors_summary: "Veuillez corriger les erreurs ci-dessous",
     err_login: "Adresse e-mail ou mot de passe incorrect",
-    err_google: "Erreur lors de la connexion avec Google",
     step_verify: "Vérification",
     verify_title: "Vérifiez votre e-mail",
     verify_desc: "Nous avons envoyé un code à 6 chiffres à :",
     verify_btn: "Vérifier",
     verify_loading: "Vérification...",
-    code_label: "Code de vérification",
     resend_btn: "Renvoyer le code",
     resend_sent: "Nouveau code envoyé",
     resend_wait: "Renvoyer",
-    err_code_invalid: "Le code doit comporter 6 chiffres",
     err_verify: "Code incorrect ou expiré",
     forgot_link: "Mot de passe oublié ?",
     forgot_title: "Réinitialiser le mot de passe",
     forgot_desc: "Saisissez votre e-mail — nous enverrons un code",
     forgot_send: "Envoyer le code",
-    forgot_sent: "Si un compte existe, un code a été envoyé",
     reset_title: "Nouveau mot de passe",
     reset_desc: "Saisissez le code et choisissez un nouveau mot de passe",
     new_password: "Nouveau mot de passe",
@@ -2492,7 +2304,6 @@ const FR: TranslationSchema = {
     reset_done: "Mot de passe mis à jour !",
     back_to_login: "Retour à la connexion",
     err_reset: "Impossible de mettre à jour le mot de passe",
-    not_verified_hint: "E-mail non vérifié — saisissez le code",
     err_register: "Une erreur est survenue lors de l'inscription",
     err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer.",
     err_password_required: "Veuillez saisir votre mot de passe",
