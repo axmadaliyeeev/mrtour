@@ -1,22 +1,39 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { TourProvider } from "@/components/ui/Tour";
 import Landing from "@/pages/Landing";
-import Auth from "@/pages/Auth";
-import Privacy from "@/pages/Privacy";
-import Terms from "@/pages/Terms";
 import Home from "@/pages/Home";
-import Locations from "@/pages/Locations";
-import LocationDetail from "@/pages/LocationDetail";
-import Chat from "@/pages/Chat";
-import Services from "@/pages/Services";
-import Profile from "@/pages/Profile";
-import Uzbekistan from "@/pages/Uzbekistan";
-import SavedPlaces from "@/pages/SavedPlaces";
 import { useAppStore } from "@/store";
+
+// Route-level code splitting. The app shipped as one ~785 KB script, so a
+// first-time visitor paid for the chat screen, the legal pages, the whole
+// services catalog and the auth flow before seeing a single pixel. Landing
+// and Home stay in the entry bundle on purpose — they ARE the first paint
+// for guests and returning users respectively, and lazy-loading the page
+// someone actually landed on would just move the delay, not remove it.
+const Auth           = lazy(() => import("@/pages/Auth"));
+const Privacy        = lazy(() => import("@/pages/Privacy"));
+const Terms          = lazy(() => import("@/pages/Terms"));
+const Locations      = lazy(() => import("@/pages/Locations"));
+const LocationDetail = lazy(() => import("@/pages/LocationDetail"));
+const Chat           = lazy(() => import("@/pages/Chat"));
+const Services       = lazy(() => import("@/pages/Services"));
+const Profile        = lazy(() => import("@/pages/Profile"));
+const Uzbekistan     = lazy(() => import("@/pages/Uzbekistan"));
+const SavedPlaces    = lazy(() => import("@/pages/SavedPlaces"));
+
+// Chunk-fetch fallback. Deliberately quiet — a full-screen branded splash
+// for what is usually a sub-second gap would flash more than it helps.
+function RouteFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[40vh]" role="status" aria-label="Loading">
+      <span className="w-6 h-6 rounded-full border-2 border-indigo-500/25 border-t-indigo-500 animate-spin" />
+    </div>
+  );
+}
 
 function ThemeApplier() {
   const { theme, lang } = useAppStore();
@@ -39,6 +56,7 @@ export default function App() {
       <ThemeApplier />
       <AuthModal />
       <CommandPalette />
+      <Suspense fallback={<RouteFallback />}>
       <Routes>
         {/* Always renders — a marketing/landing homepage that stays reachable
             regardless of session state (the same pattern most SaaS sites
@@ -74,6 +92,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
     </TourProvider>
   );

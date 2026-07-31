@@ -55,6 +55,8 @@ function RestaurantsTab({ search }: { search: string }) {
           <div className="relative h-44 overflow-hidden">
             <img
               src={r.img}
+              loading="lazy"
+              decoding="async"
               alt={r.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={(e) => { (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=60"; }}
@@ -113,6 +115,8 @@ function HotelsTab({ search }: { search: string }) {
           <div className="relative h-44 overflow-hidden">
             <img
               src={h.img}
+              loading="lazy"
+              decoding="async"
               alt={h.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               onError={(e) => { (e.currentTarget as HTMLImageElement).src = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=60"; }}
@@ -193,6 +197,8 @@ function GuidesTab({ search }: { search: string }) {
               <div className="relative shrink-0">
                 <img
                   src={g.img}
+                  loading="lazy"
+                  decoding="async"
                   alt={g.name}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-[var(--border)]"
                   onError={(e) => {

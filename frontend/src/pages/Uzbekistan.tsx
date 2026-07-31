@@ -72,6 +72,12 @@ const TIP_ICONS = [FileCheck, Banknote, Bus, Languages];
 const ETIQUETTE_ICONS = [Shirt, HandCoins, MessageCircleHeart, Camera];
 const SEASON_ICONS = [Flower2, Sun, Leaf, Snowflake];
 const REGION_IMAGES = [registanImg, arkQalasiImg, ichanQalaImg, chorsuImg, chimganImg];
+// Data-layer city names (as stored in LOCATIONS), aligned by index with
+// c.regions, whose display names are localized. This is what lets a region
+// card deep-link to /locations?city=… — the cards used to dump visitors on
+// the unfiltered list even though the filter deep-link already existed and
+// the map right above them uses it.
+const REGION_CITIES = ["Samarqand", "Buxoro", "Xiva", "Toshkent", "Chimgan"];
 
 const CONTENT: Record<Lang, UzContent> = {
   uz: {
@@ -614,21 +620,31 @@ export default function Uzbekistan() {
         </div>
         <div className="relative">
           <JourneyCurve />
+          {/* Card treatment adapted from a 21st.dev DestinationCard prompt:
+              a brand-tinted gradient instead of plain black, a glass
+              "explore" row that reveals on hover, and an emerald hover
+              glow. Its flag emoji are deliberately NOT carried over — on
+              Windows without color-emoji fonts they render as bare letter
+              pairs, the exact bug already purged from this codebase. */}
           <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {c.regions.map((r, i) => (
               <button
                 key={r.name}
-                onClick={() => navigate("/locations")}
-                className="tilt-hover animate-fade-up group relative h-56 rounded-2xl overflow-hidden text-left shadow-md hover:shadow-xl hover:shadow-black/20 shrink-0"
+                onClick={() => navigate(`/locations?city=${encodeURIComponent(REGION_CITIES[i])}`)}
+                className="animate-fade-up group relative h-64 rounded-2xl overflow-hidden text-left shadow-md transition-all duration-300 hover:shadow-xl hover:shadow-indigo-900/25 hover:-translate-y-1 shrink-0"
                 style={{ animationDelay: `${i * 90 + 100}ms` }}
               >
                 <img
                   src={REGION_IMAGES[i]}
                   alt={r.name}
-                  className="w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-300 ease-out"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500 ease-out"
                   loading="lazy"
+                  decoding="async"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                {/* Brand-tinted scrim: deep emerald at the base so the card
+                    reads as part of the palette, fading to clear so the
+                    photo stays the subject. */}
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/90 via-emerald-900/35 to-transparent" />
                 {/* Numbered waypoint marker — reinforces the "journey" framing */}
                 <span className="absolute top-3 left-3 w-6 h-6 rounded-full bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-[11px] font-bold text-white">
                   {i + 1}
@@ -638,6 +654,17 @@ export default function Uzbekistan() {
                     {r.name}
                   </h3>
                   <p className="text-[11px] text-white/80 leading-snug line-clamp-2">{r.desc}</p>
+                  {/* Glass explore row — collapsed until hover so the grid
+                      stays quiet at rest, then slides open as the click
+                      affordance the old card never stated. */}
+                  <span className="mt-2.5 grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-300">
+                    <span className="overflow-hidden">
+                      <span className="flex items-center justify-between rounded-lg px-3 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-[11px] font-semibold tracking-wide">{c.ctaExplore}</span>
+                        <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </span>
+                    </span>
+                  </span>
                 </div>
               </button>
             ))}

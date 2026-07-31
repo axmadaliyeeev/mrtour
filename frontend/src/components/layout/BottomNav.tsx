@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Home, MapPin, Bot, LayoutGrid, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/i18n";
-import { useAppStore } from "@/store";
 
 const SPRING = { type: "spring" as const, stiffness: 420, damping: 34 };
 
@@ -11,7 +10,6 @@ export function BottomNav() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
-  const planCount = useAppStore((s) => s.plan.length);
 
   function isActive(route: string) {
     if (route === "/home") return pathname === "/home";
@@ -72,11 +70,15 @@ export function BottomNav() {
                   "relative transition-all duration-250 w-5 h-5",
                   active ? "text-white scale-105" : "text-[var(--muted-foreground)]"
                 )} />
-                {route === "/profile" && planCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-[3px] rounded-full bg-indigo-500 text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm ring-2 ring-[var(--nav-bg)]">
-                    {planCount > 9 ? "9+" : planCount}
-                  </span>
-                )}
+                {/* Saved-places count used to sit on the Profile tab — a
+                    leftover from when the plan lived inside Profile. The
+                    plan moved to /saved, which on mobile is reached through
+                    the TopHeader bookmark button (which already shows this
+                    same count), so the duplicate here pointed at the wrong
+                    destination AND double-counted the one number. Removed
+                    rather than re-pointed: there is no Saved tab down here,
+                    and a badge on a tab that doesn't open the badged thing
+                    is worse than no badge. */}
               </div>
 
               <span className={cn(
