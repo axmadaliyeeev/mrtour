@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
+import { TourProvider } from "@/components/ui/Tour";
 import Landing from "@/pages/Landing";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
@@ -30,7 +31,9 @@ function ThemeApplier() {
 }
 
 export default function App() {
+  const markTourSeen = useAppStore((s) => s.markTourSeen);
   return (
+    <TourProvider onComplete={markTourSeen}>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ThemeApplier />
       <AuthModal />
@@ -66,5 +69,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
+    </TourProvider>
   );
 }

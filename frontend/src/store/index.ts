@@ -40,6 +40,9 @@ interface AppStore {
   closeAuthModal: () => void;
   searchOpen: boolean;
   setSearchOpen: (open: boolean) => void;
+  // Persisted so the onboarding tour greets a visitor exactly once.
+  tourSeen: boolean;
+  markTourSeen: () => void;
 
   // Toasts
   toasts: Toast[];
@@ -112,6 +115,9 @@ export const useAppStore = create<AppStore>()(
       searchOpen: false,
       setSearchOpen: (open) => set({ searchOpen: open }),
 
+      tourSeen: false,
+      markTourSeen: () => set({ tourSeen: true }),
+
       // ── Toasts ────────────────────────────────────────
       toasts: [],
 
@@ -175,6 +181,7 @@ export const useAppStore = create<AppStore>()(
         theme: state.theme,
         lang: state.lang,
         userReviews: state.userReviews,
+        tourSeen: state.tourSeen,
       }),
       // Bumping this forces a one-time migration: browsers that already
       // persisted "uz" from before the default changed to English get

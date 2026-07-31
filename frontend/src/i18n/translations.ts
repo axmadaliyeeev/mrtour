@@ -107,6 +107,7 @@ export interface TranslationSchema {
     plan_banner_desc: string;
     plan_banner_more: string;
     plan_btn: string;
+    plan_generating: string;
     plan_view: string;
     input_placeholder: string;
     hint: string;
@@ -328,6 +329,20 @@ export interface TranslationSchema {
     final_cta_desc: string;
     footer_tagline: string;
   };
+  tour: {
+    next: string;
+    back: string;
+    done: string;
+    skip: string;
+    ai_title: string;
+    ai_body: string;
+    loc_title: string;
+    loc_body: string;
+    saved_title: string;
+    saved_body: string;
+    profile_title: string;
+    profile_body: string;
+  };
 }
 
 // ─── Uzbek (base) ────────────────────────────────────────────────────────────
@@ -441,6 +456,7 @@ const UZ: TranslationSchema = {
     plan_banner_desc: "va yana",
     plan_banner_more: "ta — AI savollar berib, shaxsiy tur rejasi tuzadi",
     plan_btn: "Tur rejasi tuzish",
+    plan_generating: "Tuzilmoqda",
     plan_view: "Rejani ko'r",
     input_placeholder: "Xabar yozing... (Enter — yuborish)",
     hint: "Shift+Enter — yangi qator",
@@ -663,6 +679,20 @@ const UZ: TranslationSchema = {
     final_cta_desc: "Bepul hisob oching yoki mehmon sifatida davom eting — tanlov sizniki.",
     footer_tagline: "Sun'iy intellekt yordamida O'zbekiston bo'ylab sayohat",
   },
+  tour: {
+    next: "Keyingi",
+    back: "Orqaga",
+    done: "Tugatish",
+    skip: "O'tkazib yuborish",
+    ai_title: "Trova AI",
+    ai_body: "Sayohat rejasini AI bilan tuzing — qayerga, necha kunga va kim bilan borishingizni ayting.",
+    loc_title: "Joylar",
+    loc_body: "200+ tekshirilgan joy: filtrlar, izlash va haqiqiy sharhlar.",
+    saved_title: "Saqlanganlar",
+    saved_body: "Yoqqan joylarni saqlang — ular shu yerda shahar bo'yicha guruhlanadi.",
+    profile_title: "Profil",
+    profile_body: "Sozlamalar, til, sharhlaringiz va saqlangan joylar shu yerda.",
+  },
 };
 
 // ─── Russian ─────────────────────────────────────────────────────────────────
@@ -778,6 +808,7 @@ const RU: TranslationSchema = {
     plan_banner_more:
       "мест — ИИ задаст вопросы и составит персональный маршрут",
     plan_btn: "Составить маршрут",
+    plan_generating: "Составляем",
     plan_view: "Открыть план",
     input_placeholder: "Напишите сообщение... (Enter — отправить)",
     hint: "Shift+Enter — новая строка",
@@ -1000,6 +1031,20 @@ const RU: TranslationSchema = {
     final_cta_desc: "Создайте бесплатный аккаунт или продолжите как гость — выбор за вами.",
     footer_tagline: "Путешествие по Узбекистану с помощью ИИ",
   },
+  tour: {
+    next: "Далее",
+    back: "Назад",
+    done: "Готово",
+    skip: "Пропустить",
+    ai_title: "Trova AI",
+    ai_body: "Составьте маршрут с помощью ИИ — расскажите, куда, на сколько дней и с кем едете.",
+    loc_title: "Места",
+    loc_body: "200+ проверенных мест: фильтры, поиск и настоящие отзывы.",
+    saved_title: "Сохранённое",
+    saved_body: "Сохраняйте понравившиеся места — здесь они группируются по городам.",
+    profile_title: "Профиль",
+    profile_body: "Настройки, язык, ваши отзывы и сохранённые места.",
+  },
 };
 
 // ─── English ──────────────────────────────────────────────────────────────────
@@ -1114,6 +1159,7 @@ const EN: TranslationSchema = {
     plan_banner_more:
       "more — AI will ask a few questions and craft your personal itinerary",
     plan_btn: "Build Itinerary",
+    plan_generating: "Building",
     plan_view: "View Plan",
     input_placeholder: "Type a message... (Enter to send)",
     hint: "Shift+Enter for a new line",
@@ -1336,6 +1382,20 @@ const EN: TranslationSchema = {
     final_cta_desc: "Create a free account or continue as a guest — the choice is yours.",
     footer_tagline: "AI-powered travel across Uzbekistan",
   },
+  tour: {
+    next: "Next",
+    back: "Back",
+    done: "Done",
+    skip: "Skip",
+    ai_title: "Trova AI",
+    ai_body: "Plan a trip with AI — tell it where, how long, and who is coming.",
+    loc_title: "Places",
+    loc_body: "200+ verified places with filters, search and real reviews.",
+    saved_title: "Saved",
+    saved_body: "Save places you like — they are grouped by city here.",
+    profile_title: "Profile",
+    profile_body: "Settings, language, your reviews and saved places.",
+  },
 };
 
 // ─── Chinese Simplified ───────────────────────────────────────────────────────
@@ -1449,6 +1509,7 @@ const ZH: TranslationSchema = {
     plan_banner_desc: "还有",
     plan_banner_more: "个——AI 将提问并为您量身定制专属行程",
     plan_btn: "生成行程",
+    plan_generating: "生成中",
     plan_view: "查看行程",
     input_placeholder: "输入消息...（按 Enter 发送）",
     hint: "Shift+Enter 换行",
@@ -1670,6 +1731,20 @@ const ZH: TranslationSchema = {
     final_cta_desc: "创建免费账户，或以访客身份继续——由您决定。",
     footer_tagline: "AI 驱动的乌兹别克斯坦旅行",
   },
+  tour: {
+    next: "下一步",
+    back: "上一步",
+    done: "完成",
+    skip: "跳过",
+    ai_title: "Trova AI",
+    ai_body: "用 AI 规划行程——告诉它去哪里、几天、和谁同行。",
+    loc_title: "地点",
+    loc_body: "200+ 经过验证的地点，支持筛选、搜索和真实评价。",
+    saved_title: "收藏",
+    saved_body: "收藏喜欢的地点——这里按城市分组显示。",
+    profile_title: "个人中心",
+    profile_body: "设置、语言、您的评价和收藏的地点。",
+  },
 };
 
 // ─── German ───────────────────────────────────────────────────────────────────
@@ -1786,6 +1861,7 @@ const DE: TranslationSchema = {
     plan_banner_more:
       "weitere — die KI stellt einige Fragen und erstellt Ihre persönliche Reiseroute",
     plan_btn: "Reiseroute erstellen",
+    plan_generating: "Wird erstellt",
     plan_view: "Plan anzeigen",
     input_placeholder: "Nachricht eingeben... (Enter zum Senden)",
     hint: "Shift+Enter für einen Zeilenumbruch",
@@ -2008,6 +2084,20 @@ const DE: TranslationSchema = {
     final_cta_desc: "Erstellen Sie ein kostenloses Konto oder fahren Sie als Gast fort — die Wahl liegt bei Ihnen.",
     footer_tagline: "KI-gestütztes Reisen durch Usbekistan",
   },
+  tour: {
+    next: "Weiter",
+    back: "Zurück",
+    done: "Fertig",
+    skip: "Überspringen",
+    ai_title: "Trova AI",
+    ai_body: "Planen Sie mit KI — sagen Sie wohin, wie lange und mit wem.",
+    loc_title: "Orte",
+    loc_body: "200+ geprüfte Orte mit Filtern, Suche und echten Bewertungen.",
+    saved_title: "Gespeichert",
+    saved_body: "Speichern Sie Orte — hier nach Stadt gruppiert.",
+    profile_title: "Profil",
+    profile_body: "Einstellungen, Sprache, Ihre Bewertungen und gespeicherte Orte.",
+  },
 };
 
 // ─── French ───────────────────────────────────────────────────────────────────
@@ -2124,6 +2214,7 @@ const FR: TranslationSchema = {
     plan_banner_more:
       "— l'IA vous posera quelques questions pour concevoir votre itinéraire personnalisé",
     plan_btn: "Créer un itinéraire",
+    plan_generating: "Création",
     plan_view: "Voir le plan",
     input_placeholder: "Écrivez un message… (Entrée pour envoyer)",
     hint: "Shift+Entrée pour un saut de ligne",
@@ -2347,6 +2438,20 @@ const FR: TranslationSchema = {
     final_cta_title: "Prêt à planifier votre voyage ?",
     final_cta_desc: "Créez un compte gratuit ou continuez en tant qu'invité — le choix vous appartient.",
     footer_tagline: "Voyager en Ouzbékistan grâce à l'IA",
+  },
+  tour: {
+    next: "Suivant",
+    back: "Retour",
+    done: "Terminé",
+    skip: "Passer",
+    ai_title: "Trova AI",
+    ai_body: "Planifiez avec l'IA — indiquez où, combien de jours et avec qui.",
+    loc_title: "Lieux",
+    loc_body: "200+ lieux vérifiés avec filtres, recherche et vrais avis.",
+    saved_title: "Enregistrés",
+    saved_body: "Enregistrez vos lieux — ils sont groupés par ville ici.",
+    profile_title: "Profil",
+    profile_body: "Paramètres, langue, vos avis et lieux enregistrés.",
   },
 };
 

@@ -3,6 +3,14 @@ import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2, Bookm
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
+import { TOUR_IDS } from "@/components/ui/Tour";
+
+// Maps a route to the tour anchor id it should carry, if any. Undefined for
+// routes the tour doesn't visit, which React simply omits from the DOM.
+const TOUR_ANCHOR: Record<string, string | undefined> = {
+  "/locations": TOUR_IDS.LOCATIONS,
+  "/saved": TOUR_IDS.SAVED,
+};
 
 const NAV_TABS = [
   { route: "/home",       Icon: Home,       key: "home"      },
@@ -47,6 +55,9 @@ export function Sidebar() {
           return (
             <button
               key={route}
+              // Anchors for the onboarding tour's spotlight. Only the routes
+              // the tour actually references get one.
+              id={TOUR_ANCHOR[route]}
               onClick={() => navigate(route)}
               className={cn(
                 "relative w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 group active:scale-[0.98]",
@@ -90,6 +101,7 @@ export function Sidebar() {
             const active = pathname === route || pathname.startsWith(route);
             return (
               <button
+                id={TOUR_IDS.AI}
                 onClick={() => navigate(route)}
                 className={cn(
                   "w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 relative active:scale-[0.98]",
@@ -136,6 +148,7 @@ export function Sidebar() {
             const active = pathname === route;
             return (
               <button
+                id={TOUR_IDS.PROFILE}
                 onClick={() => navigate(route)}
                 className={cn(
                   "relative w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 group active:scale-[0.98]",

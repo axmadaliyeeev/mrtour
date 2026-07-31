@@ -12,6 +12,7 @@ import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MessageContent } from "@/components/chat/MessageContent";
+import { GenerateButton } from "@/components/ui/GenerateButton";
 import { LOCATIONS } from "@/data";
 
 interface Message {
@@ -649,13 +650,17 @@ export default function Chat() {
                     {plan.length > 3 && ` ${t("chat", "plan_banner_desc")} ${plan.length - 3} ${t("chat", "plan_banner_more")}`}
                   </p>
                   <div className="flex gap-2">
-                    <button
+                    {/* The one action on this screen that kicks off real AI
+                        work, so it gets the animated treatment — and the
+                        letters keep moving while the request is in flight,
+                        which doubles as the loading state. */}
+                    <GenerateButton
                       onClick={sendPlanTourRequest}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-all active:scale-[0.97]"
-                    >
-                      <Sparkles className="w-3 h-3" />
-                      {t("chat", "plan_btn")}
-                    </button>
+                      generating={isLoading}
+                      labelIdle={t("chat", "plan_btn")}
+                      labelActive={t("chat", "plan_generating")}
+                      className="!px-4 !py-2 !text-xs !rounded-xl"
+                    />
                     <button
                       onClick={() => navigate("/saved")}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] transition-all"

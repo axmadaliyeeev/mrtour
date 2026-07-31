@@ -577,3 +577,39 @@ img { display: block; max-width: 100%; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Generate button ──────────────────────────────────
+   CSS for components/ui/GenerateButton.tsx. It lives here rather than in
+   the component because the source this was adapted from used Next.js's
+   styled-jsx, which does nothing in Vite. Delays come from a --i custom
+   property set per letter, so the stagger works for a label of any length
+   (the original hardcoded :nth-child rules up to 13 and silently stopped
+   staggering past that — every label here is translated to six languages). */
+.gen-btn-letter {
+  display: inline-block;
+  animation: genLetter 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.gen-btn-letter.is-generating {
+  animation-duration: 1.1s;
+}
+@keyframes genLetter {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.62; text-shadow: 0 0 8px rgb(255 255 255 / 0.55); }
+}
+
+.gen-btn-spark {
+  animation: genSpark 1.1s linear infinite;
+}
+@keyframes genSpark {
+  0%   { transform: rotate(0deg)   scale(1);    opacity: 1; }
+  50%  { transform: rotate(180deg) scale(1.15); opacity: 0.55; }
+  100% { transform: rotate(360deg) scale(1);    opacity: 1; }
+}
+
+/* Anyone who has asked their OS to reduce motion should not get a button
+   that pulses and spins indefinitely. */
+@media (prefers-reduced-motion: reduce) {
+  .gen-btn-letter,
+  .gen-btn-spark { animation: none; }
+}

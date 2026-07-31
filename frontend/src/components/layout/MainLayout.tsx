@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { TourRunner } from "./TourRunner";
 
 const pageVariants = {
   initial: { opacity: 0, y: 10 },
@@ -111,6 +112,7 @@ export function MainLayout() {
         </div>
         <Toaster />
         <ScrollToTop />
+        <TourRunner />
       </div>
     );
   }
