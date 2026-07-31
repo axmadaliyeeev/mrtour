@@ -285,6 +285,11 @@ export interface TranslationSchema {
     reset_done: string;
     back_to_login: string;
     err_reset: string;
+    shot_registan: string;
+    shot_ichanqala: string;
+    shot_chimgan: string;
+    shot_chorsu: string;
+    back_home: string;
     err_register: string;
     err_waking_up: string;
     err_password_required: string;
@@ -636,6 +641,11 @@ const UZ: TranslationSchema = {
     reset_done: "Parol yangilandi!",
     back_to_login: "Kirishga qaytish",
     err_reset: "Parolni yangilab bo'lmadi",
+    shot_registan: "Registon maydoni — Ipak yo'lining marvaridi",
+    shot_ichanqala: "Ichan-Qal'a — vaqtda muzlab qolgan shahar",
+    shot_chimgan: "Chimgan tog'lari — poytaxtdan bir soatlik masofada",
+    shot_chorsu: "Chorsu bozori — Toshkentning tirik yuragi",
+    back_home: "Bosh sahifaga",
     err_register: "Ro'yxatdan o'tishda xato yuz berdi",
     err_waking_up: "Server uyg'onmoqda, biroz kuting va yana urinib ko'ring.",
     err_password_required: "Parol kiritilishi shart",
@@ -989,6 +999,11 @@ const RU: TranslationSchema = {
     reset_done: "Пароль обновлён!",
     back_to_login: "Вернуться ко входу",
     err_reset: "Не удалось обновить пароль",
+    shot_registan: "Площадь Регистан — жемчужина Шёлкового пути",
+    shot_ichanqala: "Ичан-Кала — город, застывший во времени",
+    shot_chimgan: "Горы Чимган — в часе езды от столицы",
+    shot_chorsu: "Базар Чорсу — живое сердце Ташкента",
+    back_home: "На главную",
     err_register: "Ошибка при регистрации",
     err_waking_up: "Сервер просыпается, подождите немного и попробуйте снова.",
     err_password_required: "Введите пароль",
@@ -1341,6 +1356,11 @@ const EN: TranslationSchema = {
     reset_done: "Password updated!",
     back_to_login: "Back to sign in",
     err_reset: "Could not update the password",
+    shot_registan: "Registan Square — the pearl of the Silk Road",
+    shot_ichanqala: "Ichan-Qala — a city frozen in time",
+    shot_chimgan: "The Chimgan mountains — an hour from the capital",
+    shot_chorsu: "Chorsu bazaar — the living heart of Tashkent",
+    back_home: "Back to home",
     err_register: "Something went wrong during registration",
     err_waking_up: "Server is waking up — please wait a moment and try again.",
     err_password_required: "Please enter your password",
@@ -1691,6 +1711,11 @@ const ZH: TranslationSchema = {
     reset_done: "密码已更新！",
     back_to_login: "返回登录",
     err_reset: "无法更新密码",
+    shot_registan: "列吉斯坦广场——丝绸之路上的明珠",
+    shot_ichanqala: "伊钦卡拉——时间静止的古城",
+    shot_chimgan: "奇姆干山——距首都仅一小时车程",
+    shot_chorsu: "恰尔苏市场——塔什干跳动的心脏",
+    back_home: "返回首页",
     err_register: "注册过程中出现错误",
     err_waking_up: "服务器正在唤醒，请稍等片刻后重试。",
     err_password_required: "请输入密码",
@@ -2045,6 +2070,11 @@ const DE: TranslationSchema = {
     reset_done: "Passwort aktualisiert!",
     back_to_login: "Zurück zur Anmeldung",
     err_reset: "Passwort konnte nicht aktualisiert werden",
+    shot_registan: "Registan-Platz — die Perle der Seidenstraße",
+    shot_ichanqala: "Itchan Kala — eine Stadt, die die Zeit vergaß",
+    shot_chimgan: "Die Tschimgan-Berge — eine Stunde von der Hauptstadt",
+    shot_chorsu: "Chorsu-Basar — das lebendige Herz Taschkents",
+    back_home: "Zurück zur Startseite",
     err_register: "Bei der Registrierung ist ein Fehler aufgetreten",
     err_waking_up: "Der Server wacht auf — bitte warten Sie einen Moment und versuchen Sie es erneut.",
     err_password_required: "Bitte geben Sie Ihr Passwort ein",
@@ -2401,6 +2431,11 @@ const FR: TranslationSchema = {
     reset_done: "Mot de passe mis à jour !",
     back_to_login: "Retour à la connexion",
     err_reset: "Impossible de mettre à jour le mot de passe",
+    shot_registan: "La place du Registan — la perle de la Route de la Soie",
+    shot_ichanqala: "Itchan-Kala — une cité figée dans le temps",
+    shot_chimgan: "Les monts Tchimgan — à une heure de la capitale",
+    shot_chorsu: "Le bazar de Chorsu — le cœur vivant de Tachkent",
+    back_home: "Retour à l'accueil",
     err_register: "Une erreur est survenue lors de l'inscription",
     err_waking_up: "Le serveur se réveille — veuillez patienter un instant et réessayer.",
     err_password_required: "Veuillez saisir votre mot de passe",

@@ -59,7 +59,7 @@ const CHIP_STYLES = [
 export default function Landing() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { openAuthModal, isLoggedIn } = useAppStore();
+  const isLoggedIn = useAppStore((s) => s.isLoggedIn);
   const featured = LOCATIONS.filter((l) => l.featured).slice(0, 6);
 
   // "/" is a public marketing page reachable regardless of session state
@@ -102,7 +102,7 @@ export default function Landing() {
           <img src="/img/logo-d.svg" alt="trova" className="h-7 w-auto hidden dark:block" />
         </div>
         <button
-          onClick={isLoggedIn ? enterApp : () => openAuthModal("login")}
+          onClick={isLoggedIn ? enterApp : () => navigate("/login")}
           className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-colors"
         >
           {isLoggedIn ? t("landing", "open_app") : t("landing", "sign_in")}
@@ -174,7 +174,7 @@ export default function Landing() {
             ) : (
               <>
                 <button
-                  onClick={() => openAuthModal("register")}
+                  onClick={() => navigate("/signup")}
                   className="btn-shine group flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
                 >
                   {t("landing", "cta_signup")}
@@ -359,7 +359,7 @@ export default function Landing() {
               ) : (
                 <>
                   <button
-                    onClick={() => openAuthModal("register")}
+                    onClick={() => navigate("/signup")}
                     className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-indigo-600 text-sm font-bold shadow-lg transition-all active:scale-[0.97] hover:-translate-y-0.5"
                   >
                     {t("landing", "cta_signup")}

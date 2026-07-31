@@ -5,6 +5,7 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { TourProvider } from "@/components/ui/Tour";
 import Landing from "@/pages/Landing";
+import Auth from "@/pages/Auth";
 import Privacy from "@/pages/Privacy";
 import Terms from "@/pages/Terms";
 import Home from "@/pages/Home";
@@ -54,6 +55,11 @@ export default function App() {
             MainLayout (no sidebar/app-shell) since Google's OAuth
             verification crawler and logged-out visitors both need to
             reach these without hitting any auth gate. */}
+        {/* Standalone auth. The modal still exists for in-app prompts —
+            it keeps the visitor's context — while these are real,
+            shareable addresses reachable from the landing page. */}
+        <Route path="/login"  element={<Auth />} />
+        <Route path="/signup" element={<Auth />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms"   element={<Terms />} />
         <Route element={<MainLayout />}>
