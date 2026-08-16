@@ -46,14 +46,19 @@ export type MailPurpose = "EMAIL_VERIFY" | "PASSWORD_RESET";
 // for them, which is exactly the habit phishing relies on — the message
 // has to state plainly what the code will do, and what to do if the
 // request wasn't theirs.
+// Subject line deliberately does NOT lead with the raw code. A subject
+// that starts with a bare number is one of the heuristics spam filters
+// use to flag OTP-style phishing mail — putting the brand name first and
+// the code at the end (still visible in the inbox preview) keeps the
+// convenience without tripping that specific pattern.
 const COPY: Record<MailPurpose, { subject: (c: string) => string; lead: string; footer: string }> = {
   EMAIL_VERIFY: {
-    subject: (c) => `${c} — your trova verification code`,
+    subject: (c) => `Trova — tasdiqlash kodingiz: ${c}`,
     lead: "Here is your verification code. It expires in 10 minutes.",
     footer: "If you didn't try to create a trova account, you can ignore this email.",
   },
   PASSWORD_RESET: {
-    subject: (c) => `${c} — reset your trova password`,
+    subject: (c) => `Trova — parolni tiklash kodi: ${c}`,
     lead: "Use this code to set a new password. It expires in 10 minutes.",
     footer:
       "If you didn't ask to reset your password, ignore this email — your " +
@@ -77,6 +82,9 @@ function codeEmailHtml(code: string, purpose: MailPurpose): string {
     </div>
     <p style="font-size:13px;line-height:1.6;margin:24px 0 0;color:#64748b">
       ${copy.footer}
+    </p>
+    <p style="font-size:11px;line-height:1.6;margin:20px 0 0;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:16px">
+      trova · Bu avtomatik xabar, unga javob berish shart emas.
     </p>
   </div>`;
 }
@@ -104,6 +112,10 @@ async function sendViaHttpApi(to: string, code: string, purpose: MailPurpose): P
     body: JSON.stringify({
       sender,
       to: [{ email: to }],
+      // A reply-to matching the sender is a small but real deliverability
+      // signal — mail with no reply path at all is more consistent with
+      // spam than with a real transactional sender.
+      replyTo: sender,
       subject: COPY[purpose].subject(code),
       textContent: `${COPY[purpose].lead} Code: ${code}`,
       htmlContent: codeEmailHtml(code, purpose),
@@ -162,6 +174,7 @@ export async function sendVerificationCode(
   try {
     await transporter.sendMail({
       from: env.MAIL_FROM ?? `trova <${env.SMTP_USER}>`,
+      replyTo: env.MAIL_FROM ?? `trova <${env.SMTP_USER}>`,
       to,
       subject: COPY[purpose].subject(code),
       // Always ship a text/plain alternative: some clients (and most spam

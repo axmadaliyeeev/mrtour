@@ -1,17 +1,20 @@
 ﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Search, MapPin, Clock, Phone, CheckCircle, Star,
   Wifi, Car, Coffee, Dumbbell, Utensils, Hotel, Compass,
   Train, Bus, Zap, TrendingUp, Globe2, CircleDot,
-  Ambulance, Flame, Shield, AlertTriangle, Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RESTAURANTS, HOTELS, GUIDES, CURRENCY_RATES } from "@/data";
+import { EMERGENCY_NUMBERS } from "@/data/emergency-numbers";
 import { Stars } from "@/components/ui/stars";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { ServiceDetailModal } from "@/components/services/ServiceDetailModal";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 import { useTranslation } from "@/i18n";
+import type { Restaurant, Hotel as HotelType, Guide } from "@/types";
 
 type Tab = "restoranlar" | "hotellar" | "gidlar" | "transport" | "valyuta";
 
@@ -28,11 +31,20 @@ const AMENITY_ICONS: Record<string, React.ReactNode> = {
 // monoline dot instead of raw text, so it never renders as a stray
 // letter glyph.
 function amenityIcon(name: string) {
-  return AMENITY_ICONS[name] ?? <CircleDot className="w-3 h-3" />;
+  const icon = AMENITY_ICONS[name];
+  // AMENITY_ICONS is keyed by literal strings that have to exactly match
+  // the mock HOTELS data — nothing ties them together at the type level,
+  // so a typo on either side falls through to the generic dot silently.
+  // A dev-only warning at least surfaces that during development instead
+  // of shipping a hotel card with an unexplained blank icon.
+  if (!icon && import.meta.env.DEV) {
+    console.warn(`Services.tsx: no AMENITY_ICONS entry for "${name}"`);
+  }
+  return icon ?? <CircleDot className="w-3 h-3" />;
 }
 
 // ── Restaurants ───────────────────────────────────────────
-function RestaurantsTab({ search }: { search: string }) {
+function RestaurantsTab({ search, onSelect }: { search: string; onSelect: (r: Restaurant) => void }) {
   const { t } = useTranslation();
   const q = search.toLowerCase();
   const filtered = RESTAURANTS.filter(
@@ -51,7 +63,15 @@ function RestaurantsTab({ search }: { search: string }) {
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((r) => (
-        <motion.div key={r.id} variants={staggerItem} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <motion.div
+          key={r.id}
+          variants={staggerItem}
+          onClick={() => onSelect(r)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(r); } }}
+          className="cursor-pointer rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group"
+        >
           <div className="relative h-44 overflow-hidden">
             <img
               src={r.img}
@@ -92,7 +112,7 @@ function RestaurantsTab({ search }: { search: string }) {
 }
 
 // ── Hotels ────────────────────────────────────────────────
-function HotelsTab({ search }: { search: string }) {
+function HotelsTab({ search, onSelect }: { search: string; onSelect: (h: HotelType) => void }) {
   const { t } = useTranslation();
   const q = search.toLowerCase();
   const filtered = HOTELS.filter(
@@ -111,7 +131,15 @@ function HotelsTab({ search }: { search: string }) {
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {filtered.map((h) => (
-        <motion.div key={h.id} variants={staggerItem} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group">
+        <motion.div
+          key={h.id}
+          variants={staggerItem}
+          onClick={() => onSelect(h)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(h); } }}
+          className="cursor-pointer rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5 transition-all duration-200 group"
+        >
           <div className="relative h-44 overflow-hidden">
             <img
               src={h.img}
@@ -172,7 +200,7 @@ function HotelsTab({ search }: { search: string }) {
 }
 
 // ── Guides ────────────────────────────────────────────────
-function GuidesTab({ search }: { search: string }) {
+function GuidesTab({ search, onSelect }: { search: string; onSelect: (g: Guide) => void }) {
   const { t } = useTranslation();
   const q = search.toLowerCase();
   const filtered = GUIDES.filter(
@@ -191,7 +219,14 @@ function GuidesTab({ search }: { search: string }) {
   return (
     <div className="space-y-3">
       {filtered.map((g) => (
-        <div key={g.id} className="rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all duration-200">
+        <div
+          key={g.id}
+          onClick={() => onSelect(g)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(g); } }}
+          className="cursor-pointer rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] overflow-hidden hover:border-indigo-500/40 hover:shadow-md transition-all duration-200"
+        >
           <div className="p-4">
             <div className="flex items-start gap-3">
               <div className="relative shrink-0">
@@ -300,14 +335,6 @@ function TransportTab() {
     },
   ];
 
-  const EMERGENCY = [
-    { name: t("services", "emergency_ambulance"), number: "103",  Icon: Ambulance },
-    { name: t("services", "emergency_fire"),      number: "101",  Icon: Flame },
-    { name: t("services", "emergency_police"),    number: "102",  Icon: Shield },
-    { name: t("services", "emergency_gas"),       number: "104",  Icon: AlertTriangle },
-    { name: t("services", "emergency_tourism"),   number: "1219", Icon: Info },
-  ];
-
   return (
     <div className="space-y-5">
       {TRANSPORT_OPTIONS.map((opt) => (
@@ -351,15 +378,16 @@ function TransportTab() {
           <h3 className="text-sm font-bold text-[var(--foreground)]">{t("services", "emergency")}</h3>
         </div>
         <div className="divide-y divide-[var(--border)]/30">
-          {EMERGENCY.map((item) => (
+          {EMERGENCY_NUMBERS.map((item) => (
             <a
               key={item.number}
               href={`tel:${item.number}`}
+              aria-label={`${t("services", item.key)}: ${item.number}`}
               className="flex items-center justify-between px-4 py-3 bg-[var(--card)] hover:bg-[var(--muted)]/50 transition-colors"
             >
               <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">
                 <item.Icon className="w-4 h-4 text-red-400" strokeWidth={2} />
-                {item.name}
+                {t("services", item.key)}
               </span>
               <span className="text-sm font-bold text-red-400">{item.number}</span>
             </a>
@@ -377,7 +405,15 @@ function CurrencyTab() {
   const [fromCurrency, setFromCurrency] = useState("USD");
 
   const currencies = Object.entries(CURRENCY_RATES).map(([code, rate]) => ({ code, rate }));
-  const numericAmount = parseFloat(amount) || 0;
+  // Guards against both non-numeric input (parseFloat -> NaN -> 0) and
+  // absurd-but-technically-numeric input like "1e300" — without a finite
+  // upper bound, that multiplies through to Infinity and renders as a
+  // garbled "∞ UZS" result with no validation message.
+  const MAX_CONVERTIBLE = 1_000_000_000;
+  const parsedAmount = parseFloat(amount);
+  const numericAmount = Number.isFinite(parsedAmount)
+    ? Math.min(Math.max(parsedAmount, 0), MAX_CONVERTIBLE)
+    : 0;
   const baseRate = CURRENCY_RATES[fromCurrency] ?? 1;
   const uzsAmount = numericAmount * baseRate;
 
@@ -404,6 +440,7 @@ function CurrencyTab() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             min="0"
+            max={MAX_CONVERTIBLE}
             className={cn(
               "flex-1 px-3 py-2.5 rounded-xl",
               "bg-[var(--muted)] border border-[var(--border)]",
@@ -466,6 +503,7 @@ function CurrencyTab() {
               key={code}
               type="button"
               onClick={() => setFromCurrency(code)}
+              aria-pressed={fromCurrency === code}
               className={cn(
                 "flex items-center gap-2.5 p-3 rounded-xl border transition-all text-left min-h-[56px]",
                 fromCurrency === code
@@ -498,8 +536,14 @@ function CurrencyTab() {
 // ── Main page ─────────────────────────────────────────────
 export default function Services() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("restoranlar");
   const [search, setSearch] = useState("");
+  // Restaurants and hotels now navigate to their own page (a menu/booking
+  // flow needs real room, not a popup) — only guides, which have nothing
+  // further to drill into beyond their own bio, still use the quick-look
+  // modal.
+  const [detail, setDetail] = useState<{ type: "guide"; data: Guide } | null>(null);
 
   const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "restoranlar", label: t("services", "tab_restaurants"), icon: <Utensils className="w-3.5 h-3.5" /> },
@@ -600,14 +644,22 @@ export default function Services() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
-            {activeTab === "restoranlar" && <RestaurantsTab search={search} />}
-            {activeTab === "hotellar"    && <HotelsTab    search={search} />}
-            {activeTab === "gidlar"      && <GuidesTab    search={search} />}
+            {activeTab === "restoranlar" && (
+              <RestaurantsTab search={search} onSelect={(r) => navigate(`/services/restaurants/${r.id}`)} />
+            )}
+            {activeTab === "hotellar" && (
+              <HotelsTab search={search} onSelect={(h) => navigate(`/services/hotels/${h.id}`)} />
+            )}
+            {activeTab === "gidlar" && (
+              <GuidesTab search={search} onSelect={(g) => setDetail({ type: "guide", data: g })} />
+            )}
             {activeTab === "transport"   && <TransportTab />}
             {activeTab === "valyuta"     && <CurrencyTab />}
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <ServiceDetailModal item={detail} onClose={() => setDetail(null)} />
     </div>
   );
 }

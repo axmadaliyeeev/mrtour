@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -22,26 +22,33 @@ import {
   Settings,
   Building2,
   DollarSign,
-  Ambulance,
-  Flame,
-  AlertTriangle,
-  Info,
   Bookmark,
   MessageSquare,
   Compass,
   Trash2,
+  Pencil,
+  Check,
+  X as XIcon,
+  Loader2,
+  Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/api-client";
+import { isAxiosError } from "axios";
+import { fileToAvatarDataUrl } from "@/lib/image";
 import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { Stars } from "@/components/ui/stars";
+import { Avatar } from "@/components/ui/Avatar";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { Field } from "@/components/auth/AuthForms";
+import { CountrySelect } from "@/components/auth/CountrySelect";
 import { useTour } from "@/components/ui/Tour";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import type { Location } from "@/types";
 import { LOCATIONS } from "@/data";
+import { EMERGENCY_NUMBERS } from "@/data/emergency-numbers";
 
 /* Trip totals computed from the saved plan */
 function PlanSummary({ plan, freeLabel }: { plan: Location[]; freeLabel: string }) {
@@ -81,20 +88,168 @@ const LANGUAGES: { code: Lang; label: string }[] = [
   { code: "fr", label: "Français" },
 ];
 
-const EMERGENCY_NUMBERS_RAW = [
-  { Icon: Ambulance,     key: "emergency_ambulance" as const, number: "103" },
-  { Icon: Flame,         key: "emergency_fire"      as const, number: "101" },
-  { Icon: Shield,        key: "emergency_police"    as const, number: "102" },
-  { Icon: AlertTriangle, key: "emergency_gas"       as const, number: "104" },
-  { Icon: Info,          key: "emergency_tourism"   as const, number: "1219" },
-];
-
 type ProfileTab = "itineraries" | "saved" | "reviews" | "settings";
+
+/* Inline name/surname/country editor — the backend's PATCH /users/me
+   already accepted these fields, but nothing in the UI ever called it
+   with anything but `lang`, so there was no way to fix a typo'd name or
+   set a country after signup. */
+function EditProfileForm({
+  name,
+  surname,
+  country,
+  avatarUrl,
+  onCancel,
+  onSaved,
+}: {
+  name: string;
+  surname: string;
+  country: string;
+  avatarUrl?: string | null;
+  onCancel: () => void;
+  onSaved: (data: { name: string; surname: string; country: string; avatarUrl?: string | null }) => void;
+}) {
+  const { t } = useTranslation();
+  const { showToast } = useAppStore();
+  const [editName, setEditName] = useState(name);
+  const [editSurname, setEditSurname] = useState(surname);
+  const [editCountry, setEditCountry] = useState(country);
+  // undefined = untouched (don't send it), null = explicitly removed,
+  // string = a newly picked photo. Distinguishing "untouched" from
+  // "removed" is the whole reason this isn't just `string | null`.
+  const [avatarDraft, setAvatarDraft] = useState<string | null | undefined>(undefined);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const previewAvatar = avatarDraft !== undefined ? avatarDraft : avatarUrl;
+  const valid = editName.trim().length >= 2 && editSurname.trim().length >= 2;
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-picking the same file later
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError(t("profile", "avatar_invalid_file"));
+      return;
+    }
+    setAvatarBusy(true);
+    setError("");
+    try {
+      const dataUrl = await fileToAvatarDataUrl(file);
+      setAvatarDraft(dataUrl);
+    } catch {
+      setError(t("profile", "avatar_process_error"));
+    } finally {
+      setAvatarBusy(false);
+    }
+  }
+
+  async function save() {
+    if (!valid || saving) return;
+    setSaving(true);
+    setError("");
+    try {
+      const payload: { name: string; surname: string; country: string; avatarUrl?: string | null } = {
+        name: editName.trim(),
+        surname: editSurname.trim(),
+        country: editCountry,
+      };
+      if (avatarDraft !== undefined) payload.avatarUrl = avatarDraft;
+      await apiClient.patch("/users/me", payload);
+      onSaved(payload);
+      showToast(t("profile", "edit_saved_toast"), undefined, "success");
+    } catch (err) {
+      const msg = isAxiosError<{ message?: string }>(err) ? err.response?.data?.message : undefined;
+      setError(msg || t("profile", "edit_error"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="relative p-4 rounded-2xl bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] space-y-3 animate-scale-in">
+      <div className="flex items-center gap-3">
+        <div className="relative shrink-0">
+          <Avatar name={editName || name} avatarUrl={previewAvatar} size={56} className="text-xl" />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={avatarBusy}
+            aria-label={t("profile", "avatar_change")}
+            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white flex items-center justify-center shadow-sm border-2 border-[var(--card)] transition-colors"
+          >
+            {avatarBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Camera className="w-3 h-3" />}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={avatarBusy}
+            className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 text-left transition-colors"
+          >
+            {t("profile", "avatar_change")}
+          </button>
+          {previewAvatar && (
+            <button
+              type="button"
+              onClick={() => setAvatarDraft(null)}
+              className="text-xs font-medium text-[var(--muted-foreground)] hover:text-red-400 text-left transition-colors"
+            >
+              {t("profile", "avatar_remove")}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t("auth", "name")} value={editName} onChange={setEditName} />
+        <Field label={t("auth", "surname")} value={editSurname} onChange={setEditSurname} />
+      </div>
+      <CountrySelect
+        value={editCountry}
+        onChange={setEditCountry}
+        label={t("auth", "country")}
+        placeholder={t("auth", "country_placeholder")}
+        searchPlaceholder={t("auth", "country_search")}
+        skipLabel={t("auth", "country_clear")}
+      />
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <div className="flex gap-2">
+        <button
+          onClick={save}
+          disabled={!valid || saving}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+            valid && !saving
+              ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
+              : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
+          )}
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+          {t("profile", "edit_save")}
+        </button>
+        <button
+          onClick={onCancel}
+          disabled={saving}
+          className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--muted)] text-[var(--foreground)] text-sm font-semibold hover:border-indigo-500/40 transition-colors"
+        >
+          <XIcon className="w-4 h-4" />
+          {t("profile", "edit_cancel")}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Profile() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [tab, setTab] = useState<ProfileTab>("saved");
+  const [editingProfile, setEditingProfile] = useState(false);
   const { startTour } = useTour();
   const {
     user,
@@ -109,6 +264,7 @@ export default function Profile() {
     openAuthModal,
     userReviews,
     showToast,
+    updateUser,
   } = useAppStore();
 
   // Flatten { locationId: Review[] } into a single list with the location
@@ -356,9 +512,12 @@ export default function Profile() {
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none animate-breathe" />
         <div className="relative flex items-center gap-4">
           <div className="relative animate-pop-in">
-            <div className="w-16 h-16 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-extrabold shadow-md ring-2 ring-indigo-500/25 ring-offset-2 ring-offset-[var(--background)]">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            <Avatar
+              name={user.name}
+              avatarUrl={user.avatarUrl}
+              size={64}
+              className="text-2xl shadow-md ring-2 ring-indigo-500/25 ring-offset-2 ring-offset-[var(--background)]"
+            />
             {user.isPremium && (
               <div className="glint absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gold-500 border-2 border-[var(--background)] flex items-center justify-center">
                 <Star className="w-3 h-3 text-white fill-white" />
@@ -366,9 +525,20 @@ export default function Profile() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-extrabold text-[var(--foreground)] truncate">
-              {user.name} {user.surname}
-            </h2>
+            <div className="flex items-center gap-1.5">
+              <h2 className="text-lg font-extrabold text-[var(--foreground)] truncate">
+                {user.name} {user.surname}
+              </h2>
+              {!editingProfile && (
+                <button
+                  onClick={() => setEditingProfile(true)}
+                  className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[var(--muted-foreground)] hover:text-indigo-400 hover:bg-indigo-500/10 transition-colors"
+                  aria-label={t("profile", "edit_profile")}
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+              )}
+            </div>
             <p className="text-xs text-[var(--muted-foreground)] truncate">{user.email}</p>
             <div className="flex items-center gap-2 mt-1">
               {user.country && (
@@ -385,6 +555,26 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Rendered as a sibling of the decorative header, not inside it —
+          that header is overflow-hidden (it clips the blurred glow
+          circles to its own rounded edge), which would also clip the
+          CountrySelect dropdown opening below the country field. */}
+      {editingProfile && (
+        <div className="px-4 -mt-2 mb-2">
+          <EditProfileForm
+            name={user.name}
+            surname={user.surname}
+            country={user.country ?? ""}
+            avatarUrl={user.avatarUrl}
+            onCancel={() => setEditingProfile(false)}
+            onSaved={(data) => {
+              updateUser(data);
+              setEditingProfile(false);
+            }}
+          />
+        </div>
+      )}
 
       {/* Stats row — trips planned (cities in the saved plan), places
           saved, and reviews written. Scaled-down version of Home's stat
@@ -719,10 +909,11 @@ export default function Profile() {
           <Phone className="w-4 h-4 text-red-400" /> {t("profile", "emergency_label")}
         </h3>
         <div className="p-3 rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] space-y-1">
-          {EMERGENCY_NUMBERS_RAW.map((item) => (
+          {EMERGENCY_NUMBERS.map((item) => (
             <a
               key={item.number}
               href={`tel:${item.number}`}
+              aria-label={`${t("services", item.key)}: ${item.number}`}
               className="flex items-center justify-between p-2 rounded-xl hover:bg-[var(--muted)] transition-colors"
             >
               <span className="flex items-center gap-2 text-sm text-[var(--foreground)]">

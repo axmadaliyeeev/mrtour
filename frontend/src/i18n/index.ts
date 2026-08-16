@@ -1,6 +1,7 @@
 import { useAppStore } from "@/store";
 import { translations } from "./translations";
 export type { Lang, TranslationSchema } from "./translations";
+export { LOCALE_TAGS } from "./translations";
 
 export function useTranslation() {
   const lang = useAppStore((s) => s.lang);

@@ -7,6 +7,7 @@
  */
 ﻿import { useState, useRef, useEffect, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { isAxiosError } from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Eye, EyeOff, ChevronRight, PartyPopper, CheckCircle2, AlertCircle, Loader2, MailCheck, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,9 +37,11 @@ function passwordStrength(pw: string): 0 | 1 | 2 | 3 {
 // real validation error, so it gets its own message instead of the generic
 // fallback text.
 function extractAuthError(err: unknown, fallback: string, wakingUp: string): string {
-  const e = err as { code?: string; response?: { data?: { message?: string } } };
-  if (e?.response?.data?.message) return e.response.data.message;
-  if (e?.code === "ECONNABORTED" || !e?.response) return wakingUp;
+  // isAxiosError actually checks the shape rather than assuming any
+  // thrown value looks like one.
+  if (!isAxiosError<{ message?: string }>(err)) return fallback;
+  if (err.response?.data?.message) return err.response.data.message;
+  if (err.code === "ECONNABORTED" || !err.response) return wakingUp;
   return fallback;
 }
 
@@ -126,6 +129,7 @@ function VerifyStep({
   email,
   onVerified,
   initialDevCode,
+  onChangeEmail,
 }: {
   email: string;
   onVerified: (user: User) => void;
@@ -135,6 +139,12 @@ function VerifyStep({
    * code back and we show it here. Production never returns this field.
    */
   initialDevCode?: string;
+  /**
+   * Previously the only way out of a mistyped address was resending to the
+   * same wrong inbox forever — no path back to the field that set `email`.
+   * Optional because ForgotPassword doesn't have its own VerifyStep call.
+   */
+  onChangeEmail?: () => void;
 }) {
   const { t } = useTranslation();
   const { showToast } = useAppStore();
@@ -250,12 +260,22 @@ function VerifyStep({
       >
         {cooldown > 0 ? `${t("auth", "resend_wait")} (${cooldown})` : t("auth", "resend_btn")}
       </button>
+
+      {onChangeEmail && (
+        <button
+          type="button"
+          onClick={onChangeEmail}
+          className="w-full text-xs font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+        >
+          {t("auth", "change_email_btn")}
+        </button>
+      )}
     </div>
   );
 }
 
 // ── Shared input ──────────────────────────────────────────────────────────────
-function Field({
+export function Field({
   label, error, type = "text", value, onChange, placeholder, autoComplete, required,
 }: {
   label: string; error?: string; type?: string; value: string;
@@ -544,7 +564,7 @@ export function LoginTab({ onClose }: { onClose: () => void }) {
     } catch (err: unknown) {
       // Correct password, unconfirmed address: send them to the code screen
       // and re-issue a code, instead of showing an error they can't act on.
-      const code = (err as { response?: { data?: { code?: string } } })?.response?.data?.code;
+      const code = isAxiosError<{ code?: string }>(err) ? err.response?.data?.code : undefined;
       if (code === "EMAIL_NOT_VERIFIED") {
         apiClient.post("/auth/resend-code", { email: email.trim().toLowerCase() }).catch(() => {});
         setNeedsVerify(true);
@@ -557,7 +577,13 @@ export function LoginTab({ onClose }: { onClose: () => void }) {
   }
 
   if (needsVerify) {
-    return <VerifyStep email={email.trim().toLowerCase()} onVerified={finishLogin} />;
+    return (
+      <VerifyStep
+        email={email.trim().toLowerCase()}
+        onVerified={finishLogin}
+        onChangeEmail={() => setNeedsVerify(false)}
+      />
+    );
   }
 
   if (forgot) {
@@ -809,7 +835,12 @@ export function RegisterTab({ onClose }: { onClose: () => void }) {
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <VerifyStep email={email.trim().toLowerCase()} onVerified={onVerified} initialDevCode={devCode} />
+          <VerifyStep
+            email={email.trim().toLowerCase()}
+            onVerified={onVerified}
+            initialDevCode={devCode}
+            onChangeEmail={() => setStep(2)}
+          />
         </motion.div>
       )}
 

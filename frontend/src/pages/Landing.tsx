@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { LOCATIONS } from "@/data";
 import { LocationCard } from "@/components/locations/LocationCard";
+import { PriorityMotionImg } from "@/components/shared/PriorityImg";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import heroImg from "@/data/registan.jpg";
@@ -111,15 +112,10 @@ export default function Landing() {
 
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section className="relative min-h-[92dvh] flex items-end overflow-hidden">
-        <motion.img
+        <PriorityMotionImg
           src={heroImg}
           alt=""
           aria-hidden="true"
-          // Lowercase, not a typo — see the matching comment in Home.tsx;
-          // React 18.3 (what this app runs) doesn't recognize the
-          // camelCase `fetchPriority` prop yet, only React 19 does.
-          // @ts-expect-error — intentionally lowercase for React 18's actual runtime support
-          fetchpriority="high"
           initial={{ scale: 1.12 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}

@@ -23,8 +23,19 @@ export function useBreakpoint(): Breakpoint {
       });
     }
     update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    // Debounced — an undebounced listener re-renders every consumer of
+    // this hook on every intermediate frame of a window drag, not just
+    // once it settles.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    function onResize() {
+      clearTimeout(timer);
+      timer = setTimeout(update, 120);
+    }
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   return bp;

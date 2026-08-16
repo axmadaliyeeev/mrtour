@@ -289,6 +289,14 @@ export const LOCATIONS: Location[] = [
   },
 ];
 
+// O(1) id lookup — LocationDetail looked this up with LOCATIONS.find() on
+// every render, a linear scan of the whole catalog. Fine at 40-something
+// entries, but the indexed lookup costs nothing and stops being "fine" the
+// moment the catalog grows.
+export const LOCATIONS_BY_ID: Map<string, Location> = new Map(
+  LOCATIONS.map((loc) => [loc.id, loc])
+);
+
 // ── Restaurants ───────────────────────────────────────
 export const RESTAURANTS: Restaurant[] = [
   {
@@ -361,6 +369,10 @@ export const RESTAURANTS: Restaurant[] = [
   },
 ];
 
+export const RESTAURANTS_BY_ID: Map<string, Restaurant> = new Map(
+  RESTAURANTS.map((r) => [r.id, r])
+);
+
 // ── Hotels ────────────────────────────────────────────
 export const HOTELS: Hotel[] = [
   {
@@ -412,6 +424,10 @@ export const HOTELS: Hotel[] = [
     available: true,
   },
 ];
+
+export const HOTELS_BY_ID: Map<string, Hotel> = new Map(
+  HOTELS.map((h) => [h.id, h])
+);
 
 // ── Guides ────────────────────────────────────────────
 export const GUIDES: Guide[] = [

@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Bookmark, LogIn, Sun, Moon, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Avatar } from "@/components/ui/Avatar";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
@@ -50,7 +51,8 @@ export function TopHeader() {
       ) : (
         <button
           onClick={() => navigate("/home")}
-          className="flex items-center flex-1 min-w-0 active:opacity-70 transition-opacity"
+          aria-label={t("nav", "home")}
+          className="flex items-center flex-1 min-w-0 active:opacity-70 transition-opacity rounded-lg focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-2"
         >
           <img src="/img/logo-l.svg" alt="trova" className="h-6 w-auto dark:hidden" />
           <img src="/img/logo-d.svg" alt="trova" className="h-6 w-auto hidden dark:block" />
@@ -126,10 +128,10 @@ export function TopHeader() {
         {user ? (
           <button
             onClick={() => navigate("/profile")}
-            className="flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-indigo-500 text-white text-xs font-bold hover:scale-105 transition-transform shadow-sm active:scale-95"
+            className="flex items-center justify-center shrink-0 w-8 h-8 rounded-xl overflow-hidden hover:scale-105 transition-transform shadow-sm active:scale-95"
             aria-label={t("nav", "profile")}
           >
-            {user.name.charAt(0).toUpperCase()}
+            <Avatar name={user.name} avatarUrl={user.avatarUrl} size={32} className="rounded-xl text-xs" />
           </button>
         ) : (
           <button

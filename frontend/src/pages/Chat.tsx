@@ -1,17 +1,19 @@
-﻿import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect, useMemo, memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Send, User as UserIcon, Loader2, RotateCcw, MapPin, Sparkles, X,
   Copy, Check, RefreshCw, ChevronDown, ThumbsUp, ThumbsDown,
-  Landmark, Hotel, Bus, Star as StarIcon, Lightbulb, AlertTriangle,
+  Landmark, Hotel, Bus, Star as StarIcon, Lightbulb, AlertTriangle, Square,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { isAxiosError } from "axios";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store";
-import { useTranslation } from "@/i18n";
+import { useTranslation, LOCALE_TAGS } from "@/i18n";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MessageContent } from "@/components/chat/MessageContent";
+import { Avatar } from "@/components/ui/Avatar";
 import { GenerateButton } from "@/components/ui/GenerateButton";
 import { LOCATIONS } from "@/data";
 
@@ -30,6 +32,42 @@ interface Message {
 function findMentionedLocations(text: string) {
   return LOCATIONS.filter((l) => text.includes(l.name)).slice(0, 3);
 }
+
+// Split out and memoized: a message's mentioned-locations scan only needs
+// to re-run when that message's own text changes, not on every re-render
+// of the whole message list (typing, reactions, other messages arriving).
+const MentionedLocations = memo(function MentionedLocations({
+  text,
+  onOpen,
+}: {
+  text: string;
+  onOpen: (id: string) => void;
+}) {
+  const mentioned = useMemo(() => findMentionedLocations(text), [text]);
+  if (!mentioned.length) return null;
+  return (
+    <div className="flex flex-col items-start gap-1.5 pt-1">
+      {mentioned.map((loc) => (
+        <button
+          key={loc.id}
+          onClick={() => onOpen(loc.id)}
+          className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl bg-[var(--card)]/70 border border-[var(--border)] hover:border-indigo-500/40 hover:bg-[var(--card)] hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.98] text-left w-full max-w-[240px]"
+        >
+          <img src={loc.img} alt="" className="w-11 h-11 rounded-lg object-cover shrink-0" />
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-semibold text-[var(--foreground)] truncate">{loc.name}</span>
+            <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
+              <MapPin className="w-2.5 h-2.5 text-indigo-500" />{loc.city}
+            </span>
+          </span>
+          <span className="flex items-center gap-0.5 text-[10px] font-bold text-indigo-400 shrink-0">
+            <StarIcon className="w-3 h-3 fill-indigo-400" />{loc.rating}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+});
 
 // The Trova AI "face" — an S-curve echoing the wordmark, not a generic
 // bot/robot glyph. Same route-motif as the sidebar indicator and the
@@ -66,9 +104,12 @@ function makeId(): string {
 // A timed-out/network failure (most often a free-tier backend cold-booting)
 // reads very differently to a user than a genuine server error.
 function extractChatError(err: unknown, fallback: string, wakingUp: string): string {
-  const e = err as { code?: string; response?: { data?: { message?: string } } };
-  if (e?.response?.data?.message) return e.response.data.message;
-  if (e?.code === "ECONNABORTED" || !e?.response) return wakingUp;
+  // isAxiosError actually checks the shape rather than assuming any thrown
+  // value looks like one — a bug elsewhere (a plain TypeError, say) no
+  // longer gets misread as "the server is waking up".
+  if (!isAxiosError<{ message?: string }>(err)) return fallback;
+  if (err.response?.data?.message) return err.response.data.message;
+  if (err.code === "ECONNABORTED" || !err.response) return wakingUp;
   return fallback;
 }
 
@@ -104,6 +145,7 @@ export default function Chat() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const wasNearBottomRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Only auto-scroll to new messages if the user was already near the
   // bottom — jumping the view while someone has scrolled up to reread
@@ -155,6 +197,9 @@ export default function Chat() {
     setIsLoading(true);
     wasNearBottomRef.current = true;
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
       const history = messages
         .filter((m) => m.id !== "welcome" && !m.isError)
@@ -172,7 +217,7 @@ export default function Chat() {
         // it by default, but still switches to whatever language the
         // user actually typed in for that specific message.
         { messages: apiMessages, userContext: { plan: buildPlanContext(), lang } },
-        { timeout: 45_000 }
+        { timeout: 45_000, signal: controller.signal }
       );
 
       const assistantMsg: Message = {
@@ -183,6 +228,9 @@ export default function Chat() {
       };
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
+      // A user-initiated cancel isn't an error worth a message bubble —
+      // just drop back to idle silently.
+      if (controller.signal.aborted) return;
       const errMsg: Message = {
         id: makeId(),
         role: "assistant",
@@ -193,8 +241,13 @@ export default function Chat() {
       setMessages((prev) => [...prev, errMsg]);
     } finally {
       setIsLoading(false);
+      abortRef.current = null;
       inputRef.current?.focus();
     }
+  }
+
+  function cancelRequest() {
+    abortRef.current?.abort();
   }
 
   function retryLastMessage() {
@@ -264,12 +317,8 @@ export default function Chat() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
 
-  const LOCALE_MAP: Record<string, string> = {
-    uz: "uz-UZ", ru: "ru-RU", en: "en-US", zh: "zh-CN", de: "de-DE", fr: "fr-FR",
-  };
-
   function formatTime(date: Date) {
-    return date.toLocaleTimeString(LOCALE_MAP[lang] ?? "uz-UZ", { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString(LOCALE_TAGS[lang], { hour: "2-digit", minute: "2-digit" });
   }
 
   const showPlanBanner = plan.length > 0 && !planBannerDismissed && messages.length <= 1;
@@ -292,44 +341,42 @@ export default function Chat() {
           : "calc(100dvh - 3.5rem - 72px - env(safe-area-inset-bottom, 0px))",
       }}
     >
-      {/* Header — --header-bg is now a fully opaque color (see index.css);
-          a translucent sticky header let fast-scrolled content bleed/clip
-          through it at the boundary. The bar itself spans the full
-          content area; only its content centers at 720px. */}
-      <div className="glass border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 relative z-20 w-full">
+      {/* Header — flat and quiet: a solid-fill orb with a small state dot
+          (idle vs. thinking) instead of a permanently animated ring, a
+          plain label instead of a tinted subtitle. Modern minimal chat
+          UIs (Claude, ChatGPT) don't put motion in the header at rest —
+          motion is reserved for state changes, not idling. */}
+      <div className="border-b border-[var(--border)] bg-[var(--header-bg)] shrink-0 relative z-20 w-full">
       <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 max-w-[720px] mx-auto">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div
-            className={cn(
-              "relative w-10 h-10 rounded-full bg-gradient-to-br from-[#10b981] to-[#a7f3d0] flex items-center justify-center text-white shadow-sm shrink-0 transition-shadow",
-              // The spinning ring is meaningful, not decorative — it only
-              // runs while Trova AI is actually composing a reply, so an
-              // always-on animation isn't idling for no reason at rest.
-              // Idle breathing is the opposite: a very quiet "always ready"
-              // signal, so it's the default state and yields to the spin.
-              isLoading ? "border-glow-spin" : "animate-orb-breathe"
-            )}
-          >
-            <RouteOrb className="w-5 h-5" />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-indigo-400 rounded-full border-2 border-[var(--background)]" />
+          <div className="relative w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white shrink-0">
+            <RouteOrb className="w-4.5 h-4.5" />
+            <span
+              className={cn(
+                "absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-[var(--background)] transition-colors",
+                isLoading ? "bg-gold-500 animate-pulse" : "bg-indigo-400"
+              )}
+            />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-bold text-[var(--foreground)] truncate">{t("chat", "title")}</p>
-            <p className="text-[11px] text-indigo-400 truncate">{t("chat", "subtitle")}</p>
+            <p className="text-sm font-semibold text-[var(--foreground)] truncate">{t("chat", "title")}</p>
+            <p className="text-[11px] text-[var(--muted-foreground)] truncate">
+              {t("chat", "subtitle")}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {plan.length > 0 && (
-            <div className="hidden xs:flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 shrink-0">
-              <MapPin className="w-3 h-3 text-indigo-400" />
-              <span className="text-[11px] font-semibold text-indigo-400 whitespace-nowrap">
+            <div className="hidden xs:flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg bg-[var(--muted)] border border-[var(--border)] shrink-0">
+              <MapPin className="w-3 h-3 text-[var(--muted-foreground)]" />
+              <span className="text-[11px] font-medium text-[var(--muted-foreground)] whitespace-nowrap">
                 {plan.length} {t("chat", "places")}
               </span>
             </div>
           )}
           <button
             onClick={resetChat}
-            className="flex items-center justify-center gap-1.5 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:border-indigo-500/40 transition-all shrink-0"
+            className="flex items-center justify-center gap-1.5 w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 rounded-lg text-[var(--muted-foreground)] text-xs hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors shrink-0"
             aria-label={t("chat", "reset")}
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -358,14 +405,8 @@ export default function Chat() {
             assistant is here" rather than a blank inbox. */}
         {showQuickActions && !isLoading && (
           <div className="flex flex-col items-center text-center pt-6 pb-6 animate-fade-up">
-            <div className="relative w-20 h-20 mb-5">
-              {/* A soft, diffused halo — not a hard-edged green glow — sized
-                  well past the orb itself so the falloff reads as ambient
-                  light, not a ring. */}
-              <div className="absolute -inset-4 rounded-full bg-[#10b981] opacity-[0.07] blur-2xl" />
-              <div className="relative w-full h-full rounded-full bg-gradient-to-br from-[#10b981] to-[#a7f3d0] flex items-center justify-center shadow-md animate-orb-breathe">
-                <RouteOrb className="w-10 h-10" />
-              </div>
+            <div className="w-14 h-14 mb-4 rounded-full bg-indigo-500 flex items-center justify-center">
+              <RouteOrb className="w-7 h-7" />
             </div>
             <h2 className="font-display text-lg font-bold text-[var(--foreground)]">
               {t("chat", "empty_heading")}
@@ -385,24 +426,26 @@ export default function Chat() {
               msg.role === "user" ? "flex-row-reverse" : "flex-row"
             )}
           >
-            <div
-              className={cn(
-                "w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5 font-bold",
-                msg.role === "assistant"
-                  ? msg.isError
-                    ? "bg-red-500/15 border border-red-500/30 text-red-400"
-                    : "bg-indigo-500 text-white shadow-sm"
-                  : "bg-gradient-to-br from-indigo-500/80 to-indigo-600/80 text-white"
-              )}
-            >
-              {msg.role === "assistant" ? (
-                msg.isError ? <AlertTriangle className="w-3.5 h-3.5" /> : <RouteOrb className="w-4 h-4" />
-              ) : user ? (
-                user.name.charAt(0).toUpperCase()
-              ) : (
-                <UserIcon className="w-3.5 h-3.5" />
-              )}
-            </div>
+            {msg.role === "user" && user ? (
+              <Avatar name={user.name} avatarUrl={user.avatarUrl} size={28} className="text-sm shrink-0 mt-0.5" />
+            ) : (
+              <div
+                className={cn(
+                  "w-7 h-7 rounded-full flex items-center justify-center text-sm shrink-0 mt-0.5 font-bold",
+                  msg.role === "assistant"
+                    ? msg.isError
+                      ? "bg-red-500/15 border border-red-500/30 text-red-400"
+                      : "bg-indigo-500 text-white"
+                    : "bg-indigo-500/80 text-white"
+                )}
+              >
+                {msg.role === "assistant" ? (
+                  msg.isError ? <AlertTriangle className="w-3.5 h-3.5" /> : <RouteOrb className="w-4 h-4" />
+                ) : (
+                  <UserIcon className="w-3.5 h-3.5" />
+                )}
+              </div>
+            )}
 
             <div
               className={cn(
@@ -418,16 +461,17 @@ export default function Chat() {
                     ? msg.isError
                       ? "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tl-sm bg-red-500/8 border border-red-500/25 text-[var(--foreground)]"
                       // Now that --card is a neutral graphite (not a
-                      // saturated green fill), a fully opaque card reads
+                      // saturated green fill), a flat bordered card reads
                       // as a calm contained surface rather than a second
                       // loud bubble — important for structured replies
                       // (numbered lists, bold labels) to have a clear
-                      // boundary instead of floating on the page. Dark
-                      // mode uses the exact surface color from spec
-                      // (#141b2b), one clear step up from the #0a0e1a
-                      // page background.
-                      : "px-4 py-4 sm:px-6 sm:py-5 rounded-2xl max-w-[720px] bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-[var(--foreground)] break-words"
-                    : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-indigo-500 text-white shadow-sm"
+                      // boundary instead of floating on the page. No
+                      // shadow: a border alone is enough separation from
+                      // the page background, and skipping it keeps a long
+                      // conversation looking calm rather than every turn
+                      // casting its own little shadow down the column.
+                      : "px-4 py-4 sm:px-6 sm:py-5 rounded-2xl max-w-[720px] bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] break-words"
+                    : "px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-2xl rounded-tr-sm bg-indigo-500 text-white"
                 )}
               >
                 <MessageContent text={msg.content} />
@@ -448,35 +492,12 @@ export default function Chat() {
                   actually mentions by name — turns a place-drop in plain
                   text into something clickable that ties back to the
                   location catalog instead of just being a proper noun. */}
-              {msg.role === "assistant" && !msg.isError && (() => {
-                const mentioned = findMentionedLocations(msg.content);
-                if (!mentioned.length) return null;
-                return (
-                  // Compact and self-sized, not a full-width solid-fill bar —
-                  // a proper mini-card (photo + name + trust score) that sits
-                  // lightly under the reply instead of dominating it.
-                  <div className="flex flex-col items-start gap-1.5 pt-1">
-                    {mentioned.map((loc) => (
-                      <button
-                        key={loc.id}
-                        onClick={() => navigate(`/locations/${loc.id}`)}
-                        className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl bg-[var(--card)]/70 border border-[var(--border)] hover:border-indigo-500/40 hover:bg-[var(--card)] hover:shadow-[var(--shadow-card-hover)] transition-all active:scale-[0.98] text-left w-full max-w-[240px]"
-                      >
-                        <img src={loc.img} alt="" className="w-11 h-11 rounded-lg object-cover shrink-0" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-xs font-semibold text-[var(--foreground)] truncate">{loc.name}</span>
-                          <span className="flex items-center gap-1 text-[10px] text-[var(--muted-foreground)]">
-                            <MapPin className="w-2.5 h-2.5 text-indigo-500" />{loc.city}
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-indigo-400 shrink-0">
-                          <StarIcon className="w-3 h-3 fill-indigo-400" />{loc.rating}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                );
-              })()}
+              {msg.role === "assistant" && !msg.isError && (
+                <MentionedLocations
+                  text={msg.content}
+                  onOpen={(id) => navigate(`/locations/${id}`)}
+                />
+              )}
 
               <div className="flex items-center gap-2 px-1">
                 <span className="text-[10px] text-[var(--muted-foreground)]/60">
@@ -542,10 +563,10 @@ export default function Chat() {
                 <button
                   key={action.label}
                   onClick={() => sendMessage(action.text)}
-                  className="animate-fade-up group flex items-center gap-3 p-3 rounded-2xl bg-[var(--card)] text-left text-xs font-semibold text-[var(--foreground)] shadow-[0_1px_2px_rgba(41,39,31,0.04),0_8px_20px_-6px_rgba(41,39,31,0.10)] hover:shadow-[0_2px_6px_rgba(41,39,31,0.06),0_16px_32px_-8px_rgba(41,39,31,0.16)] transition-all duration-[180ms] ease-out hover:-translate-y-[3px] active:scale-[0.97]"
+                  className="animate-fade-up group flex items-center gap-3 p-3 rounded-2xl bg-[var(--card)] border border-[var(--border)] text-left text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 hover:bg-[var(--card-hover)] transition-colors duration-150 active:scale-[0.98]"
                   style={{ animationDelay: `${250 + i * 60}ms` }}
                 >
-                  <span className={cn("flex items-center justify-center w-9 h-9 rounded-xl shrink-0 transition-transform group-hover:scale-105", action.bg)}>
+                  <span className={cn("flex items-center justify-center w-9 h-9 rounded-xl shrink-0", action.bg)}>
                     <action.icon className={cn("w-4 h-4", action.color)} strokeWidth={2} />
                   </span>
                   <span className="flex-1 leading-snug">{action.label}</span>
@@ -578,10 +599,10 @@ export default function Chat() {
             exit={{ opacity: 0 }}
             className="flex gap-2.5"
           >
-            <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-7 h-7 rounded-full bg-indigo-500 flex items-center justify-center shrink-0">
               <RouteOrb className="w-4 h-4" />
             </div>
-            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)]">
+            <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[var(--card)] border border-[var(--border)]">
               <div className="flex items-center gap-1">
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
                 <span className="typing-dot w-1.5 h-1.5 rounded-full bg-indigo-400" />
@@ -613,7 +634,7 @@ export default function Chat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.9 }}
             onClick={scrollToBottom}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] shadow-lg text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-20"
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--card)] border border-[var(--border)] shadow-[var(--shadow-card)] text-xs font-semibold text-[var(--foreground)] hover:border-indigo-500/40 transition-colors z-20"
           >
             <ChevronDown className="w-3.5 h-3.5" />
           </motion.button>
@@ -678,7 +699,7 @@ export default function Chat() {
       )}
 
       {/* Input area — full-width bar, content centered at 720px */}
-      <div className="glass px-3 sm:px-4 pb-3 sm:pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
+      <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2.5 border-t border-[var(--border)] bg-[var(--header-bg)] shrink-0">
       <div className="max-w-[720px] mx-auto">
         <div
           className={cn(
@@ -686,11 +707,10 @@ export default function Chat() {
             // message/recommendation cards) so the input reads as "where
             // you type" and the send button stays the one bright accent —
             // not another green card competing for attention. Fully
-            // rounded (pill), with a real :focus-within state — border and
-            // glow ring respond to the field being focused, not just to
-            // whether it has text in it.
-            "flex items-end gap-2 p-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] shadow-[var(--shadow-card)] transition-all duration-200",
-            "focus-within:border-[#10b981] focus-within:ring-4 focus-within:ring-[#10b981]/15 focus-within:shadow-none"
+            // rounded (pill), with a real :focus-within state — the border
+            // alone communicates focus, no glow ring needed.
+            "flex items-end gap-2 p-1.5 rounded-full bg-[var(--muted)] border border-[var(--border)] transition-colors duration-150",
+            "focus-within:border-indigo-500"
           )}
         >
           <textarea
@@ -699,6 +719,7 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t("chat", "input_placeholder")}
+            aria-label={t("chat", "input_placeholder")}
             rows={1}
             className={cn(
               "flex-1 px-3.5 py-2.5 rounded-full resize-none bg-transparent",
@@ -714,20 +735,21 @@ export default function Chat() {
             disabled={isLoading}
           />
           <button
-            onClick={() => sendMessage(input)}
-            disabled={!input.trim() || isLoading}
+            onClick={() => (isLoading ? cancelRequest() : sendMessage(input))}
+            disabled={!isLoading && !input.trim()}
             className={cn(
-              "ripple flex items-center justify-center w-10 h-10 rounded-full transition-all active:scale-95 shrink-0 overflow-hidden",
-              input.trim() && !isLoading
-                ? "bg-indigo-500 hover:from-indigo-600 hover:to-indigo-700 text-white shadow-sm hover:shadow-lg hover:shadow-indigo-500/40"
+              "flex items-center justify-center w-10 h-10 rounded-full transition-colors active:scale-95 shrink-0",
+              isLoading || (input.trim() && !isLoading)
+                ? "bg-indigo-500 hover:bg-indigo-600 text-white"
                 : "bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed"
             )}
-            aria-label={t("chat", "input_placeholder")}
+            aria-label={isLoading ? t("chat", "cancel_label") : t("chat", "send_label")}
           >
             <AnimatePresence mode="wait" initial={false}>
               {isLoading ? (
-                <motion.span key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                <motion.span key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative flex items-center justify-center w-4 h-4">
+                  <Loader2 className="absolute inset-0 w-4 h-4 animate-spin opacity-40" />
+                  <Square className="w-2 h-2 fill-current" />
                 </motion.span>
               ) : (
                 <motion.span

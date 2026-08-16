@@ -50,6 +50,10 @@ export interface User {
   // False until the emailed 6-digit code has been confirmed. Existing
   // accounts predating this feature were backfilled to true.
   emailVerified?: boolean;
+  // A resized JPEG data URL, or null/undefined for the initial-letter
+  // fallback avatar. There is no object storage wired up, so the photo
+  // itself lives in this field rather than a CDN URL.
+  avatarUrl?: string | null;
 }
 
 export interface Guide {

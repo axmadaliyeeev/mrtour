@@ -17,10 +17,12 @@ import { useAppStore } from "@/store";
 const Auth           = lazy(() => import("@/pages/Auth"));
 const Privacy        = lazy(() => import("@/pages/Privacy"));
 const Terms          = lazy(() => import("@/pages/Terms"));
-const Locations      = lazy(() => import("@/pages/Locations"));
-const LocationDetail = lazy(() => import("@/pages/LocationDetail"));
-const Chat           = lazy(() => import("@/pages/Chat"));
-const Services       = lazy(() => import("@/pages/Services"));
+const Locations       = lazy(() => import("@/pages/Locations"));
+const LocationDetail  = lazy(() => import("@/pages/LocationDetail"));
+const Chat            = lazy(() => import("@/pages/Chat"));
+const Services        = lazy(() => import("@/pages/Services"));
+const RestaurantDetail = lazy(() => import("@/pages/RestaurantDetail"));
+const HotelDetail      = lazy(() => import("@/pages/HotelDetail"));
 const Profile        = lazy(() => import("@/pages/Profile"));
 const Uzbekistan     = lazy(() => import("@/pages/Uzbekistan"));
 const SavedPlaces    = lazy(() => import("@/pages/SavedPlaces"));
@@ -86,6 +88,8 @@ export default function App() {
           <Route path="/locations/:id" element={<LocationDetail />} />
           <Route path="/chat"          element={<Chat />} />
           <Route path="/services"      element={<Services />} />
+          <Route path="/services/restaurants/:id" element={<RestaurantDetail />} />
+          <Route path="/services/hotels/:id"      element={<HotelDetail />} />
           <Route path="/profile"       element={<Profile />} />
           <Route path="/uzbekistan"    element={<Uzbekistan />} />
           <Route path="/saved"         element={<SavedPlaces />} />

@@ -67,7 +67,16 @@ const TOOLTIP_W = 296;
 
 function readRect(id: string): Rect | null {
   const el = document.getElementById(id);
-  if (!el) return null;
+  if (!el) {
+    // A missing anchor just silently skips the step in production (better
+    // than throwing), but during development that's easy to miss — e.g.
+    // a step pointed at a lazy-loaded route whose anchor hasn't mounted
+    // yet, or a TOUR_IDS constant that drifted from the actual DOM id.
+    if (import.meta.env.DEV) {
+      console.warn(`Tour: no element with id "${id}" — this step will be skipped`);
+    }
+    return null;
+  }
   const r = el.getBoundingClientRect();
   // Element may be scrolled out of view entirely (e.g. a sidebar item on a
   // short window) — treating that as "no target" is better than spotlighting

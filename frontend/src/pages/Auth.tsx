@@ -50,6 +50,7 @@ export default function Auth() {
     pathname === "/signup" ? "register" : "login"
   );
   const [active, setActive] = useState(0);
+  const [showcasePaused, setShowcasePaused] = useState(false);
 
   useEffect(() => {
     setTab(pathname === "/signup" ? "register" : "login");
@@ -61,9 +62,17 @@ export default function Auth() {
   }, [isLoggedIn, navigate]);
 
   useEffect(() => {
+    // Respects both: someone hovering to actually read a caption
+    // shouldn't have it swapped out from under them, and someone who
+    // asked their OS to reduce motion shouldn't get an auto-advancing
+    // slideshow at all (the crossfade/scale transitions on each panel
+    // aren't covered by the CSS reduced-motion rule since they're driven
+    // by framer-motion, not a CSS animation/transition).
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (showcasePaused || reduceMotion) return;
     const id = window.setInterval(() => setActive((i) => (i + 1) % SHOWCASE.length), 5000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [showcasePaused]);
 
   function done() {
     navigate("/home", { replace: true });
@@ -77,7 +86,11 @@ export default function Auth() {
             Hidden below lg rather than stacked: on a phone it would push
             the actual form a full screen down, turning sign-in into a
             scroll hunt. */}
-        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden rounded-3xl bg-black p-10 text-white">
+        <div
+          onMouseEnter={() => setShowcasePaused(true)}
+          onMouseLeave={() => setShowcasePaused(false)}
+          className="relative hidden lg:flex flex-col justify-between overflow-hidden rounded-3xl bg-black p-10 text-white"
+        >
           <AnimatePresence mode="wait">
             <motion.img
               key={active}

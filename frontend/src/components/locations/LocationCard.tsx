@@ -1,42 +1,84 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Bookmark, BookmarkCheck, Clock, Star, Navigation, Landmark, Leaf, Palette, Church, Pickaxe } from "lucide-react";
-import { cn, truncate } from "@/lib/utils";
-import { useAppStore } from "@/store";
-import { syncAddToPlan, syncRemoveFromPlan } from "@/lib/plan-sync";
-import { useSpotlight } from "@/hooks/useSpotlight";
-import { useTranslation } from "@/i18n";
-import type { Location } from "@/types";
+import { useSpotlight } from '@/hooks/useSpotlight';
+import { useTranslation } from '@/i18n';
+import { syncAddToPlan, syncRemoveFromPlan } from '@/lib/plan-sync';
+import { cn, truncate } from '@/lib/utils';
+import { useAppStore } from '@/store';
+import type { Location } from '@/types';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Bookmark,
+  BookmarkCheck,
+  Church,
+  Clock,
+  Landmark,
+  Leaf,
+  MapPin,
+  Navigation,
+  Palette,
+  Pickaxe,
+  Star,
+} from 'lucide-react';
+import { memo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Single monoline icon set (constant 2px stroke, no filled illustrative
 // icons) — every category reads as one geometric family, on-brand emerald,
 // instead of a mix of flat-color emoji and unrelated hues.
 const CAT_STYLE: Record<
-  Location["category"],
-  { Icon: typeof Landmark; color: string; bg: string; tKey: "cat_tarix" | "cat_tabiat" | "cat_madaniyat" | "cat_din" | "cat_arxeologiya" }
+  Location['category'],
+  {
+    Icon: typeof Landmark;
+    color: string;
+    bg: string;
+    tKey: 'cat_tarix' | 'cat_tabiat' | 'cat_madaniyat' | 'cat_din' | 'cat_arxeologiya';
+  }
 > = {
-  tarix:       { Icon: Landmark, color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_tarix" },
-  tabiat:      { Icon: Leaf,     color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_tabiat" },
-  madaniyat:   { Icon: Palette,  color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_madaniyat" },
-  din:         { Icon: Church,   color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_din" },
-  arxeologiya: { Icon: Pickaxe,  color: "text-indigo-500", bg: "bg-indigo-500/15 border-indigo-500/25", tKey: "cat_arxeologiya" },
+  tarix: {
+    Icon: Landmark,
+    color: 'text-indigo-600',
+    bg: 'bg-indigo-500/15 border-indigo-500/25',
+    tKey: 'cat_tarix',
+  },
+  tabiat: {
+    Icon: Leaf,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-500/15 border-emerald-500/25',
+    tKey: 'cat_tabiat',
+  },
+  madaniyat: {
+    Icon: Palette,
+    color: 'text-fuchsia-600',
+    bg: 'bg-fuchsia-500/15 border-fuchsia-500/25',
+    tKey: 'cat_madaniyat',
+  },
+  din: {
+    Icon: Church,
+    color: 'text-amber-600',
+    bg: 'bg-amber-500/15 border-amber-500/25',
+    tKey: 'cat_din',
+  },
+  arxeologiya: {
+    Icon: Pickaxe,
+    color: 'text-teal-600',
+    bg: 'bg-teal-500/15 border-teal-500/25',
+    tKey: 'cat_arxeologiya',
+  },
 };
 
 interface LocationCardProps {
   location: Location;
-  variant?: "default" | "featured";
+  variant?: 'default' | 'featured';
   className?: string;
 }
 
-export function LocationCard({ location, variant = "default", className }: LocationCardProps) {
+function LocationCardImpl({ location, variant = 'default', className }: LocationCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { addToPlan, removeFromPlan, isInPlan, showToast } = useAppStore();
   const inPlan = isInPlan(location.id);
   const cat = CAT_STYLE[location.category];
-  const catLabel = t("home", cat.tKey);
-  const freeLabel = t("detail", "free");
+  const catLabel = t('home', cat.tKey);
+  const freeLabel = t('detail', 'free');
 
   const [imgLoaded, setImgLoaded] = useState(false);
   const spotlight = useSpotlight<HTMLDivElement>();
@@ -51,16 +93,16 @@ export function LocationCard({ location, variant = "default", className }: Locat
       // No emoji icon argument — Toaster already renders a clean lucide
       // icon based on the toast type, so this used to double up (a raw
       // emoji glyph next to/instead of the real icon).
-      showToast(`${location.name} ${t("card", "removed_toast")}`, undefined, "info");
+      showToast(`${location.name} ${t('card', 'removed_toast')}`, undefined, 'info');
     } else {
       addToPlan(location);
       syncAddToPlan(location.id);
-      showToast(`${location.name} ${t("card", "added_toast")}`, undefined, "success");
+      showToast(`${location.name} ${t('card', 'added_toast')}`, undefined, 'success');
     }
   };
 
   /* ── Featured variant ──────────────────────────────────── */
-  if (variant === "featured") {
+  if (variant === 'featured') {
     return (
       <motion.div
         ref={spotlight.ref}
@@ -68,8 +110,8 @@ export function LocationCard({ location, variant = "default", className }: Locat
         onClick={go}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "spotlight-card tilt-hover relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0",
-          "shadow-md hover:shadow-xl hover:shadow-black/30",
+          'spotlight-card tilt-hover relative h-64 rounded-2xl overflow-hidden cursor-pointer group shrink-0',
+          'shadow-md hover:shadow-xl hover:shadow-black/30',
           className
         )}
       >
@@ -80,34 +122,39 @@ export function LocationCard({ location, variant = "default", className }: Locat
           src={location.img}
           alt={location.name}
           className={cn(
-            "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out",
-            imgLoaded ? "opacity-100" : "opacity-0"
+            'w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out',
+            imgLoaded ? 'opacity-100' : 'opacity-0'
           )}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          onError={(e) => {
+          onError={e => {
             setImgLoaded(true);
             (e.currentTarget as HTMLImageElement).src =
-              "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60";
+              'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60';
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
 
         {/* Category badge */}
-        <span className={cn(
-          "absolute top-3 left-3 flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full border backdrop-blur-md",
-          cat.bg, cat.color
-        )}>
+        <span
+          className={cn(
+            'absolute top-3 left-3 flex items-center gap-1 text-[10px] font-semibold px-2.5 py-1 rounded-full border backdrop-blur-md',
+            cat.bg,
+            cat.color
+          )}
+        >
           <cat.Icon className="w-3 h-3" strokeWidth={2} /> {catLabel}
         </span>
 
         {/* Price badge */}
-        <span className={cn(
-          "glint absolute top-3 right-12 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md",
-          location.priceUSD === 0
-            ? "bg-emerald-500/90 text-white"
-            : "bg-black/55 text-gold-300 border border-gold-500/30"
-        )}>
+        <span
+          className={cn(
+            'glint absolute top-3 right-12 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md',
+            location.priceUSD === 0
+              ? 'bg-emerald-500/90 text-white'
+              : 'bg-black/55 text-gold-300 border border-gold-500/30'
+          )}
+        >
           {location.priceUSD === 0 ? freeLabel : `~$${location.priceUSD}`}
         </span>
 
@@ -116,21 +163,27 @@ export function LocationCard({ location, variant = "default", className }: Locat
           onClick={bookmark}
           whileTap={{ scale: 0.85 }}
           className={cn(
-            "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors",
-            inPlan ? "bg-indigo-500 text-white shadow-md" : "bg-black/40 text-white hover:bg-indigo-500/80"
+            'absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-colors',
+            inPlan
+              ? 'bg-indigo-500 text-white shadow-md'
+              : 'bg-black/40 text-white hover:bg-indigo-500/80'
           )}
-          aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
+          aria-label={inPlan ? t('detail', 'remove_plan') : t('card', 'add_plan')}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
-              key={inPlan ? "in" : "out"}
+              key={inPlan ? 'in' : 'out'}
               initial={{ scale: 0.4, rotate: -45, opacity: 0 }}
               animate={{ scale: 1, rotate: 0, opacity: 1 }}
               exit={{ scale: 0.4, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
               className="flex"
             >
-              {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+              {inPlan ? (
+                <BookmarkCheck className="w-3.5 h-3.5" />
+              ) : (
+                <Bookmark className="w-3.5 h-3.5" />
+              )}
             </motion.span>
           </AnimatePresence>
         </motion.button>
@@ -168,10 +221,10 @@ export function LocationCard({ location, variant = "default", className }: Locat
         // card with just a soft shadow (Apple's own card language) reads
         // as content, not data rows. A border only appears on hover, as
         // a focus cue rather than a permanent outline.
-        "spotlight-card tilt-hover rounded-2xl border border-transparent bg-[var(--card)] overflow-hidden cursor-pointer",
-        "hover:border-indigo-500/40",
-        "transition-all duration-200 group",
-        "shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]",
+        'spotlight-card tilt-hover rounded-2xl border border-transparent bg-[var(--card)] overflow-hidden cursor-pointer',
+        'hover:border-indigo-500/40',
+        'transition-all duration-200 group',
+        'shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)]',
         className
       )}
     >
@@ -184,34 +237,39 @@ export function LocationCard({ location, variant = "default", className }: Locat
           src={location.img}
           alt={location.name}
           className={cn(
-            "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out",
-            imgLoaded ? "opacity-100" : "opacity-0"
+            'w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300 ease-out',
+            imgLoaded ? 'opacity-100' : 'opacity-0'
           )}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          onError={(e) => {
+          onError={e => {
             setImgLoaded(true);
             (e.currentTarget as HTMLImageElement).src =
-              "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60";
+              'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=400&q=60';
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
 
         {/* Category badge */}
-        <span className={cn(
-          "absolute top-2.5 left-2.5 flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border backdrop-blur-md",
-          cat.bg, cat.color
-        )}>
+        <span
+          className={cn(
+            'absolute top-2.5 left-2.5 flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full border backdrop-blur-md',
+            cat.bg,
+            cat.color
+          )}
+        >
           <cat.Icon className="w-3 h-3" strokeWidth={2} /> {catLabel}
         </span>
 
         {/* Price badge */}
-        <span className={cn(
-          "absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold backdrop-blur-md",
-          location.priceUSD === 0
-            ? "bg-emerald-500/90 text-white"
-            : "bg-black/60 text-indigo-300 border border-indigo-500/20"
-        )}>
+        <span
+          className={cn(
+            'absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold backdrop-blur-md',
+            location.priceUSD === 0
+              ? 'bg-emerald-500/90 text-white'
+              : 'bg-black/60 text-indigo-300 border border-indigo-500/20'
+          )}
+        >
           {location.priceUSD === 0 ? freeLabel : `~$${location.priceUSD}`}
         </span>
 
@@ -220,23 +278,25 @@ export function LocationCard({ location, variant = "default", className }: Locat
           onClick={bookmark}
           whileTap={{ scale: 0.85 }}
           className={cn(
-            "absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-md transition-colors",
-            inPlan
-              ? "bg-indigo-500 text-white"
-              : "bg-black/50 text-white/80 hover:bg-indigo-500/90"
+            'absolute bottom-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md shadow-md transition-colors',
+            inPlan ? 'bg-indigo-500 text-white' : 'bg-black/50 text-white/80 hover:bg-indigo-500/90'
           )}
-          aria-label={inPlan ? t("detail", "remove_plan") : t("card", "add_plan")}
+          aria-label={inPlan ? t('detail', 'remove_plan') : t('card', 'add_plan')}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
-              key={inPlan ? "in" : "out"}
+              key={inPlan ? 'in' : 'out'}
               initial={{ scale: 0.4, rotate: -45, opacity: 0 }}
               animate={{ scale: 1, rotate: 0, opacity: 1 }}
               exit={{ scale: 0.4, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
               className="flex"
             >
-              {inPlan ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+              {inPlan ? (
+                <BookmarkCheck className="w-3.5 h-3.5" />
+              ) : (
+                <Bookmark className="w-3.5 h-3.5" />
+              )}
             </motion.span>
           </AnimatePresence>
         </motion.button>
@@ -258,10 +318,11 @@ export function LocationCard({ location, variant = "default", className }: Locat
           </span>
           <span className="flex items-center gap-1 shrink-0 text-[11px] text-[var(--muted-foreground)] tabular-nums">
             <Star className="w-3 h-3 text-indigo-500 fill-indigo-500" />
-            <span className="font-semibold text-[var(--foreground)]">{location.rating}</span>
-            ({location.reviewCount >= 1000
+            <span className="font-semibold text-[var(--foreground)]">{location.rating}</span>(
+            {location.reviewCount >= 1000
               ? `${(location.reviewCount / 1000).toFixed(1)}k`
-              : location.reviewCount})
+              : location.reviewCount}
+            )
           </span>
         </div>
 
@@ -279,7 +340,7 @@ export function LocationCard({ location, variant = "default", className }: Locat
             {location.duration}
           </span>
           <div className="flex gap-1">
-            {location.tags.slice(0, 2).map((tag) => (
+            {location.tags.slice(0, 2).map(tag => (
               <span
                 key={tag}
                 className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] font-medium border border-[var(--border)]"
@@ -298,19 +359,29 @@ export function LocationCard({ location, variant = "default", className }: Locat
         <button
           onClick={bookmark}
           className={cn(
-            "ripple w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer",
+            'ripple w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-[0.97] cursor-pointer',
             inPlan
-              ? "bg-[var(--muted)] border border-indigo-500/35 text-indigo-400 hover:bg-indigo-500/10"
-              : "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
+              ? 'bg-[var(--muted)] border border-indigo-500/35 text-indigo-400 hover:bg-indigo-500/10'
+              : 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm'
           )}
         >
           {inPlan ? (
-            <><BookmarkCheck className="w-3.5 h-3.5" /> {t("card", "in_plan")}</>
+            <>
+              <BookmarkCheck className="w-3.5 h-3.5" /> {t('card', 'in_plan')}
+            </>
           ) : (
-            <><Bookmark className="w-3.5 h-3.5" /> {t("card", "add_plan")}</>
+            <>
+              <Bookmark className="w-3.5 h-3.5" /> {t('card', 'add_plan')}
+            </>
           )}
         </button>
       </div>
     </motion.div>
   );
 }
+
+// Home renders 40+ of these in one grid and Locations re-renders the whole
+// filtered list on every search keystroke — memoizing keeps a card's own
+// re-render tied to its own props (location identity, variant) instead of
+// riding along with every unrelated sibling update.
+export const LocationCard = memo(LocationCardImpl);

@@ -7,7 +7,7 @@ import {
   ChevronDown, ChevronUp, Share2, MessageSquare, Check, CheckCircle2, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LOCATIONS, INIT_REVIEWS } from "@/data";
+import { LOCATIONS_BY_ID, INIT_REVIEWS } from "@/data";
 import { Stars } from "@/components/ui/stars";
 import { MessageContent } from "@/components/chat/MessageContent";
 import { useAppStore } from "@/store";
@@ -227,7 +227,7 @@ export default function LocationDetail() {
   const { addToPlan, removeFromPlan, isInPlan, showToast, user } = useAppStore();
   const { t, lang } = useTranslation();
 
-  const location = LOCATIONS.find((l) => l.id === id);
+  const location = id ? LOCATIONS_BY_ID.get(id) : undefined;
   const initReviews = id ? (INIT_REVIEWS[id] ?? []) : [];
 
   // Reviews written through this page previously only ever lived in the
@@ -237,16 +237,26 @@ export default function LocationDetail() {
   // now reads straight from the same table. Fetch the real, persisted
   // reviews for this location instead.
   const [backendReviews, setBackendReviews] = useState<Review[]>([]);
+  const [reviewsLoadError, setReviewsLoadError] = useState(false);
   useEffect(() => {
     if (!id) return;
     let cancelled = false;
+    setReviewsLoadError(false);
     apiClient.get<BackendReview[]>(`/reviews/${id}`)
       .then((rows) => { if (!cancelled) setBackendReviews(rows.map(adaptBackendReview)); })
-      .catch(() => {});
+      .catch(() => {
+        // Silently keeping only the static seed reviews used to leave no
+        // trace that live reviews failed to load — a visitor comparing
+        // review counts against Stars' badge above would have no idea
+        // the page didn't actually reach the server.
+        if (!cancelled) setReviewsLoadError(true);
+      });
     return () => { cancelled = true; };
   }, [id]);
 
   const allReviews = useMemo(() => [...backendReviews, ...initReviews], [backendReviews, initReviews]);
+  const REVIEWS_PAGE_SIZE = 8;
+  const [reviewsVisible, setReviewsVisible] = useState(REVIEWS_PAGE_SIZE);
 
   // Review form state
   const [reviewOpen, setReviewOpen] = useState(false);
@@ -589,10 +599,23 @@ export default function LocationDetail() {
           </div>
         ) : (
           <div className="space-y-3">
-            {allReviews.slice(0, 8).map((review) => (
+            {allReviews.slice(0, reviewsVisible).map((review) => (
               <ReviewCard key={review.id} review={review} t={t} />
             ))}
+            {reviewsVisible < allReviews.length && (
+              <button
+                onClick={() => setReviewsVisible((v) => v + REVIEWS_PAGE_SIZE)}
+                className="w-full py-2.5 rounded-xl text-xs font-semibold text-indigo-400 border border-indigo-500/25 bg-indigo-500/5 hover:bg-indigo-500/10 transition-colors"
+              >
+                {t("detail", "load_more_reviews")}
+              </button>
+            )}
           </div>
+        )}
+        {reviewsLoadError && (
+          <p className="mt-3 text-[11px] text-[var(--muted-foreground)]/70 text-center">
+            {t("detail", "reviews_load_error")}
+          </p>
         )}
       </section>
 

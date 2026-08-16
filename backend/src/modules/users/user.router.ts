@@ -19,6 +19,11 @@ const updateMeSchema = z.object({
   // logged in 400'd silently and the choice was never saved to the account.
   lang:        z.enum(["uz", "ru", "en", "zh", "de", "fr"]).optional(),
   preferences: z.array(z.string()).max(20).optional(),
+  // Client resizes to ~256px JPEG before sending — this cap is a server-
+  // side backstop against a modified client shipping something huge into
+  // the database, not the actual size-control mechanism. null clears the
+  // photo back to the initial-letter avatar.
+  avatarUrl:   z.string().max(400_000).startsWith("data:image/").nullable().optional(),
 });
 
 const planBodySchema  = z.object({ locationId: z.string().min(1) });

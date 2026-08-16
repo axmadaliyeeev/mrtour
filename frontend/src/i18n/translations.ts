@@ -1,5 +1,17 @@
 ﻿export type Lang = "uz" | "ru" | "en" | "zh" | "de" | "fr";
 
+// BCP-47 tags for Intl/toLocaleString APIs. Record<Lang, string> means
+// adding a 7th Lang without adding it here is a compile error, not a
+// silent runtime fallback to Uzbek for that language's users.
+export const LOCALE_TAGS: Record<Lang, string> = {
+  uz: "uz-UZ",
+  ru: "ru-RU",
+  en: "en-US",
+  zh: "zh-CN",
+  de: "de-DE",
+  fr: "fr-FR",
+};
+
 export interface TranslationSchema {
   nav: {
     home: string;
@@ -20,6 +32,7 @@ export interface TranslationSchema {
     stats_rating: string;
     stats_travelers: string;
     stats_langs: string;
+    coming_soon: string;
     featured_title: string;
     all_title: string;
     ai_banner_title: string;
@@ -64,6 +77,8 @@ export interface TranslationSchema {
     best_season: string;
     reviews: string;
     no_reviews: string;
+    load_more_reviews: string;
+    reviews_load_error: string;
     write_review: string;
     add_plan: string;
     remove_plan: string;
@@ -115,6 +130,8 @@ export interface TranslationSchema {
     error: string;
     waking_up: string;
     retry: string;
+    send_label: string;
+    cancel_label: string;
     disclaimer: string;
     empty_heading: string;
     reaction_thanks: string;
@@ -171,6 +188,28 @@ export interface TranslationSchema {
     hours_unit: string;
     min_unit: string;
     uzs_unit: string;
+    menu_title: string;
+    no_menu: string;
+    address_label: string;
+    hours_label: string;
+    amenities_label: string;
+    languages_label: string;
+    open_map: string;
+    close_label: string;
+    view_details: string;
+    booking_title: string;
+    check_in: string;
+    check_out: string;
+    guests_label: string;
+    contact_name_label: string;
+    contact_phone_label: string;
+    nights_label: string;
+    total_label: string;
+    submit_booking: string;
+    booking_success_title: string;
+    booking_success_desc: string;
+    booking_error: string;
+    book_another: string;
   };
   profile: {
     title: string;
@@ -217,6 +256,15 @@ export interface TranslationSchema {
     linked_accounts_title: string;
     linked_not_connected: string;
     linked_connected: string;
+    edit_profile: string;
+    edit_save: string;
+    edit_cancel: string;
+    edit_saved_toast: string;
+    edit_error: string;
+    avatar_change: string;
+    avatar_remove: string;
+    avatar_invalid_file: string;
+    avatar_process_error: string;
     delete_account: string;
     delete_account_soon: string;
   };
@@ -271,6 +319,7 @@ export interface TranslationSchema {
     resend_btn: string;
     resend_sent: string;
     resend_wait: string;
+    change_email_btn: string;
     err_verify: string;
     forgot_link: string;
     forgot_title: string;
@@ -299,6 +348,8 @@ export interface TranslationSchema {
     subtitle: string;
     empty_title: string;
     empty_desc: string;
+    empty_title_guest: string;
+    empty_desc_guest: string;
     explore_btn: string;
     ai_btn: string;
     cities_suffix: string;
@@ -374,6 +425,7 @@ const UZ: TranslationSchema = {
     stats_rating: "O'rtacha reyting",
     stats_travelers: "Sayohatchi",
     stats_langs: "Til",
+    coming_soon: "Tez orada",
     featured_title: "Tavsiya etilgan joylar",
     all_title: "Barcha joylar",
     ai_banner_title: "Trova AI sizga yordam beradi",
@@ -418,6 +470,8 @@ const UZ: TranslationSchema = {
     best_season: "Eng yaxshi mavsum",
     reviews: "Sharhlar",
     no_reviews: "Hali sharh yo'q. Birinchi bo'lib sharh qoldiring!",
+    load_more_reviews: "Ko'proq ko'rsatish",
+    reviews_load_error: "Yangi sharhlarni yuklab bo'lmadi. Saqlangan sharhlar ko'rsatilmoqda.",
     write_review: "Sharh yozish",
     add_plan: "Rejaga qo'sh",
     remove_plan: "Rejadan olib tashlash",
@@ -471,6 +525,8 @@ const UZ: TranslationSchema = {
       "Kechirasiz, hozirda server bilan bog'lanishda muammo bor. Iltimos, bir ozdan so'ng qayta urinib ko'ring.",
     waking_up: "Server uyg'onmoqda. Bir necha soniyadan so'ng qayta yuboring.",
     retry: "Qayta yuborish",
+    send_label: "Xabarni yuborish",
+    cancel_label: "So'rovni bekor qilish",
     disclaimer: "Trova AI xato qilishi mumkin. Muhim ma'lumotlarni tekshiring.",
     empty_heading: "Sizga qanday yordam bera olaman?",
     reaction_thanks: "Fikringiz uchun rahmat!",
@@ -527,6 +583,28 @@ const UZ: TranslationSchema = {
     hours_unit: "soat",
     min_unit: "daqiqa",
     uzs_unit: "so'm",
+    menu_title: "Taomlar menyusi",
+    no_menu: "Menyu haqida ma'lumot yo'q",
+    address_label: "Manzil",
+    hours_label: "Ish vaqti",
+    amenities_label: "Qulayliklar",
+    languages_label: "Tillar",
+    open_map: "Xaritada ko'rish",
+    close_label: "Yopish",
+    view_details: "Batafsil",
+    booking_title: "Xonani bron qilish",
+    check_in: "Kirish sanasi",
+    check_out: "Chiqish sanasi",
+    guests_label: "Mehmonlar soni",
+    contact_name_label: "Ism familiya",
+    contact_phone_label: "Telefon raqami",
+    nights_label: "kecha",
+    total_label: "Jami",
+    submit_booking: "Bron so'rovini yuborish",
+    booking_success_title: "So'rovingiz qabul qilindi!",
+    booking_success_desc: "Mehmonxona jamoasi tez orada ko'rsatgan telefon raqamingiz orqali siz bilan bog'lanadi.",
+    booking_error: "So'rovni yuborib bo'lmadi. Qayta urinib ko'ring.",
+    book_another: "Yana bron qilish",
   },
   profile: {
     title: "Profil",
@@ -573,6 +651,15 @@ const UZ: TranslationSchema = {
     linked_accounts_title: "Ulangan akkauntlar",
     linked_not_connected: "Ulanmagan",
     linked_connected: "Ulangan",
+    edit_profile: "Profilni tahrirlash",
+    edit_save: "Saqlash",
+    edit_cancel: "Bekor qilish",
+    edit_saved_toast: "Profil yangilandi",
+    edit_error: "Profilni yangilab bo'lmadi. Qayta urinib ko'ring.",
+    avatar_change: "Rasmni o'zgartirish",
+    avatar_remove: "Rasmni o'chirish",
+    avatar_invalid_file: "Iltimos, rasm faylini tanlang",
+    avatar_process_error: "Rasmni qayta ishlab bo'lmadi. Boshqa faylni sinab ko'ring.",
     delete_account: "Akkauntni o'chirish",
     delete_account_soon: "Bu funksiya hali mavjud emas — tez orada qo'shiladi.",
   },
@@ -627,6 +714,7 @@ const UZ: TranslationSchema = {
     resend_btn: "Kodni qayta yuborish",
     resend_sent: "Yangi kod yuborildi",
     resend_wait: "Qayta yuborish",
+    change_email_btn: "Boshqa email kiritish",
     err_verify: "Kod noto'g'ri yoki muddati tugagan",
     forgot_link: "Parolni unutdingizmi?",
     forgot_title: "Parolni tiklash",
@@ -655,6 +743,8 @@ const UZ: TranslationSchema = {
     subtitle: "Rejaga qo'shgan joylaringiz shu yerda",
     empty_title: "Hali hech narsa saqlanmagan",
     empty_desc: "Yoqqan joylarni \"Rejaga qo'sh\" tugmasi orqali saqlang — ular shu yerda to'planadi.",
+    empty_title_guest: "Saqlangan joylarni ko'rish uchun kiring",
+    empty_desc_guest: "Hisobingizga kirsangiz, avval saqlagan joylaringiz shu yerda ko'rinadi.",
     explore_btn: "Joylarni ko'rish",
     ai_btn: "AI bilan reja tuzish",
     cities_suffix: "shahar",
@@ -730,6 +820,7 @@ const RU: TranslationSchema = {
     stats_rating: "Средний рейтинг",
     stats_travelers: "Путешественников",
     stats_langs: "Языков",
+    coming_soon: "Скоро",
     featured_title: "Рекомендуемые места",
     all_title: "Все места",
     ai_banner_title: "Trova AI готова помочь",
@@ -775,6 +866,8 @@ const RU: TranslationSchema = {
     best_season: "Лучшее время для посещения",
     reviews: "Отзывы",
     no_reviews: "Отзывов пока нет. Станьте первым!",
+    load_more_reviews: "Показать ещё",
+    reviews_load_error: "Не удалось загрузить свежие отзывы. Показаны сохранённые.",
     write_review: "Написать отзыв",
     add_plan: "Добавить в план",
     remove_plan: "Убрать из плана",
@@ -829,6 +922,8 @@ const RU: TranslationSchema = {
       "Извините, в данный момент возникла проблема с подключением к серверу. Пожалуйста, попробуйте ещё раз чуть позже.",
     waking_up: "Сервер просыпается. Повторите отправку через несколько секунд.",
     retry: "Отправить снова",
+    send_label: "Отправить сообщение",
+    cancel_label: "Отменить запрос",
     disclaimer: "Trova AI может ошибаться. Проверяйте важную информацию.",
     empty_heading: "Чем я могу вам помочь?",
     reaction_thanks: "Спасибо за ваш отзыв!",
@@ -885,6 +980,28 @@ const RU: TranslationSchema = {
     hours_unit: "ч",
     min_unit: "мин",
     uzs_unit: "сум",
+    menu_title: "Меню",
+    no_menu: "Информация о меню отсутствует",
+    address_label: "Адрес",
+    hours_label: "Часы работы",
+    amenities_label: "Удобства",
+    languages_label: "Языки",
+    open_map: "Открыть на карте",
+    close_label: "Закрыть",
+    view_details: "Подробнее",
+    booking_title: "Забронировать номер",
+    check_in: "Дата заезда",
+    check_out: "Дата выезда",
+    guests_label: "Количество гостей",
+    contact_name_label: "Имя и фамилия",
+    contact_phone_label: "Номер телефона",
+    nights_label: "ночей",
+    total_label: "Итого",
+    submit_booking: "Отправить запрос на бронь",
+    booking_success_title: "Ваш запрос принят!",
+    booking_success_desc: "Команда отеля свяжется с вами по указанному номеру телефона в ближайшее время.",
+    booking_error: "Не удалось отправить запрос. Попробуйте ещё раз.",
+    book_another: "Забронировать ещё",
   },
   profile: {
     title: "Профиль",
@@ -931,6 +1048,15 @@ const RU: TranslationSchema = {
     linked_accounts_title: "Привязанные аккаунты",
     linked_not_connected: "Не подключено",
     linked_connected: "Подключено",
+    edit_profile: "Редактировать профиль",
+    edit_save: "Сохранить",
+    edit_cancel: "Отмена",
+    edit_saved_toast: "Профиль обновлён",
+    edit_error: "Не удалось обновить профиль. Попробуйте ещё раз.",
+    avatar_change: "Изменить фото",
+    avatar_remove: "Удалить фото",
+    avatar_invalid_file: "Пожалуйста, выберите файл изображения",
+    avatar_process_error: "Не удалось обработать изображение. Попробуйте другой файл.",
     delete_account: "Удалить аккаунт",
     delete_account_soon: "Эта функция пока недоступна — скоро появится.",
   },
@@ -985,6 +1111,7 @@ const RU: TranslationSchema = {
     resend_btn: "Отправить код повторно",
     resend_sent: "Новый код отправлен",
     resend_wait: "Повторно",
+    change_email_btn: "Изменить email",
     err_verify: "Неверный код или истёк срок действия",
     forgot_link: "Забыли пароль?",
     forgot_title: "Восстановление пароля",
@@ -1013,6 +1140,8 @@ const RU: TranslationSchema = {
     subtitle: "Места, добавленные в план, собраны здесь",
     empty_title: "Пока ничего не сохранено",
     empty_desc: "Сохраняйте понравившиеся места кнопкой «В план» — они появятся здесь.",
+    empty_title_guest: "Войдите, чтобы увидеть сохранённые места",
+    empty_desc_guest: "Ваши ранее сохранённые места появятся здесь после входа в аккаунт.",
     explore_btn: "Смотреть места",
     ai_btn: "Составить план с AI",
     cities_suffix: "город(ов)",
@@ -1088,6 +1217,7 @@ const EN: TranslationSchema = {
     stats_rating: "Average Rating",
     stats_travelers: "Travelers",
     stats_langs: "Languages",
+    coming_soon: "Coming soon",
     featured_title: "Featured Destinations",
     all_title: "All Places",
     ai_banner_title: "Trova AI is here to help",
@@ -1132,6 +1262,8 @@ const EN: TranslationSchema = {
     best_season: "Best Time to Visit",
     reviews: "Reviews",
     no_reviews: "No reviews yet. Be the first to share your experience!",
+    load_more_reviews: "Show more",
+    reviews_load_error: "Couldn't load the latest reviews. Showing saved ones.",
     write_review: "Write a Review",
     add_plan: "Add to Plan",
     remove_plan: "Remove from Plan",
@@ -1186,6 +1318,8 @@ const EN: TranslationSchema = {
       "Sorry, we're having trouble connecting to the server right now. Please try again in a moment.",
     waking_up: "The server is waking up. Please resend in a few seconds.",
     retry: "Try again",
+    send_label: "Send message",
+    cancel_label: "Cancel request",
     disclaimer: "Trova AI can make mistakes. Check important information.",
     empty_heading: "How can I help you?",
     reaction_thanks: "Thanks for your feedback!",
@@ -1242,6 +1376,28 @@ const EN: TranslationSchema = {
     hours_unit: "h",
     min_unit: "min",
     uzs_unit: "UZS",
+    menu_title: "Menu",
+    no_menu: "No menu information available",
+    address_label: "Address",
+    hours_label: "Opening hours",
+    amenities_label: "Amenities",
+    languages_label: "Languages",
+    open_map: "Open in maps",
+    close_label: "Close",
+    view_details: "View details",
+    booking_title: "Book a room",
+    check_in: "Check-in date",
+    check_out: "Check-out date",
+    guests_label: "Number of guests",
+    contact_name_label: "Full name",
+    contact_phone_label: "Phone number",
+    nights_label: "nights",
+    total_label: "Total",
+    submit_booking: "Send booking request",
+    booking_success_title: "Your request has been received!",
+    booking_success_desc: "The hotel team will contact you at the phone number you provided shortly.",
+    booking_error: "Couldn't send the request. Please try again.",
+    book_another: "Book another stay",
   },
   profile: {
     title: "Profile",
@@ -1288,6 +1444,15 @@ const EN: TranslationSchema = {
     linked_accounts_title: "Linked accounts",
     linked_not_connected: "Not connected",
     linked_connected: "Connected",
+    edit_profile: "Edit profile",
+    edit_save: "Save",
+    edit_cancel: "Cancel",
+    edit_saved_toast: "Profile updated",
+    edit_error: "Couldn't update your profile. Please try again.",
+    avatar_change: "Change photo",
+    avatar_remove: "Remove photo",
+    avatar_invalid_file: "Please choose an image file",
+    avatar_process_error: "Couldn't process that image. Try a different file.",
     delete_account: "Delete account",
     delete_account_soon: "This feature isn't available yet — coming soon.",
   },
@@ -1340,6 +1505,7 @@ const EN: TranslationSchema = {
     verify_btn: "Verify",
     verify_loading: "Checking...",
     resend_btn: "Resend code",
+    change_email_btn: "Use a different email",
     resend_sent: "New code sent",
     resend_wait: "Resend",
     err_verify: "Incorrect or expired code",
@@ -1370,6 +1536,8 @@ const EN: TranslationSchema = {
     subtitle: "Everything you've added to your plan lives here",
     empty_title: "Nothing saved yet",
     empty_desc: "Save places you like with the \"Add to Plan\" button — they'll show up here.",
+    empty_title_guest: "Sign in to see your saved places",
+    empty_desc_guest: "Places you saved before will show up here once you sign back in.",
     explore_btn: "Browse places",
     ai_btn: "Plan with AI",
     cities_suffix: "cities",
@@ -1445,6 +1613,7 @@ const ZH: TranslationSchema = {
     stats_rating: "平均评分",
     stats_travelers: "旅行者",
     stats_langs: "语言",
+    coming_soon: "即将推出",
     featured_title: "推荐目的地",
     all_title: "全部景点",
     ai_banner_title: "Trova AI 随时为您服务",
@@ -1489,6 +1658,8 @@ const ZH: TranslationSchema = {
     best_season: "最佳游览时节",
     reviews: "评价",
     no_reviews: "暂无评价，快来留下第一条评价吧！",
+    load_more_reviews: "显示更多",
+    reviews_load_error: "无法加载最新评价，正在显示已保存的评价。",
     write_review: "撰写评价",
     add_plan: "加入行程",
     remove_plan: "从行程移除",
@@ -1541,6 +1712,8 @@ const ZH: TranslationSchema = {
     error: "抱歉，当前无法连接到服务器，请稍后再试。",
     waking_up: "服务器正在唤醒，请几秒后重新发送。",
     retry: "重新发送",
+    send_label: "发送消息",
+    cancel_label: "取消请求",
     disclaimer: "Trova AI 可能会出错，请核实重要信息。",
     empty_heading: "我能为您做些什么？",
     reaction_thanks: "感谢您的反馈！",
@@ -1597,6 +1770,28 @@ const ZH: TranslationSchema = {
     hours_unit: "小时",
     min_unit: "分钟",
     uzs_unit: "苏姆",
+    menu_title: "菜单",
+    no_menu: "暂无菜单信息",
+    address_label: "地址",
+    hours_label: "营业时间",
+    amenities_label: "设施",
+    languages_label: "语言",
+    open_map: "在地图中查看",
+    close_label: "关闭",
+    view_details: "查看详情",
+    booking_title: "预订房间",
+    check_in: "入住日期",
+    check_out: "退房日期",
+    guests_label: "客人数量",
+    contact_name_label: "姓名",
+    contact_phone_label: "电话号码",
+    nights_label: "晚",
+    total_label: "总计",
+    submit_booking: "发送预订请求",
+    booking_success_title: "您的请求已收到！",
+    booking_success_desc: "酒店团队会尽快通过您提供的电话号码与您联系。",
+    booking_error: "无法发送请求，请重试。",
+    book_another: "再次预订",
   },
   profile: {
     title: "个人中心",
@@ -1643,6 +1838,15 @@ const ZH: TranslationSchema = {
     linked_accounts_title: "关联账户",
     linked_not_connected: "未连接",
     linked_connected: "已连接",
+    edit_profile: "编辑个人资料",
+    edit_save: "保存",
+    edit_cancel: "取消",
+    edit_saved_toast: "个人资料已更新",
+    edit_error: "更新个人资料失败，请重试。",
+    avatar_change: "更换头像",
+    avatar_remove: "删除头像",
+    avatar_invalid_file: "请选择一个图片文件",
+    avatar_process_error: "无法处理该图片，请尝试其他文件。",
     delete_account: "删除账户",
     delete_account_soon: "此功能暂未开放，敬请期待。",
   },
@@ -1695,6 +1899,7 @@ const ZH: TranslationSchema = {
     verify_btn: "验证",
     verify_loading: "验证中...",
     resend_btn: "重新发送验证码",
+    change_email_btn: "更换邮箱",
     resend_sent: "新验证码已发送",
     resend_wait: "重新发送",
     err_verify: "验证码错误或已过期",
@@ -1725,6 +1930,8 @@ const ZH: TranslationSchema = {
     subtitle: "您添加到计划中的地点都在这里",
     empty_title: "还没有收藏任何地点",
     empty_desc: "点击「加入计划」保存喜欢的地点，它们会显示在这里。",
+    empty_title_guest: "登录后查看已收藏的地点",
+    empty_desc_guest: "登录账号后，您之前保存的地点会显示在这里。",
     explore_btn: "浏览地点",
     ai_btn: "使用 AI 规划",
     cities_suffix: "个城市",
@@ -1800,6 +2007,7 @@ const DE: TranslationSchema = {
     stats_rating: "Durchschnittsbewertung",
     stats_travelers: "Reisende",
     stats_langs: "Sprachen",
+    coming_soon: "Demnächst",
     featured_title: "Empfohlene Reiseziele",
     all_title: "Alle Orte",
     ai_banner_title: "Trova AI hilft Ihnen weiter",
@@ -1846,6 +2054,8 @@ const DE: TranslationSchema = {
     reviews: "Bewertungen",
     no_reviews:
       "Noch keine Bewertungen. Schreiben Sie die erste Rezension!",
+    load_more_reviews: "Mehr anzeigen",
+    reviews_load_error: "Neue Bewertungen konnten nicht geladen werden. Gespeicherte werden angezeigt.",
     write_review: "Bewertung schreiben",
     add_plan: "Zum Plan hinzufügen",
     remove_plan: "Aus dem Plan entfernen",
@@ -1900,6 +2110,8 @@ const DE: TranslationSchema = {
       "Entschuldigung, es gibt derzeit ein Problem mit der Serververbindung. Bitte versuchen Sie es in Kürze erneut.",
     waking_up: "Der Server wacht auf. Bitte in ein paar Sekunden erneut senden.",
     retry: "Erneut senden",
+    send_label: "Nachricht senden",
+    cancel_label: "Anfrage abbrechen",
     disclaimer: "Trova AI kann Fehler machen. Überprüfen Sie wichtige Informationen.",
     empty_heading: "Wie kann ich Ihnen helfen?",
     reaction_thanks: "Danke für Ihr Feedback!",
@@ -1956,6 +2168,28 @@ const DE: TranslationSchema = {
     hours_unit: "Std.",
     min_unit: "Min.",
     uzs_unit: "Sum",
+    menu_title: "Speisekarte",
+    no_menu: "Keine Speisekarteninformationen verfügbar",
+    address_label: "Adresse",
+    hours_label: "Öffnungszeiten",
+    amenities_label: "Ausstattung",
+    languages_label: "Sprachen",
+    open_map: "Auf der Karte anzeigen",
+    close_label: "Schließen",
+    view_details: "Details ansehen",
+    booking_title: "Zimmer buchen",
+    check_in: "Anreisedatum",
+    check_out: "Abreisedatum",
+    guests_label: "Anzahl der Gäste",
+    contact_name_label: "Vollständiger Name",
+    contact_phone_label: "Telefonnummer",
+    nights_label: "Nächte",
+    total_label: "Gesamt",
+    submit_booking: "Buchungsanfrage senden",
+    booking_success_title: "Ihre Anfrage wurde empfangen!",
+    booking_success_desc: "Das Hotelteam wird Sie in Kürze unter der angegebenen Telefonnummer kontaktieren.",
+    booking_error: "Anfrage konnte nicht gesendet werden. Bitte erneut versuchen.",
+    book_another: "Weitere Buchung",
   },
   profile: {
     title: "Profil",
@@ -2002,6 +2236,15 @@ const DE: TranslationSchema = {
     linked_accounts_title: "Verknüpfte Konten",
     linked_not_connected: "Nicht verbunden",
     linked_connected: "Verbunden",
+    edit_profile: "Profil bearbeiten",
+    edit_save: "Speichern",
+    edit_cancel: "Abbrechen",
+    edit_saved_toast: "Profil aktualisiert",
+    edit_error: "Profil konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+    avatar_change: "Foto ändern",
+    avatar_remove: "Foto entfernen",
+    avatar_invalid_file: "Bitte wählen Sie eine Bilddatei aus",
+    avatar_process_error: "Bild konnte nicht verarbeitet werden. Versuchen Sie eine andere Datei.",
     delete_account: "Konto löschen",
     delete_account_soon: "Diese Funktion ist noch nicht verfügbar — bald verfügbar.",
   },
@@ -2054,6 +2297,7 @@ const DE: TranslationSchema = {
     verify_btn: "Bestätigen",
     verify_loading: "Wird geprüft...",
     resend_btn: "Code erneut senden",
+    change_email_btn: "Andere E-Mail verwenden",
     resend_sent: "Neuer Code gesendet",
     resend_wait: "Erneut senden",
     err_verify: "Code ungültig oder abgelaufen",
@@ -2084,6 +2328,8 @@ const DE: TranslationSchema = {
     subtitle: "Alles, was Sie zu Ihrem Plan hinzugefügt haben, ist hier",
     empty_title: "Noch nichts gespeichert",
     empty_desc: "Speichern Sie Orte, die Ihnen gefallen, über „Zum Plan hinzufügen\" — sie erscheinen dann hier.",
+    empty_title_guest: "Melden Sie sich an, um gespeicherte Orte zu sehen",
+    empty_desc_guest: "Ihre zuvor gespeicherten Orte erscheinen hier, sobald Sie sich wieder anmelden.",
     explore_btn: "Orte entdecken",
     ai_btn: "Mit KI planen",
     cities_suffix: "Städte",
@@ -2159,6 +2405,7 @@ const FR: TranslationSchema = {
     stats_rating: "Note moyenne",
     stats_travelers: "Voyageurs",
     stats_langs: "Langues",
+    coming_soon: "Bientôt disponible",
     featured_title: "Destinations à la une",
     all_title: "Tous les lieux",
     ai_banner_title: "Trova AI est là pour vous aider",
@@ -2205,6 +2452,8 @@ const FR: TranslationSchema = {
     reviews: "Avis",
     no_reviews:
       "Aucun avis pour l'instant. Soyez le premier à partager votre expérience !",
+    load_more_reviews: "Afficher plus",
+    reviews_load_error: "Impossible de charger les derniers avis. Avis enregistrés affichés.",
     write_review: "Rédiger un avis",
     add_plan: "Ajouter au plan",
     remove_plan: "Retirer du plan",
@@ -2259,6 +2508,8 @@ const FR: TranslationSchema = {
       "Désolé, nous rencontrons un problème de connexion avec le serveur. Veuillez réessayer dans quelques instants.",
     waking_up: "Le serveur se réveille. Veuillez renvoyer dans quelques secondes.",
     retry: "Réessayer",
+    send_label: "Envoyer le message",
+    cancel_label: "Annuler la requête",
     disclaimer: "Trova AI peut faire des erreurs. Vérifiez les informations importantes.",
     empty_heading: "Comment puis-je vous aider ?",
     reaction_thanks: "Merci pour votre retour !",
@@ -2315,6 +2566,28 @@ const FR: TranslationSchema = {
     hours_unit: "h",
     min_unit: "min",
     uzs_unit: "Sum",
+    menu_title: "Menu",
+    no_menu: "Aucune information sur le menu",
+    address_label: "Adresse",
+    hours_label: "Horaires d'ouverture",
+    amenities_label: "Équipements",
+    languages_label: "Langues",
+    open_map: "Voir sur la carte",
+    close_label: "Fermer",
+    view_details: "Voir les détails",
+    booking_title: "Réserver une chambre",
+    check_in: "Date d'arrivée",
+    check_out: "Date de départ",
+    guests_label: "Nombre d'invités",
+    contact_name_label: "Nom complet",
+    contact_phone_label: "Numéro de téléphone",
+    nights_label: "nuits",
+    total_label: "Total",
+    submit_booking: "Envoyer la demande de réservation",
+    booking_success_title: "Votre demande a été reçue !",
+    booking_success_desc: "L'équipe de l'hôtel vous contactera bientôt au numéro de téléphone indiqué.",
+    booking_error: "Impossible d'envoyer la demande. Veuillez réessayer.",
+    book_another: "Réserver à nouveau",
   },
   profile: {
     title: "Profil",
@@ -2362,6 +2635,15 @@ const FR: TranslationSchema = {
     linked_accounts_title: "Comptes liés",
     linked_not_connected: "Non connecté",
     linked_connected: "Connecté",
+    edit_profile: "Modifier le profil",
+    edit_save: "Enregistrer",
+    edit_cancel: "Annuler",
+    edit_saved_toast: "Profil mis à jour",
+    edit_error: "Impossible de mettre à jour le profil. Veuillez réessayer.",
+    avatar_change: "Changer la photo",
+    avatar_remove: "Supprimer la photo",
+    avatar_invalid_file: "Veuillez choisir un fichier image",
+    avatar_process_error: "Impossible de traiter cette image. Essayez un autre fichier.",
     delete_account: "Supprimer le compte",
     delete_account_soon: "Cette fonctionnalité n'est pas encore disponible — bientôt.",
   },
@@ -2415,6 +2697,7 @@ const FR: TranslationSchema = {
     verify_btn: "Vérifier",
     verify_loading: "Vérification...",
     resend_btn: "Renvoyer le code",
+    change_email_btn: "Utiliser un autre email",
     resend_sent: "Nouveau code envoyé",
     resend_wait: "Renvoyer",
     err_verify: "Code incorrect ou expiré",
@@ -2445,6 +2728,8 @@ const FR: TranslationSchema = {
     subtitle: "Tout ce que vous avez ajouté à votre plan se trouve ici",
     empty_title: "Rien d'enregistré pour l'instant",
     empty_desc: "Enregistrez les lieux qui vous plaisent via « Ajouter au plan » — ils apparaîtront ici.",
+    empty_title_guest: "Connectez-vous pour voir vos lieux enregistrés",
+    empty_desc_guest: "Les lieux que vous avez enregistrés apparaîtront ici après votre connexion.",
     explore_btn: "Explorer les lieux",
     ai_btn: "Planifier avec l'IA",
     cities_suffix: "villes",

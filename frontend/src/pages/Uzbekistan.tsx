@@ -7,6 +7,7 @@ import {
   Shirt, HandCoins, MessageCircleHeart, Camera,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CountrySwitcher } from "@/components/shared/CountrySwitcher";
 import { useTranslation } from "@/i18n";
 import type { Lang } from "@/i18n";
 import { useInView } from "@/hooks/useInView";
@@ -441,7 +442,18 @@ const MAP_CITIES = [
   { name: "Xiva",      x: 10, y: 40 },
 ];
 
-function RegionMap({ onPick }: { onPick: (city: string) => void }) {
+// Short "not to scale" caption — visitors otherwise have no way to know
+// the outline above is a stylized diagram rather than an accurate map.
+const MAP_NOTE: Record<Lang, string> = {
+  uz: "Sxematik tasvir, geografik jihatdan aniq emas",
+  ru: "Схематичное изображение, не является точной картой",
+  en: "Schematic illustration, not to scale",
+  zh: "示意图，非精确地图",
+  de: "Schematische Darstellung, nicht maßstabsgetreu",
+  fr: "Illustration schématique, pas à l'échelle",
+};
+
+function RegionMap({ onPick, lang }: { onPick: (city: string) => void; lang: Lang }) {
   return (
     <div className="relative rounded-2xl bg-[var(--card)] border border-transparent shadow-[var(--shadow-card)] p-4 sm:p-6">
       <svg viewBox="0 0 100 70" className="w-full h-auto max-h-64" aria-hidden="true">
@@ -462,7 +474,16 @@ function RegionMap({ onPick }: { onPick: (city: string) => void }) {
             role="button"
             tabIndex={0}
             aria-label={city.name}
-            onKeyDown={(e) => { if (e.key === "Enter") onPick(city.name); }}
+            onKeyDown={(e) => {
+              // Native/ARIA buttons activate on both Enter and Space —
+              // this custom <g role="button"> only handled Enter, so
+              // Space (the more common activation key for keyboard/switch
+              // users) silently scrolled the page instead.
+              if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+                e.preventDefault();
+                onPick(city.name);
+              }
+            }}
           >
             <circle cx={city.x} cy={city.y} r="5" fill="var(--primary)" opacity="0.15">
               <animate attributeName="r" values="5;7;5" dur="2.4s" repeatCount="indefinite" />
@@ -483,6 +504,9 @@ function RegionMap({ onPick }: { onPick: (city: string) => void }) {
           </g>
         ))}
       </svg>
+      <p className="text-[10px] text-[var(--muted-foreground)]/70 text-center mt-1">
+        {MAP_NOTE[lang]}
+      </p>
     </div>
   );
 }
@@ -511,10 +535,20 @@ function JourneyCurve() {
 export default function Uzbekistan() {
   const navigate = useNavigate();
   const { lang } = useTranslation();
+  // CONTENT is keyed by the same Lang union as everywhere else, so this
+  // fallback should be unreachable — but if a future language is added to
+  // Lang without a matching CONTENT entry, silently rendering Uzbek copy
+  // for that language's users would be a much harder regression to catch
+  // than a console warning during development.
+  if (import.meta.env.DEV && !CONTENT[lang]) {
+    console.warn(`Uzbekistan.tsx: no CONTENT entry for lang "${lang}", falling back to "uz"`);
+  }
   const c = CONTENT[lang] ?? CONTENT.uz;
 
   return (
     <div className="pb-8">
+      <CountrySwitcher />
+
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="px-4 pt-4 pb-2">
         <div className="grain-overlay relative overflow-hidden rounded-3xl border border-[var(--border)] shadow-2xl shadow-black/10 h-[380px] sm:h-[440px] flex items-end">
@@ -616,7 +650,7 @@ export default function Uzbekistan() {
           <p className="text-sm text-[var(--muted-foreground)]">{c.regionsSubtitle}</p>
         </div>
         <div className="mb-4">
-          <RegionMap onPick={(city) => navigate(`/locations?city=${encodeURIComponent(city)}`)} />
+          <RegionMap lang={lang} onPick={(city) => navigate(`/locations?city=${encodeURIComponent(city)}`)} />
         </div>
         <div className="relative">
           <JourneyCurve />

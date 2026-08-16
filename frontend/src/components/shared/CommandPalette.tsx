@@ -146,6 +146,12 @@ export function CommandPalette() {
     } else if (e.key === "Enter" && items[active]) {
       e.preventDefault();
       items[active].run();
+    } else if (e.key === "Tab") {
+      // The palette has exactly one focusable control (the input) while
+      // results/actions are click/Enter-only, not tab stops — without
+      // this, Tab moves focus straight through to whatever is behind the
+      // overlay while it's still open.
+      e.preventDefault();
     }
   };
 
@@ -161,6 +167,9 @@ export function CommandPalette() {
           onMouseDown={close}
         >
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("locations", "search_placeholder")}
             initial={{ opacity: 0, y: -8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
             exit={{ opacity: 0, y: -8, scale: 0.96, transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}

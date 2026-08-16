@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, MapPin, Bot, LayoutGrid, User, ChevronRight, LogIn, Globe2, Bookmark } from "lucide-react";
+import { Home, MapPin, Bot, LayoutGrid, ChevronRight, LogIn, Globe2, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Avatar } from "@/components/ui/Avatar";
 import { useAppStore } from "@/store";
 import { useTranslation } from "@/i18n";
 import { TOUR_IDS } from "@/components/ui/Tour";
@@ -141,36 +142,6 @@ export function Sidebar() {
           })()}
         </div>
 
-        {/* ── Profile nav item ───────────────────────── */}
-        <div className="mt-1.5">
-          {(() => {
-            const route = "/profile";
-            const active = pathname === route;
-            return (
-              <button
-                id={TOUR_IDS.PROFILE}
-                onClick={() => navigate(route)}
-                className={cn(
-                  "relative w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-all duration-200 group active:scale-[0.98]",
-                  active
-                    ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/25"
-                    : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]"
-                )}
-              >
-                <User className={cn(
-                  "w-[18px] h-[18px] shrink-0 transition-all",
-                  active ? "text-white scale-110" : "text-[var(--muted-foreground)] group-hover:scale-105"
-                )} />
-                <span className={cn(
-                  "text-[13.5px] transition-colors flex-1 text-left",
-                  active ? "font-semibold text-white" : "font-medium"
-                )}>
-                  {t("nav", "profile")}
-                </span>
-              </button>
-            );
-          })()}
-        </div>
       </nav>
 
       {/* ── Bottom: user card ─────────────────────────────
@@ -178,20 +149,24 @@ export function Sidebar() {
           stranded debug switch tucked at the bottom of the sidebar) */}
       <div className="shrink-0 shadow-[0_-1px_0_0_var(--sidebar-border)]">
 
-        {/* User / guest card */}
-        <div className="p-3">
+        {/* User / guest card — this is the sidebar's single entry point
+            into /profile. A separate "Profile" row used to sit in the nav
+            list above this, so the rail showed two identical destinations
+            (a plain nav item, then this richer card) — confusing, and
+            visually redundant. This card carries the tour's profile
+            anchor now that the other one is gone. */}
+        <div id={TOUR_IDS.PROFILE} className="p-3">
           {user ? (
             <button
               onClick={() => navigate("/profile")}
-              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-[var(--muted)] transition-all group active:scale-[0.98]"
+              className={cn(
+                "w-full flex items-center gap-3 p-2.5 rounded-xl transition-all group active:scale-[0.98]",
+                pathname === "/profile"
+                  ? "bg-indigo-500/12 ring-1 ring-indigo-500/30"
+                  : "hover:bg-[var(--muted)]"
+              )}
             >
-              {/* Avatar */}
-              <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-sm">
-                {/* charAt, not [0] — [0] on an empty string is undefined
-                    and .toUpperCase() on it crashes the whole sidebar;
-                    charAt just returns "". */}
-                {user.name.charAt(0).toUpperCase()}
-              </div>
+              <Avatar name={user.name} avatarUrl={user.avatarUrl} size={36} className="text-sm shadow-sm" />
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-[var(--foreground)] truncate leading-tight">
                   {user.name} {user.surname}
@@ -200,7 +175,12 @@ export function Sidebar() {
                   {user.email}
                 </p>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-[var(--muted-foreground)] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+              <ChevronRight className={cn(
+                "w-3.5 h-3.5 shrink-0 transition-all",
+                pathname === "/profile"
+                  ? "text-indigo-400 opacity-100"
+                  : "text-[var(--muted-foreground)] opacity-0 group-hover:opacity-100"
+              )} />
             </button>
           ) : (
             <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500/8 to-purple-500/5 border border-indigo-500/15">

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, MapPin, Bot, Sparkles, BookmarkX } from "lucide-react";
+import { Bookmark, MapPin, Bot, Sparkles, BookmarkX, LogIn } from "lucide-react";
 import { useAppStore } from "@/store";
 import { syncRemoveFromPlan } from "@/lib/plan-sync";
 import { useTranslation } from "@/i18n";
@@ -16,7 +16,7 @@ import type { Location } from "@/types";
 export default function SavedPlaces() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { plan, removeFromPlan } = useAppStore();
+  const { plan, removeFromPlan, user, openAuthModal } = useAppStore();
 
   const byCity = useMemo(() => {
     const groups = new Map<string, Location[]>();
@@ -49,24 +49,54 @@ export default function SavedPlaces() {
           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
             <Bookmark className="w-6 h-6 text-indigo-500/60" strokeWidth={1.5} />
           </div>
-          <p className="text-sm font-semibold text-[var(--foreground)]">{t("saved", "empty_title")}</p>
-          <p className="text-xs text-[var(--muted-foreground)] max-w-xs">{t("saved", "empty_desc")}</p>
-          <div className="flex gap-2 mt-2">
-            <button
-              onClick={() => navigate("/locations")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-colors active:scale-[0.97]"
-            >
-              <MapPin className="w-3.5 h-3.5" />
-              {t("saved", "explore_btn")}
-            </button>
-            <button
-              onClick={() => navigate("/chat")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--foreground)] text-xs font-semibold hover:border-indigo-500/40 transition-all active:scale-[0.97]"
-            >
-              <Bot className="w-3.5 h-3.5" />
-              {t("saved", "ai_btn")}
-            </button>
-          </div>
+          {/* A signed-out visitor and a signed-in visitor who simply hasn't
+              saved anything yet see the same "nothing here" shape, but not
+              the same words — someone who just logged out had their plan
+              array cleared with them, and "start exploring" reads as if
+              nothing was ever there rather than "sign back in to see it". */}
+          {!user ? (
+            <>
+              <p className="text-sm font-semibold text-[var(--foreground)]">{t("saved", "empty_title_guest")}</p>
+              <p className="text-xs text-[var(--muted-foreground)] max-w-xs">{t("saved", "empty_desc_guest")}</p>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => openAuthModal()}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-colors active:scale-[0.97]"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  {t("auth", "login")}
+                </button>
+                <button
+                  onClick={() => navigate("/locations")}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--foreground)] text-xs font-semibold hover:border-indigo-500/40 transition-all active:scale-[0.97]"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  {t("saved", "explore_btn")}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-[var(--foreground)]">{t("saved", "empty_title")}</p>
+              <p className="text-xs text-[var(--muted-foreground)] max-w-xs">{t("saved", "empty_desc")}</p>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => navigate("/locations")}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold transition-colors active:scale-[0.97]"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  {t("saved", "explore_btn")}
+                </button>
+                <button
+                  onClick={() => navigate("/chat")}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--muted)] border border-[var(--border)] text-[var(--foreground)] text-xs font-semibold hover:border-indigo-500/40 transition-all active:scale-[0.97]"
+                >
+                  <Bot className="w-3.5 h-3.5" />
+                  {t("saved", "ai_btn")}
+                </button>
+              </div>
+            </>
+          )}
         </motion.div>
       </div>
     );
